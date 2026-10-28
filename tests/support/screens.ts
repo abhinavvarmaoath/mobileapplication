@@ -5,8 +5,11 @@ import type { Page } from "@playwright/test";
 // file and not the specs.
 
 async function pick(page: Page, menu: string, label: string): Promise<void> {
+	// Items arrive from the API after the page opens, so wait for them first.
+	const items = page.locator(`${menu} .dropdown-item`);
+	await items.first().waitFor({ state: "attached" });
 	await page.locator(`${menu} .dropdown-deploy`).click();
-	await page.locator(`${menu} .dropdown-item`, { hasText: label }).click();
+	await items.filter({ hasText: label }).click();
 }
 
 export function chooseCourse(page: Page, name: string): Promise<void> {
