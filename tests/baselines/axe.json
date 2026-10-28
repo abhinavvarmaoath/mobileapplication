@@ -1,0 +1,80 @@
+{
+  "chat.html": {
+    "color-contrast": 4,
+    "html-has-lang": 1
+  },
+  "grade.html": {
+    "color-contrast": 7,
+    "html-has-lang": 1,
+    "meta-viewport": 1
+  },
+  "grades.html": {
+    "color-contrast": 4,
+    "html-has-lang": 1
+  },
+  "index.html": {
+    "aria-allowed-role": 1,
+    "aria-valid-attr-value": 1,
+    "color-contrast": 2,
+    "document-title": 1,
+    "html-has-lang": 1,
+    "label": 2,
+    "role-img-alt": 2,
+    "select-name": 1
+  },
+  "prohome.html": {
+    "color-contrast": 9,
+    "html-has-lang": 1
+  },
+  "set.html": {
+    "color-contrast": 6,
+    "html-has-lang": 1,
+    "meta-viewport": 1
+  },
+  "set1.html": {
+    "color-contrast": 6,
+    "html-has-lang": 1,
+    "meta-viewport": 1
+  },
+  "set2.html": {
+    "color-contrast": 6,
+    "html-has-lang": 1,
+    "meta-viewport": 1
+  },
+  "signup.html": {
+    "aria-allowed-role": 1,
+    "aria-valid-attr-value": 1,
+    "color-contrast": 2,
+    "html-has-lang": 1,
+    "label": 5,
+    "role-img-alt": 2,
+    "select-name": 1
+  },
+  "student.html": {
+    "color-contrast": 6,
+    "html-has-lang": 1
+  },
+  "stuhome.html": {
+    "color-contrast": 4,
+    "heading-order": 1,
+    "html-has-lang": 1
+  },
+  "team.html": {
+    "color-contrast": 4,
+    "html-has-lang": 1
+  },
+  "videoCall.html": {
+    "color-contrast": 4,
+    "html-has-lang": 1
+  },
+  "viewGrades.html": {
+    "aria-allowed-role": 6,
+    "color-contrast": 4,
+    "html-has-lang": 1,
+    "label": 6
+  },
+  "viewTeams.html": {
+    "color-contrast": 4,
+    "html-has-lang": 1
+  }
+}

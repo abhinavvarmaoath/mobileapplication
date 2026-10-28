@@ -7,6 +7,8 @@ const executablePath = process.env.CHROMIUM_EXECUTABLE_PATH;
 export default defineConfig({
 	testDir: "tests/e2e",
 	fullyParallel: true,
+	// Recording baselines rewrites a shared file, so do it one test at a time.
+	workers: process.env.UPDATE_BASELINES ? 1 : undefined,
 	forbidOnly: Boolean(process.env.CI),
 	retries: process.env.CI ? 1 : 0,
 	reporter: process.env.CI ? [["list"], ["html", { open: "never" }]] : "list",
