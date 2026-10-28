@@ -9,7 +9,8 @@
   },
   "scripts": {
     "lint": "biome check .",
-    "format": "biome format --write ."
+    "format": "biome format --write .",
+    "dev": "node tools/serve.mjs"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.6.3"
