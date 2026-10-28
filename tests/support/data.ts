@@ -26,3 +26,6 @@ export const studentGrades = {
 	Final: "40",
 	Grade: "B",
 };
+
+/** The developer's machine that the pages still link to (see B9). */
+export const localSite = "file:///Users/leona/hello/www/";

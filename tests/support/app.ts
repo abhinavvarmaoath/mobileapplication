@@ -27,6 +27,15 @@ export class App {
 		await this.page.goto(`/${path}`);
 		await this.page.locator(".ui-page-active").waitFor();
 	}
+
+	/** Waits until jQuery has no request in flight and its callbacks have run. */
+	async idle(): Promise<void> {
+		await this.page.waitForFunction(
+			() =>
+				(window as unknown as { jQuery: { active: number } }).jQuery.active ===
+				0,
+		);
+	}
 }
 
 export const test = base.extend<{ app: App }>({
