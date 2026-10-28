@@ -8,6 +8,7 @@ import { fileURLToPath } from "node:url";
 const root = resolve(fileURLToPath(new URL("..", import.meta.url)));
 const port = Number(process.env.PORT ?? 5173);
 
+/** @type {Record<string, string>} */
 const types = {
 	".css": "text/css; charset=utf-8",
 	".gif": "image/gif",

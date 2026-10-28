@@ -10,9 +10,12 @@
   "scripts": {
     "lint": "biome check .",
     "format": "biome format --write .",
-    "dev": "node tools/serve.mjs"
+    "dev": "node tools/serve.mjs",
+    "typecheck": "tsc --noEmit"
   },
   "devDependencies": {
-    "@biomejs/biome": "^2.6.3"
+    "@biomejs/biome": "^2.6.3",
+    "@types/node": "^22.20.5",
+    "typescript": "^7.0.2"
   }
 }
