@@ -25,8 +25,7 @@ const links: Record<string, string[]> = {
 	"grades.html": studentNav,
 	"viewGrades.html": [...studentNav, "grades.html"],
 	"team.html": [...studentNav, "chat.html", "videoCall.html"],
-	// Known bug B14: Home leads to the professor's student list.
-	"chat.html": ["student.html", "team.html", "viewGrades.html"],
+	"chat.html": studentNav,
 	"videoCall.html": studentNav,
 	"viewTeams.html": studentNav,
 };

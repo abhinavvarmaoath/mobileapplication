@@ -1,17 +1,17 @@
 {
   "chat.html": 6,
-  "grade.html": 12,
+  "grade.html": 9,
   "grades.html": 13,
-  "index.html": 6,
-  "prohome.html": 11,
-  "set.html": 10,
-  "set1.html": 10,
-  "set2.html": 8,
+  "index.html": 5,
+  "prohome.html": 8,
+  "set.html": 7,
+  "set1.html": 7,
+  "set2.html": 6,
   "signup.html": 12,
   "student.html": 10,
-  "stuhome.html": 12,
-  "team.html": 8,
+  "stuhome.html": 6,
+  "team.html": 7,
   "videoCall.html": 6,
-  "viewGrades.html": 18,
-  "viewTeams.html": 6
+  "viewGrades.html": 14,
+  "viewTeams.html": 5
 }
