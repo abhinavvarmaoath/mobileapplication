@@ -1,5 +1,10 @@
 import { type App, expect, test } from "../support/app";
-import { chooseCourse, chooseStudent, openSettings } from "../support/screens";
+import {
+	chooseCourse,
+	chooseStudent,
+	openSettings,
+	studentItems,
+} from "../support/screens";
 
 const marks = Object.fromEntries(
 	["Homework", "Labs", "Project", "Presentation", "Midterm", "Final"].map(
@@ -18,7 +23,7 @@ test.beforeEach(async ({ app }) => {
 
 test("loads the students of the chosen course", async ({ app }) => {
 	await chooseCourse(app.page, "CMPE 235");
-	await expect(app.page.locator("#student .dropdown-item")).toHaveText([
+	await expect(studentItems(app.page)).toHaveText([
 		"Ada Lovelace",
 		"Alan Turing",
 	]);
@@ -72,9 +77,9 @@ test("keeps the students of the previous course when the course changes", async 
 	app,
 }) => {
 	await chooseCourse(app.page, "CMPE 235");
-	await expect(app.page.locator("#student .dropdown-item")).toHaveCount(2);
+	await expect(studentItems(app.page)).toHaveCount(2);
 	await chooseCourse(app.page, "ENGR 297");
-	await expect(app.page.locator("#student .dropdown-item")).toHaveText([
+	await expect(studentItems(app.page)).toHaveText([
 		"Ada Lovelace",
 		"Alan Turing",
 		"Grace Hopper",

@@ -1,5 +1,5 @@
 import { type App, expect, test } from "../support/app";
-import { chooseCourse, openSettings } from "../support/screens";
+import { chooseCourse, courseItems, openSettings } from "../support/screens";
 
 interface SetupPage {
 	path: string;
@@ -66,10 +66,7 @@ for (const setup of setupPages) {
 			const [call] = app.backend.callsTo("get_course.php");
 			expect(app.backend.callsTo("get_course.php")).toHaveLength(1);
 			expect(call?.method).toBe("GET");
-			await expect(app.page.locator("#course .dropdown-item")).toHaveText([
-				"CMPE 235",
-				"ENGR 297",
-			]);
+			await expect(courseItems(app.page)).toHaveText(["CMPE 235", "ENGR 297"]);
 		});
 
 		test("fills the hidden course id from the chosen course", async ({

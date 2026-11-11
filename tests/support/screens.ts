@@ -1,4 +1,4 @@
-import type { Page } from "@playwright/test";
+import type { Locator, Page } from "@playwright/test";
 
 // The specs only talk to the course and student pickers and the settings
 // section through these helpers, so changing the widgets means changing this
@@ -10,6 +10,16 @@ async function pick(page: Page, menu: string, label: string): Promise<void> {
 	await items.first().waitFor({ state: "attached" });
 	await page.locator(`${menu} .dropdown-deploy`).click();
 	await items.filter({ hasText: label }).click();
+}
+
+/** The courses on offer in the course picker. */
+export function courseItems(page: Page): Locator {
+	return page.locator("#course .dropdown-item");
+}
+
+/** The students on offer in the student picker. */
+export function studentItems(page: Page): Locator {
+	return page.locator("#student .dropdown-item");
 }
 
 export function chooseCourse(page: Page, name: string): Promise<void> {
