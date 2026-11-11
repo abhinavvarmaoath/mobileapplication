@@ -122,17 +122,19 @@ test("shows markup in a student name as plain text", async ({ app }) => {
 	await expect(studentItems(app.page).locator("*")).toHaveCount(0);
 });
 
-// Known bug B8: the page replaces window.print and logs the form on every click.
-test("replaces window.print", async ({ app }) => {
+test("leaves window.print alone", async ({ app }) => {
 	const native = await app.page.evaluate(() =>
 		String(window.print).includes("[native code]"),
 	);
-	expect(native).toBe(false);
+	expect(native).toBe(true);
 });
 
-test("logs the form values when a button is pressed", async ({ app }) => {
+test("does not log the form values when a button is pressed", async ({
+	app,
+}) => {
 	await compute(app);
-	await expect
-		.poll(() => app.consoleLogs.some((line) => line.startsWith("courseId=")))
-		.toBe(true);
+	await app.idle();
+	expect(app.consoleLogs.some((line) => line.startsWith("courseId="))).toBe(
+		false,
+	);
 });

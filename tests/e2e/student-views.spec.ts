@@ -86,16 +86,18 @@ test.describe("grade estimator", () => {
 			.toBe(1);
 	});
 
-	// Known bug B8: the page replaces window.print and logs the form on every click.
-	test("replaces window.print and logs the form values", async ({ app }) => {
+	test("leaves window.print alone and does not log the form values", async ({
+		app,
+	}) => {
 		const native = await app.page.evaluate(() =>
 			String(window.print).includes("[native code]"),
 		);
-		expect(native).toBe(false);
+		expect(native).toBe(true);
 		await app.page.getByRole("button", { name: "COMPUTE GRADE" }).click();
-		await expect
-			.poll(() => app.consoleLogs.some((line) => line.startsWith("courseId=")))
-			.toBe(true);
+		await app.idle();
+		expect(app.consoleLogs.some((line) => line.startsWith("courseId="))).toBe(
+			false,
+		);
 	});
 });
 
