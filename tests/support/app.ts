@@ -40,7 +40,10 @@ export class App {
 
 export const test = base.extend<{ app: App }>({
 	app: async ({ page, context }, use) => {
-		await use(new App(page, await Backend.attach(context)));
+		const app = new App(page, await Backend.attach(context));
+		await use(app);
+		// Leftover debug output would show up here in every spec.
+		expect(app.consoleLogs, "the page wrote to the console").toEqual([]);
 	},
 });
 

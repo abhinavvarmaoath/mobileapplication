@@ -21,9 +21,7 @@
             url: 'http://rubypals.com/phonegapstyle/phpcode/computegradestudent.php',
             data: $('#gr').serialize(),
             success: function (data) {
-            console.log(data);
             document.getElementById('totalMarksSaveStatus').innerHTML="Estimated Grade is :"+data.grade+"<br/><br/> Percentage :"+data.percentage;
-				console.log(data.grade);  
 			}
           });
 

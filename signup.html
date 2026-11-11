@@ -18,11 +18,7 @@
             type: 'post',
             url: 'http://rubypals.com/phonegapstyle/phpcode/signup.php',
             data: $('#gr').serialize(),
-            error: function(xhr,status){
-            console.log(xhr);
- },
             success: function (data, xhr) {
-            console.log(data.status);
             if(data.status=="True"){
             window.location.href="index.html";
             }

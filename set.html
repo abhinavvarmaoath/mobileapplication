@@ -40,11 +40,9 @@ font-family: 'Roboto', sans-serif;}
             url: 'http://rubypals.com/phonegapstyle/phpcode/save_marks_setting.php',
             data: $('#gr').serialize(),
             error: function(xhr,status){
-            console.log(status);
           document.getElementById('totalMarksSaveStatus').innerHTML="Marks saved successfully";
  },
             success: function (data, xhr) {
-            console.log(data.status);
                       document.getElementById('totalMarksSaveStatus').innerHTML="Marks saved successfully";
 
 			}

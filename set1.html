@@ -40,7 +40,6 @@ font-family: 'Roboto', sans-serif;}
             url: 'http://rubypals.com/phonegapstyle/phpcode/save_percentage_setting.php',
             data: $('#gr').serialize(),
             error: function(xhr,status){
-            console.log(status);
       document.getElementById('totalMarksSaveStatus').innerHTML="Scaling Factors cannot be saved. It has to total to 100%";
     
     if(xhr.status==200){
@@ -49,7 +48,6 @@ font-family: 'Roboto', sans-serif;}
     }
  },
             success: function (data, xhr) {
-            console.log(data.status);
             document.getElementById('totalMarksSaveStatus').innerHTML="Scaling Factors saved successfully";
 			}
 			

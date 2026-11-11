@@ -59,9 +59,7 @@ font-family: 'Roboto', sans-serif;}
             url: 'http://rubypals.com/phonegapstyle/phpcode/compute_and_save_grade.php',
             data: $('#gr').serialize(),
             success: function (data) {
-            console.log(data);
             document.getElementById('totalMarksSaveStatus').innerHTML="Computed Grade is :"+data.grade+"<br/>Total Grade :"+data.percentage+"%"+"<br/>Marks :"+data.totalMarks;
-				console.log(data.grade);  
 			}
           });
 

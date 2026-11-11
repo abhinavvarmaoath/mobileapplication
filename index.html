@@ -16,11 +16,7 @@
             type: 'post',
             url: 'http://rubypals.com/phonegapstyle/phpcode/login.php',
             data: $('#gr').serialize(),
-            error: function(xhr,status){
-            console.log(xhr);
- },
             success: function (data, xhr) {
-            console.log(data);
             if(data.status=="Prof"){
             window.location.href="prohome.html";}
             else {
