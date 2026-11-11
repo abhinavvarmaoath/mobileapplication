@@ -35,6 +35,10 @@ font-family: 'Roboto', sans-serif;}
         });
         $('#gr').on('submit', function (e) {
           e.preventDefault();
+          if (!$('#CourseId').val()) {
+            document.getElementById('totalMarksSaveStatus').textContent = "Choose a course first.";
+            return;
+          }
           $.ajax({
             type: 'post',
             url: 'http://rubypals.com/phonegapstyle/phpcode/save_marks_setting.php',

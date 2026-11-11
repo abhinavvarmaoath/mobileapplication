@@ -58,6 +58,11 @@ async function save(app: App): Promise<void> {
 	await app.page.locator("#gr button[type=submit]").click();
 }
 
+async function saveForCourse(app: App): Promise<void> {
+	await chooseCourse(app.page, "CMPE 235");
+	await save(app);
+}
+
 for (const setup of setupPages) {
 	test.describe(setup.path, () => {
 		test("loads the course list when the page opens", async ({ app }) => {
@@ -89,18 +94,15 @@ for (const setup of setupPages) {
 			expect(call?.form).toEqual({ courseId: ["2"], ...setup.fields });
 		});
 
-		// Known bug B3: nothing stops a save before a course is chosen.
-		test("saves with an empty course id when no course is chosen", async ({
+		test("asks for a course instead of saving when none is chosen", async ({
 			app,
 		}) => {
 			await app.open(setup.path);
 			await save(app);
-			await expect
-				.poll(() => app.backend.callsTo(setup.endpoint))
-				.toHaveLength(1);
-			expect(app.backend.callsTo(setup.endpoint)[0]?.form.courseId).toEqual([
-				"",
-			]);
+			await expect(app.page.locator(setup.status)).toHaveText(
+				"Choose a course first.",
+			);
+			expect(app.backend.callsTo(setup.endpoint)).toHaveLength(0);
 		});
 
 		// Course names are text, whatever they contain.
@@ -120,6 +122,7 @@ for (const setup of setupPages) {
 test.describe("set.html messages", () => {
 	test("posts a changed mark", async ({ app }) => {
 		await app.open("set.html");
+		await chooseCourse(app.page, "CMPE 235");
 		await openSettings(app.page);
 		await app.page.locator("#MHomework").fill("75");
 		await app.page.locator("#gr button[type=submit]").click();
@@ -133,7 +136,7 @@ test.describe("set.html messages", () => {
 
 	test("reports success after a save", async ({ app }) => {
 		await app.open("set.html");
-		await save(app);
+		await saveForCourse(app);
 		await expect(app.page.locator("#totalMarksSaveStatus")).toHaveText(
 			"Marks saved successfully",
 		);
@@ -143,7 +146,7 @@ test.describe("set.html messages", () => {
 	test("reports success after a failed save", async ({ app }) => {
 		app.backend.reply("save_marks_setting.php", { status: 500 });
 		await app.open("set.html");
-		await save(app);
+		await saveForCourse(app);
 		await expect(app.page.locator("#totalMarksSaveStatus")).toHaveText(
 			"Marks saved successfully",
 		);
@@ -156,14 +159,14 @@ test.describe("set1.html messages", () => {
 
 	test("reports success after a save", async ({ app }) => {
 		await app.open("set1.html");
-		await save(app);
+		await saveForCourse(app);
 		await expect(app.page.locator("#totalMarksSaveStatus")).toHaveText(saved);
 	});
 
 	test("blames the 100% total when the server refuses", async ({ app }) => {
 		app.backend.reply("save_percentage_setting.php", { status: 500 });
 		await app.open("set1.html");
-		await save(app);
+		await saveForCourse(app);
 		await expect(app.page.locator("#totalMarksSaveStatus")).toHaveText(refused);
 	});
 
@@ -171,7 +174,7 @@ test.describe("set1.html messages", () => {
 	test("blames the 100% total when the network fails", async ({ app }) => {
 		app.backend.reply("save_percentage_setting.php", { abort: true });
 		await app.open("set1.html");
-		await save(app);
+		await saveForCourse(app);
 		await expect(app.page.locator("#totalMarksSaveStatus")).toHaveText(refused);
 	});
 
@@ -179,7 +182,7 @@ test.describe("set1.html messages", () => {
 	test("reports success when the reply is not JSON", async ({ app }) => {
 		app.backend.reply("save_percentage_setting.php", { text: "OK" });
 		await app.open("set1.html");
-		await save(app);
+		await saveForCourse(app);
 		await expect(app.page.locator("#totalMarksSaveStatus")).toHaveText(saved);
 	});
 });
@@ -187,7 +190,7 @@ test.describe("set1.html messages", () => {
 test.describe("set2.html messages", () => {
 	test("reports success after a save", async ({ app }) => {
 		await app.open("set2.html");
-		await save(app);
+		await saveForCourse(app);
 		await expect(app.page.locator("#gcSaveStatus")).toHaveText(
 			"Grade Settings Saved",
 		);
@@ -197,7 +200,7 @@ test.describe("set2.html messages", () => {
 	test("says nothing after a failed save", async ({ app }) => {
 		app.backend.reply("save_grade_setting.php", { status: 500 });
 		await app.open("set2.html");
-		await save(app);
+		await saveForCourse(app);
 		await app.idle();
 		await expect(app.page.locator("#gcSaveStatus")).toHaveText("");
 	});

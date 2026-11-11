@@ -17,6 +17,12 @@ async function compute(app: App): Promise<void> {
 	await app.page.locator("#gr button[type=submit]").click();
 }
 
+async function computeForStudent(app: App): Promise<void> {
+	await chooseCourse(app.page, "CMPE 235");
+	await chooseStudent(app.page, "Ada Lovelace");
+	await compute(app);
+}
+
 test.beforeEach(async ({ app }) => {
 	await app.open("grade.html");
 });
@@ -59,17 +65,23 @@ test("computes the grade for the chosen course and student", async ({
 	);
 });
 
-// Known bug B3: nothing stops a computation before a course and student are chosen.
-test("computes with empty ids when nothing is chosen", async ({ app }) => {
+test("asks for a course and a student instead of computing", async ({
+	app,
+}) => {
 	await compute(app);
-	await expect
-		.poll(() => app.backend.callsTo("compute_and_save_grade.php"))
-		.toHaveLength(1);
-	expect(app.backend.callsTo("compute_and_save_grade.php")[0]?.form).toEqual({
-		CourseId: [""],
-		StudentId: [""],
-		...marks,
-	});
+	await expect(app.page.locator("#totalMarksSaveStatus")).toHaveText(
+		"Choose a course and a student first.",
+	);
+	expect(app.backend.callsTo("compute_and_save_grade.php")).toHaveLength(0);
+});
+
+test("asks for a student when only a course is chosen", async ({ app }) => {
+	await chooseCourse(app.page, "CMPE 235");
+	await compute(app);
+	await expect(app.page.locator("#totalMarksSaveStatus")).toHaveText(
+		"Choose a course and a student first.",
+	);
+	expect(app.backend.callsTo("compute_and_save_grade.php")).toHaveLength(0);
 });
 
 // Known bug B7: students of an earlier course stay in the list.
@@ -89,7 +101,7 @@ test("keeps the students of the previous course when the course changes", async 
 // Known bug B2: there is no error handler, so a failure is silent.
 test("says nothing when the computation fails", async ({ app }) => {
 	app.backend.reply("compute_and_save_grade.php", { status: 500 });
-	await compute(app);
+	await computeForStudent(app);
 	await app.idle();
 	await expect(app.page.locator("#totalMarksSaveStatus")).toHaveText("");
 });
@@ -103,7 +115,7 @@ test("runs script hidden in the computed grade", async ({ app }) => {
 			totalMarks: "1",
 		},
 	});
-	await compute(app);
+	await computeForStudent(app);
 	await expect
 		.poll(() =>
 			app.page.evaluate(() => (window as unknown as { __xss?: number }).__xss),
