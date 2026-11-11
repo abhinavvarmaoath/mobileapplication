@@ -68,14 +68,22 @@ test.describe("student list", () => {
 		await expect(app.page.locator('a[data-rel="popup"]')).toHaveCount(6);
 	});
 
-	// Known bug B6: the six popups share one id.
-	test("gives the six popups the same id", async ({ app }) => {
-		await expect(app.page.locator('[id="popupVideo"]')).toHaveCount(6);
+	test("gives each popup its own id", async ({ app }) => {
+		for (const number of [1, 2, 3, 4, 5, 6]) {
+			await expect(
+				app.page.locator(`[id="popupStudent${number}"]`),
+			).toHaveCount(1);
+		}
 	});
 
-	test("opens the first popup whichever button is pressed", async ({ app }) => {
+	test("opens the popup of the button that was pressed", async ({ app }) => {
+		const popupFrame = app.page.locator(".ui-popup-active iframe");
 		await app.page.locator('a[data-rel="popup"]').nth(2).click();
-		await expect(app.page.locator(".ui-popup-active iframe")).toHaveAttribute(
+		await expect(popupFrame).toHaveAttribute("src", "http://varmapp.com");
+		await app.page.keyboard.press("Escape");
+		await expect(popupFrame).toHaveCount(0);
+		await app.page.locator('a[data-rel="popup"]').first().click();
+		await expect(popupFrame).toHaveAttribute(
 			"src",
 			"http://varmapp.com/index.html",
 		);
