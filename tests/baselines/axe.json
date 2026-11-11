@@ -5,8 +5,7 @@
   },
   "grade.html": {
     "color-contrast": 5,
-    "html-has-lang": 1,
-    "meta-viewport": 1
+    "html-has-lang": 1
   },
   "grades.html": {
     "color-contrast": 4,
@@ -28,18 +27,15 @@
   },
   "set.html": {
     "color-contrast": 5,
-    "html-has-lang": 1,
-    "meta-viewport": 1
+    "html-has-lang": 1
   },
   "set1.html": {
     "color-contrast": 5,
-    "html-has-lang": 1,
-    "meta-viewport": 1
+    "html-has-lang": 1
   },
   "set2.html": {
     "color-contrast": 5,
-    "html-has-lang": 1,
-    "meta-viewport": 1
+    "html-has-lang": 1
   },
   "signup.html": {
     "aria-allowed-role": 1,

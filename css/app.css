@@ -37,3 +37,24 @@
 	display: block;
 	padding: 0 1em 1em;
 }
+
+.ui-content > h1 {
+	margin: 1em 0 0.3em;
+	font-size: 1.3em;
+	font-weight: normal;
+}
+
+.settings .field-title {
+	display: flex;
+	justify-content: space-between;
+}
+
+.settings .field-title span {
+	color: #555;
+}
+
+.ui-header .ui-title {
+	font-weight: normal;
+	color: #222;
+	text-shadow: none;
+}
