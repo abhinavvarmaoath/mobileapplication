@@ -47,15 +47,14 @@ test("stays on the page and says nothing when the request fails", async ({
 	await expect(app.page).toHaveURL(/index\.html$/);
 });
 
-// Known bug B5: Cancel is a submit button.
-test("submits the form when Cancel is pressed", async ({ app }) => {
+test("clears the form without sending anything when Cancel is pressed", async ({
+	app,
+}) => {
+	await app.page.locator("#ID").fill("ada");
 	await app.page.getByRole("button", { name: "Cancel" }).click();
-	await expect.poll(() => app.backend.callsTo("login.php")).toHaveLength(1);
-	expect(app.backend.callsTo("login.php")[0]?.form).toEqual({
-		ID: [""],
-		password: [""],
-		slider2: ["student"],
-	});
+	await expect(app.page.locator("#ID")).toHaveValue("");
+	await app.idle();
+	expect(app.backend.callsTo("login.php")).toHaveLength(0);
 });
 
 test("links to signup", async ({ app }) => {
