@@ -10,6 +10,19 @@
 		<script src="http://code.jquery.com/jquery-1.8.2.min.js"></script>
 		<script src="http://code.jquery.com/mobile/1.4.0/jquery.mobile-1.4.0.min.js"></script>
 		<script>
+		// jQuery Mobile forces autocomplete="off" on the inputs it enhances, so
+		// remember what the markup asked for and put it back afterwards.
+		$(document).on("pagebeforecreate", function () {
+			$("input[autocomplete]").each(function () {
+				$(this).data("autocomplete", this.getAttribute("autocomplete"));
+			});
+		});
+		$(document).on("pagecreate", function () {
+			$("input").each(function () {
+				var wanted = $(this).data("autocomplete");
+				if (wanted) this.setAttribute("autocomplete", wanted);
+			});
+		});
 		$(function () {
         $('#gr').on('submit', function (e) {
           e.preventDefault();
@@ -43,11 +56,11 @@
 
 					<div data-role="fieldcontain">
 						<label for="name">Username:</label>
-						<input type="text" name="ID" id="ID" value=""  />
+						<input type="text" name="ID" id="ID" value="" autocomplete="username" />
 					</div>
 					<div data-role="fieldcontain">
 						<label for="name">Password:</label>
-						<input type="password" name="password" id="password" value=""  />
+						<input type="password" name="password" id="password" value="" autocomplete="current-password" />
 					</div>
 
 					<div data-role="fieldcontain">

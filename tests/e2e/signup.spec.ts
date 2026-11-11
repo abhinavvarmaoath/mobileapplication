@@ -32,6 +32,31 @@ test("posts four fields under one name and ignores a password mismatch", async (
 	});
 });
 
+test("tells the browser what each field is", async ({ app }) => {
+	const expected: Record<string, [string, string]> = {
+		"#ID": ["text", "username"],
+		"#password": ["password", "new-password"],
+		"#repassword": ["password", "new-password"],
+		"#name": ["text", "name"],
+		"#email": ["email", "email"],
+		"#phone": ["tel", "tel"],
+	};
+	for (const [selector, [type, autocomplete]] of Object.entries(expected)) {
+		const field = app.page.locator(selector);
+		await expect(field).toHaveAttribute("type", type);
+		await expect(field).toHaveAttribute("autocomplete", autocomplete);
+	}
+});
+
+test("does not send an email address that is not one", async ({ app }) => {
+	await app.page.locator("#ID").fill("u1");
+	await app.page.locator("#password").fill("pw1");
+	await app.page.locator("#email").fill("not an email");
+	await app.page.getByRole("button", { name: "Signup" }).click();
+	await app.idle();
+	expect(app.backend.callsTo("signup.php")).toHaveLength(0);
+});
+
 test("goes to the login page when the server answers True", async ({ app }) => {
 	await fillAndSubmit(app, "pw1");
 	await expect(app.page).toHaveURL(/\/index\.html$/);

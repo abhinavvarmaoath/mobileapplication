@@ -11,6 +11,19 @@
 		<link rel="external" data-ajax="false">
 		<script src="http://code.jquery.com/mobile/1.4.0/jquery.mobile-1.4.0.min.js"></script>
 			<script>
+		// jQuery Mobile forces autocomplete="off" on the inputs it enhances, so
+		// remember what the markup asked for and put it back afterwards.
+		$(document).on("pagebeforecreate", function () {
+			$("input[autocomplete]").each(function () {
+				$(this).data("autocomplete", this.getAttribute("autocomplete"));
+			});
+		});
+		$(document).on("pagecreate", function () {
+			$("input").each(function () {
+				var wanted = $(this).data("autocomplete");
+				if (wanted) this.setAttribute("autocomplete", wanted);
+			});
+		});
 		$(function () {
         $('#gr').on('submit', function (e) {
           e.preventDefault();
@@ -42,30 +55,30 @@
 
 					<div data-role="fieldcontain">
 						<label for="name">Username:</label>
-						<input type="text" name="ID" id="ID" value=""  />
+						<input type="text" name="ID" id="ID" value="" autocomplete="username" />
 					</div>
 					<div data-role="fieldcontain">
 						<label for="name">Password:</label>
-						<input type="password" name="password" id="password" value=""  />
+						<input type="password" name="password" id="password" value="" autocomplete="new-password" />
 					</div>
 					<div data-role="fieldcontain">
 						<label for="name">Re-Password:</label>
-						<input type="password" name="name" id="repassword" value=""  />
+						<input type="password" name="name" id="repassword" value="" autocomplete="new-password" />
 					</div>
                      
                      <div data-role="fieldcontain">
 						<label for="name">Name:</label>
-						<input type="text" name="name" id="name" value=""  />
+						<input type="text" name="name" id="name" value="" autocomplete="name" />
 					</div>
 					
 					<div data-role="fieldcontain">
 						<label for="name">Email:</label>
-						<input type="text" name="name" id="email" value=""  />
+						<input type="email" name="name" id="email" value="" autocomplete="email" />
 					</div>
 					
 					<div data-role="fieldcontain">
 						<label for="name">Phone:</label>
-						<input type="text" name="name" id="phone" value=""  />
+						<input type="tel" name="name" id="phone" value="" autocomplete="tel" />
 					</div>
 					
 

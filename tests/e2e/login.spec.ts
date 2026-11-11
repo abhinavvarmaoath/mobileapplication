@@ -57,6 +57,17 @@ test("clears the form without sending anything when Cancel is pressed", async ({
 	expect(app.backend.callsTo("login.php")).toHaveLength(0);
 });
 
+test("lets the browser offer saved credentials", async ({ app }) => {
+	await expect(app.page.locator("#ID")).toHaveAttribute(
+		"autocomplete",
+		"username",
+	);
+	await expect(app.page.locator("#password")).toHaveAttribute(
+		"autocomplete",
+		"current-password",
+	);
+});
+
 test("links to signup", async ({ app }) => {
 	await expect(app.page.locator("a", { hasText: "Signup" })).toHaveAttribute(
 		"href",
