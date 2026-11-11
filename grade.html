@@ -32,11 +32,14 @@ font-family: 'Roboto', sans-serif;}
 
     function loadStudents(courseId) {
         $("#CourseId").val(courseId);
+        $("#StudentId").val("");
+        $("#student option:gt(0)").remove();
         if (!courseId) return;
 
         var url = "http://rubypals.com/cmpe235/phpcode/get_students_by_course.php?courseId=" + courseId;
 
         $.getJSON(url, function(data) {
+            if ($("#course").val() !== courseId) return;
             $.each(data, function(key, value) {
                 $("<option></option>")
                     .val(value.ID)

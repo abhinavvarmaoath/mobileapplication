@@ -1,4 +1,5 @@
 import { type App, expect, test } from "../support/app";
+import { studentsByCourse } from "../support/data";
 import {
 	chooseCourse,
 	chooseStudent,
@@ -84,18 +85,34 @@ test("asks for a student when only a course is chosen", async ({ app }) => {
 	expect(app.backend.callsTo("compute_and_save_grade.php")).toHaveLength(0);
 });
 
-// Known bug B7: students of an earlier course stay in the list.
-test("keeps the students of the previous course when the course changes", async ({
-	app,
-}) => {
+test("lists only the students of the chosen course", async ({ app }) => {
 	await chooseCourse(app.page, "CMPE 235");
 	await expect(studentItems(app.page)).toHaveCount(2);
 	await chooseCourse(app.page, "ENGR 297");
-	await expect(studentItems(app.page)).toHaveText([
-		"Ada Lovelace",
-		"Alan Turing",
-		"Grace Hopper",
-	]);
+	await expect(studentItems(app.page)).toHaveText(["Grace Hopper"]);
+});
+
+test("forgets the chosen student when the course changes", async ({ app }) => {
+	await chooseCourse(app.page, "CMPE 235");
+	await chooseStudent(app.page, "Ada Lovelace");
+	await expect(app.page.locator("#StudentId")).toHaveValue("7");
+	await chooseCourse(app.page, "ENGR 297");
+	await expect(app.page.locator("#StudentId")).toHaveValue("");
+	await expect(app.page.locator("#student")).toHaveValue("");
+});
+
+test("ignores a late reply for a course that is no longer chosen", async ({
+	app,
+}) => {
+	app.backend.reply("get_students_by_course.php", (call) => ({
+		json: studentsByCourse[call.query.courseId ?? ""] ?? [],
+		delayMs: call.query.courseId === "1" ? 500 : 0,
+	}));
+	await chooseCourse(app.page, "CMPE 235");
+	await chooseCourse(app.page, "ENGR 297");
+	await expect(studentItems(app.page)).toHaveText(["Grace Hopper"]);
+	await app.idle();
+	await expect(studentItems(app.page)).toHaveText(["Grace Hopper"]);
 });
 
 test("reports a failed computation", async ({ app }) => {
