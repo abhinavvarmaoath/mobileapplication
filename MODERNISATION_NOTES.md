@@ -45,7 +45,7 @@ Held until the open questions are answered: B1, B4, B11, the LICENSE choice.
 | --- | --- |
 | 1 Safety net | done |
 | 2 Clean-up | done |
-| 3 Bug fixes | in progress |
+| 3 Bug fixes | done, except the held items |
 
 Commands are in `README.md`. In a sandbox without Playwright's own browser,
 set `CHROMIUM_EXECUTABLE_PATH` to a Chromium binary before `npm test`.
@@ -76,35 +76,54 @@ Bugs
 
 - B1 Any login reply other than `Prof` opens the student home; no error shown.
   Held: needs sample login replies.
-- B2 Save handlers say "saved" on error; some have no error handler.
-- B3 Saves are sent with no course or student selected.
+- B2 Save handlers say "saved" on error; some have no error handler. Done.
+  `grades.html` still shows its placeholders, not a message, when loading
+  fails.
+- B3 Saves are sent with no course or student selected. Done.
 - B4 Signup sends four fields under the name `name` and does not check the
   password confirmation. Held: needs the server's field names.
-- B5 Login Cancel is a submit button.
-- B6 `student.html` has six popups with the same id.
+- B5 Login Cancel is a submit button. Done.
+- B6 `student.html` has six popups with the same id. Done.
 - B7 The student list accumulates across courses and can show stale replies.
+  Done.
 - B8 `grade.html` redefines `print()` and logs form values on every click.
+  Done, and no page logs to the console now; the test fixture enforces it.
 - B9 Links point at a developer's local `file:///` path. Done.
 - B10 Student pages use fixed student and course ids. Blocked on the backend.
 - B11 Setup allows marks up to 500 but grading stops at 100. Held: needs a
   product answer.
-- B12 Grade ranges are not validated; a stray backslash is rendered.
+- B12 Grade ranges are not validated; a stray backslash is rendered. Done.
+  The default 0-100 ranges overlap, so they cannot be saved untouched.
 - B13 Four pages load two jQuery and two jQuery Mobile copies. Done.
-- B14 Smaller navigation and markup slips.
+- B14 Smaller navigation and markup slips. Done for the listed ones. Left:
+  `viewTeams.html` is still an orphan whose file input goes nowhere.
 
 Security
 
 - S1 HTTPS end to end. Blocked on the backend.
-- S2 Server strings are built into HTML (XSS). Pickers done; result and
-  grade text still to do.
+- S2 Server strings are built into HTML (XSS). Done; no page uses
+  `innerHTML`.
 - S3 Retire jQuery 1.8.2 and jQuery Mobile with the UI replacement.
 - S4 Server-side authentication and access control. Blocked on the backend.
 - S5 Third-party iframes (chat, video, materials).
 - S6 Content-Security-Policy.
-- S7 Form hygiene (`autocomplete`, input types, logging).
+- S7 Form hygiene (`autocomplete`, input types, logging). Done. jQuery
+  Mobile forces `autocomplete="off"`, so `index.html` and `signup.html` carry
+  a small script that restores the markup's values. Remove it with jQuery
+  Mobile.
 - S8 Supply-chain guardrails. Done except SHA pinning of actions.
 - S9 Licence and privacy clean-up. Template and names removed; LICENSE is
   waiting on question 6.
+
+Not done, and worth doing soon
+
+- Double-submit protection on the save buttons.
+- `<html lang>` is missing on every page and the iframes have no `title`.
+- The orange header and nav fail contrast (see `tests/baselines/axe.json`),
+  and the Logout button on the two home pages is clipped to 30 by 10 pixels.
+- Pin the workflow actions to commit SHAs.
+- Check the setup pages in a real browser: they used to load jQuery Mobile
+  1.4.0 and 1.4.5 together and now load 1.4.0 only.
 
 Later phases, not approved yet
 
@@ -115,6 +134,19 @@ Later phases, not approved yet
 - OpenAPI contract and an optional replacement backend (A3).
 - PWA or Capacitor wrapper (A4).
 - Syllabus import with evals (AI1).
+
+## Resuming
+
+```sh
+git switch claude/nice-fermat-n9z0rq
+npm ci
+npm run check
+```
+
+`npm run check` runs lint, types, the HTML and secret checks and the
+Playwright suite (123 specs). After a fix that improves a page, record the
+new counts and commit them with the fix (commands in `README.md`). Push after
+every commit: a sandbox that is reclaimed loses anything that was not pushed.
 
 ## Open questions
 
