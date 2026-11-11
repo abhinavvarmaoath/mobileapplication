@@ -1,5 +1,4 @@
 import { type App, expect, test } from "../support/app";
-import { localSite } from "../support/data";
 
 async function fillAndSubmit(app: App, repassword: string): Promise<void> {
 	const { page } = app;
@@ -35,9 +34,7 @@ test("posts four fields under one name and ignores a password mismatch", async (
 
 test("goes to the login page when the server answers True", async ({ app }) => {
 	await fillAndSubmit(app, "pw1");
-	await expect
-		.poll(() => app.consoleErrors.join("\n"))
-		.toContain(`${localSite}index.html`);
+	await expect(app.page).toHaveURL(/\/index\.html$/);
 });
 
 test("stays put and says nothing when the server answers anything else", async ({
@@ -46,9 +43,7 @@ test("stays put and says nothing when the server answers anything else", async (
 	app.backend.reply("signup.php", { json: { status: "False" } });
 	await fillAndSubmit(app, "pw1");
 	await app.idle();
-	expect(app.consoleErrors.some((text) => text.includes("file:///"))).toBe(
-		false,
-	);
+	await expect(app.page).toHaveURL(/\/signup\.html$/);
 	expect(app.dialogs).toEqual([]);
 });
 

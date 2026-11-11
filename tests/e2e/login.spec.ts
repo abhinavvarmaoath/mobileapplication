@@ -1,5 +1,4 @@
 import { type App, expect, test } from "../support/app";
-import { localSite } from "../support/data";
 
 async function logIn(app: App): Promise<void> {
 	await app.page.locator("#ID").fill("ada");
@@ -26,9 +25,7 @@ test("posts the credentials and the account type", async ({ app }) => {
 test("sends a professor to the professor home", async ({ app }) => {
 	app.backend.reply("login.php", { json: { status: "Prof" } });
 	await logIn(app);
-	await expect
-		.poll(() => app.consoleErrors.join("\n"))
-		.toContain(`${localSite}prohome.html`);
+	await expect(app.page).toHaveURL(/\/prohome\.html$/);
 });
 
 // Known bug B1: anything but "Prof", including a failure, opens the student home.
@@ -37,9 +34,7 @@ test("sends every other reply to the student home, failures included", async ({
 }) => {
 	app.backend.reply("login.php", { json: { status: "False" } });
 	await logIn(app);
-	await expect
-		.poll(() => app.consoleErrors.join("\n"))
-		.toContain(`${localSite}stuhome.html`);
+	await expect(app.page).toHaveURL(/\/stuhome\.html$/);
 });
 
 test("stays on the page and says nothing when the request fails", async ({
@@ -48,9 +43,6 @@ test("stays on the page and says nothing when the request fails", async ({
 	app.backend.reply("login.php", { status: 500 });
 	await logIn(app);
 	await app.idle();
-	expect(app.consoleErrors.some((text) => text.includes("file:///"))).toBe(
-		false,
-	);
 	expect(app.dialogs).toEqual([]);
 	await expect(app.page).toHaveURL(/index\.html$/);
 });
@@ -66,10 +58,9 @@ test("submits the form when Cancel is pressed", async ({ app }) => {
 	});
 });
 
-// Known bug B9: the link only works on the original developer's machine.
-test("links to signup through an absolute local file path", async ({ app }) => {
+test("links to signup", async ({ app }) => {
 	await expect(app.page.locator("a", { hasText: "Signup" })).toHaveAttribute(
 		"href",
-		`${localSite}signup.html`,
+		"signup.html",
 	);
 });

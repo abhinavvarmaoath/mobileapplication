@@ -1,5 +1,5 @@
 import { expect, test } from "../support/app";
-import { localSite, studentGrades } from "../support/data";
+import { studentGrades } from "../support/data";
 
 const marks = Object.fromEntries(
 	["Homework", "Labs", "Project", "Presentation", "Midterm", "Final"].map(
@@ -20,11 +20,10 @@ test.describe("student home", () => {
 		).toContainText("WHO IS MY PROFESSOR?");
 	});
 
-	// Known bug B9: the link only works on the original developer's machine.
-	test("logs out through an absolute local file path", async ({ app }) => {
+	test("logs out to the login page", async ({ app }) => {
 		await expect(app.page.locator("a", { hasText: "Logout" })).toHaveAttribute(
 			"href",
-			`${localSite}index.html`,
+			"index.html",
 		);
 	});
 });

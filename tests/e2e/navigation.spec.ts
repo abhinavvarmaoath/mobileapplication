@@ -1,5 +1,4 @@
 import { expect, test } from "../support/app";
-import { localSite } from "../support/data";
 import { pages } from "../support/pages";
 
 const professorNav = [
@@ -14,11 +13,11 @@ const studentNav = ["stuhome.html", "team.html", "viewGrades.html"];
 // Every link target on each page, in document order. Links that only open a
 // popup (href="#...") are left out.
 const links: Record<string, string[]> = {
-	"index.html": [`${localSite}signup.html`],
+	"index.html": ["signup.html"],
 	"signup.html": [],
-	"prohome.html": [...professorNav, `${localSite}index.html`, "student.html"],
+	"prohome.html": [...professorNav, "index.html", "student.html"],
 	"student.html": professorNav,
-	"stuhome.html": [...studentNav, `${localSite}index.html`],
+	"stuhome.html": [...studentNav, "index.html"],
 	"set.html": professorNav,
 	"set1.html": professorNav,
 	"set2.html": professorNav,

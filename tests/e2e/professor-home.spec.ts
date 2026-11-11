@@ -1,5 +1,4 @@
 import { type App, expect, test } from "../support/app";
-import { localSite } from "../support/data";
 
 const greensheet =
 	"http://openloop.com/education/classes/sjsu_engr/engr_mobile_dev/fall2015/index.php";
@@ -43,11 +42,10 @@ test.describe("professor home", () => {
 		).toHaveAttribute("href", "student.html");
 	});
 
-	// Known bug B9: the link only works on the original developer's machine.
-	test("logs out through an absolute local file path", async ({ app }) => {
+	test("logs out to the login page", async ({ app }) => {
 		await expect(app.page.locator("a", { hasText: "Logout" })).toHaveAttribute(
 			"href",
-			`${localSite}index.html`,
+			"index.html",
 		);
 	});
 
