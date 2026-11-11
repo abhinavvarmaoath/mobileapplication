@@ -20,6 +20,9 @@
             type: 'post',
             url: 'http://rubypals.com/phonegapstyle/phpcode/computegradestudent.php',
             data: $('#gr').serialize(),
+            error: function () {
+            document.getElementById('totalMarksSaveStatus').textContent="The grade could not be estimated. Please try again.";
+			},
             success: function (data) {
             document.getElementById('totalMarksSaveStatus').innerHTML="Estimated Grade is :"+data.grade+"<br/><br/> Percentage :"+data.percentage;
 			}

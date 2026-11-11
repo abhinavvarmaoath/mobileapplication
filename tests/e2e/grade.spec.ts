@@ -98,12 +98,12 @@ test("keeps the students of the previous course when the course changes", async 
 	]);
 });
 
-// Known bug B2: there is no error handler, so a failure is silent.
-test("says nothing when the computation fails", async ({ app }) => {
+test("reports a failed computation", async ({ app }) => {
 	app.backend.reply("compute_and_save_grade.php", { status: 500 });
 	await computeForStudent(app);
-	await app.idle();
-	await expect(app.page.locator("#totalMarksSaveStatus")).toHaveText("");
+	await expect(app.page.locator("#totalMarksSaveStatus")).toHaveText(
+		"The grade could not be computed. Please try again.",
+	);
 });
 
 // Known bug S2: the grade is inserted as HTML.

@@ -63,12 +63,12 @@ test.describe("grade estimator", () => {
 		).toHaveAttribute("href", "grades.html");
 	});
 
-	// Known bug B2: there is no error handler, so a failure is silent.
-	test("says nothing when the estimate fails", async ({ app }) => {
+	test("reports a failed estimate", async ({ app }) => {
 		app.backend.reply("computegradestudent.php", { status: 500 });
 		await app.page.getByRole("button", { name: "COMPUTE GRADE" }).click();
-		await app.idle();
-		await expect(app.page.locator("#totalMarksSaveStatus")).toHaveText("");
+		await expect(app.page.locator("#totalMarksSaveStatus")).toHaveText(
+			"The grade could not be estimated. Please try again.",
+		);
 	});
 
 	// Known bug S2: the estimate is inserted as HTML.

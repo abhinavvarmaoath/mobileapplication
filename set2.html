@@ -43,6 +43,9 @@ font-family: 'Roboto', sans-serif;}
             type: 'post',
             url: 'http://rubypals.com/phonegapstyle/phpcode/save_grade_setting.php',
             data: $('#gr').serialize(),
+            error: function () {
+        document.getElementById('gcSaveStatus').textContent="Grade settings could not be saved. Please try again.";
+			},
             success: function (data) {
         document.getElementById('gcSaveStatus').innerHTML="Grade Settings Saved";
 			}

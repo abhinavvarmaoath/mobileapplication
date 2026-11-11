@@ -142,13 +142,12 @@ test.describe("set.html messages", () => {
 		);
 	});
 
-	// Known bug B2: the error handler reports success.
-	test("reports success after a failed save", async ({ app }) => {
+	test("reports a failed save", async ({ app }) => {
 		app.backend.reply("save_marks_setting.php", { status: 500 });
 		await app.open("set.html");
 		await saveForCourse(app);
 		await expect(app.page.locator("#totalMarksSaveStatus")).toHaveText(
-			"Marks saved successfully",
+			"Marks could not be saved. Please try again.",
 		);
 	});
 });
@@ -170,15 +169,18 @@ test.describe("set1.html messages", () => {
 		await expect(app.page.locator("#totalMarksSaveStatus")).toHaveText(refused);
 	});
 
-	// Known bug B2: a dropped connection gets the same explanation.
-	test("blames the 100% total when the network fails", async ({ app }) => {
+	test("says the server could not be reached when the network fails", async ({
+		app,
+	}) => {
 		app.backend.reply("save_percentage_setting.php", { abort: true });
 		await app.open("set1.html");
 		await saveForCourse(app);
-		await expect(app.page.locator("#totalMarksSaveStatus")).toHaveText(refused);
+		await expect(app.page.locator("#totalMarksSaveStatus")).toHaveText(
+			"Could not reach the server. Please try again.",
+		);
 	});
 
-	// Known bug B2: a 200 reply that is not JSON counts as a save.
+	// The page treats a 200 reply it cannot parse as a save; kept as it was.
 	test("reports success when the reply is not JSON", async ({ app }) => {
 		app.backend.reply("save_percentage_setting.php", { text: "OK" });
 		await app.open("set1.html");
@@ -196,12 +198,12 @@ test.describe("set2.html messages", () => {
 		);
 	});
 
-	// Known bug B2: there is no error handler, so a failure is silent.
-	test("says nothing after a failed save", async ({ app }) => {
+	test("reports a failed save", async ({ app }) => {
 		app.backend.reply("save_grade_setting.php", { status: 500 });
 		await app.open("set2.html");
 		await saveForCourse(app);
-		await app.idle();
-		await expect(app.page.locator("#gcSaveStatus")).toHaveText("");
+		await expect(app.page.locator("#gcSaveStatus")).toHaveText(
+			"Grade settings could not be saved. Please try again.",
+		);
 	});
 });

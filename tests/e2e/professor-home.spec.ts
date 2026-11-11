@@ -27,13 +27,14 @@ test.describe("professor home", () => {
 		await expect.poll(() => app.dialogs).toEqual(["Class added!"]);
 	});
 
-	// Known bug B2: the error handler reports success.
-	test("says the class was added even when the request fails", async ({
+	test("says the class could not be added when the request fails", async ({
 		app,
 	}) => {
 		app.backend.reply("adduser.php", { status: 500 });
 		await addClass(app);
-		await expect.poll(() => app.dialogs).toEqual(["Class added!"]);
+		await expect
+			.poll(() => app.dialogs)
+			.toEqual(["The class could not be added. Please try again."]);
 	});
 
 	test("links to the student list", async ({ app }) => {
