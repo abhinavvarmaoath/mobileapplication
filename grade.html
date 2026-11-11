@@ -8,6 +8,7 @@
 		<link rel="stylesheet" href="themes/Bootstrap.css">
 		<link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.0/jquery.mobile.structure-1.4.0.min.css" />
 		<link rel="stylesheet" href="themes/jquery.mobile.icons.min.css" />
+		<link rel="stylesheet" href="css/app.css">
 		<script src="http://code.jquery.com/jquery-1.8.2.min.js"></script>
 		<script src="http://code.jquery.com/mobile/1.4.0/jquery.mobile-1.4.0.min.js"></script>
 		    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
@@ -55,87 +56,38 @@ font-family: 'Roboto', sans-serif;}
     $(document).on("pagebeforecreate", function() {
 
         $.getJSON("http://rubypals.com/cmpe235/phpcode/get_course.php", function(data) {
-            var items = [];
-
             $.each(data, function(key, value) {
-                $("<a href='#' class='dropdown-item bg-light'></a>")
-                    .attr({ id: "course" + value.ID, value: value.ID })
-                    .click(function () { loadStudents(this); })
+                $("<option></option>")
+                    .val(value.ID)
                     .text(value.CourseName)
                     .appendTo("#course");
-           
             });
-
-            $("#course").append("<div class='dropdown-bottom-border'></div>");
-
-            $(".dropdown-item").hide();
         });
 
     });
- function loadStudents(event) {
 
+    function loadStudents(courseId) {
+        $("#CourseId").val(courseId);
+        if (!courseId) return;
 
-        $(event).parent().find('.dropdown-item').hide();
-        $(event).parent().find('.dropdown-hidden').hide();
-
-        $(event).parent().find('.dropdown-deploy').text(event.innerText);
-        $(event).parent().find('.dropdown-deploy').show();
-
-        var courseId = event.attributes.value.value;
         var url = "http://rubypals.com/cmpe235/phpcode/get_students_by_course.php?courseId=" + courseId;
 
-        $("#CourseId").val(courseId);
-
         $.getJSON(url, function(data) {
-            var items = [];
-
             $.each(data, function(key, value) {
-                $("<a href='#' class='dropdown-item bg-light'></a>")
-                    .attr({ id: "student" + value.ID, value: value.ID })
-                    .click(function () { showStudentInformation(this); })
+                $("<option></option>")
+                    .val(value.ID)
                     .text(value.FirstName + " " + value.LastName)
                     .appendTo("#student");
             });
-
-            $("#student").append("<div class='dropdown-bottom-border'></div>");
-
-            $(".dropdown-item").hide();
         });
-
-
-        return false;
-    };
-
-    function showStudentInformation(student) {
-
-        $(student).parent().find('.dropdown-item').hide();
-        $(student).parent().find('.dropdown-hidden').hide();
-
-        $(student).parent().find('.dropdown-deploy').text(student.innerText);
-        $(student).parent().find('.dropdown-deploy').show();
-
-         var studentId = student.attributes.value.value;
-
-         $("#StudentId").val(studentId);
-console.log($("#StudentId").val());
-
-        return false;
-
-    };
-    function setCourseDetail(event) {
-
-        $(event).parent().find('.dropdown-item').hide();
-        $(event).parent().find('.dropdown-hidden').hide();
-
-        $(event).parent().find('.dropdown-deploy').text(event.innerText);
-        $(event).parent().find('.dropdown-deploy').show();
-
-        var courseId = event.attributes.value.value;
-        $("#CourseId").val(courseId);
-        $("#ScalingFactorCourseId").val(courseId);
-
-    };
+    }
  $(function () {
+        $('#course').on('change', function () {
+          loadStudents(this.value);
+        });
+        $('#student').on('change', function () {
+          $('#StudentId').val(this.value);
+        });
         $('#gr').on('submit', function (e) {
           e.preventDefault();
           $.ajax({
@@ -190,25 +142,18 @@ $(document).ready(function(){
 
 
                 <h1 style="color:#fff;">Course</h1>
-                <p style="color:#fff;"> Please select the course number</p>
+                <label for="course" class="picker-label">Please select the course number</label>
 
-                <div class="dropdown-menu" id="course" style="background-color:#fff;">
-
-                    <a href="#" class="dropdown-deploy" style="background-color:#fff;"><em class="left-dropdown bg-dark"></em>Select Course Number</a>
-                    <a href="#" class="dropdown-hidden" style="background-color:#fff;"><em class="left-dropdown bg-dark"></em>Hide Course Number</a>
-
-
-            </div>
+                <select id="course" class="picker" data-role="none">
+                    <option value="">Select Course Number</option>
+                </select>
 
                 <h1 style="color:#fff;">Student</h1>
-                <p style="color:#fff;"> Please select the student </p>
+                <label for="student" class="picker-label">Please select the student</label>
 
-                <div class="dropdown-menu" id="student" style="background-color:#fff;">
-                    <a href="#" class="dropdown-deploy" style="background-color:#fff;"><em class="left-dropdown bg-dark"></em>Select Student</a>
-                    <a href="#" class="dropdown-hidden" style="background-color:#fff;"><em class="left-dropdown bg-dark"></em>Hide Student</a>
-
-
-            </div>
+                <select id="student" class="picker" data-role="none">
+                    <option value="">Select Student</option>
+                </select>
                       <h1 style="color:#fff;">Marks</h1>
 
                 <div class="toggle-container-v4">

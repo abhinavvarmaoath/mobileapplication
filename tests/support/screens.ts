@@ -4,22 +4,23 @@ import type { Locator, Page } from "@playwright/test";
 // section through these helpers, so changing the widgets means changing this
 // file and not the specs.
 
-async function pick(page: Page, menu: string, label: string): Promise<void> {
-	// Items arrive from the API after the page opens, so wait for them first.
-	const items = page.locator(`${menu} .dropdown-item`);
-	await items.first().waitFor({ state: "attached" });
-	await page.locator(`${menu} .dropdown-deploy`).click();
-	await items.filter({ hasText: label }).click();
+async function pick(page: Page, picker: string, label: string): Promise<void> {
+	// Options arrive from the API after the page opens, so wait for them first.
+	await page
+		.locator(`${picker} option:not([value=""])`)
+		.first()
+		.waitFor({ state: "attached" });
+	await page.locator(picker).selectOption({ label });
 }
 
 /** The courses on offer in the course picker. */
 export function courseItems(page: Page): Locator {
-	return page.locator("#course .dropdown-item");
+	return page.locator('#course option:not([value=""])');
 }
 
 /** The students on offer in the student picker. */
 export function studentItems(page: Page): Locator {
-	return page.locator("#student .dropdown-item");
+	return page.locator('#student option:not([value=""])');
 }
 
 export function chooseCourse(page: Page, name: string): Promise<void> {

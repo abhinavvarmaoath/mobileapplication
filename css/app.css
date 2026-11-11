@@ -1,0 +1,19 @@
+.picker-label {
+	display: block;
+	margin: 0 0 0.5em;
+	color: #fff;
+}
+
+.picker {
+	display: block;
+	box-sizing: border-box;
+	width: 100%;
+	min-height: 44px;
+	margin: 0 0 1em;
+	padding: 0 0.6em;
+	font: inherit;
+	color: #000;
+	background: #fff;
+	border: 1px solid #888;
+	border-radius: 4px;
+}

@@ -8,6 +8,7 @@
 		<link rel="stylesheet" href="themes/Bootstrap.css">
 		<link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.0/jquery.mobile.structure-1.4.0.min.css" />
 		<link rel="stylesheet" href="themes/jquery.mobile.icons.min.css" />
+		<link rel="stylesheet" href="css/app.css">
 		<script src="http://code.jquery.com/jquery-1.8.2.min.js"></script>
 		<script src="http://code.jquery.com/mobile/1.4.0/jquery.mobile-1.4.0.min.js"></script>
 		    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
@@ -55,37 +56,19 @@ font-family: 'Roboto', sans-serif;}
     $(document).on("pagebeforecreate", function() {
 
         $.getJSON("http://rubypals.com/cmpe235/phpcode/get_course.php", function(data) {
-            var items = [];
-
             $.each(data, function(key, value) {
-                $("<a href='#' class='dropdown-item bg-light'></a>")
-                    .attr({ id: "course" + value.ID, value: value.ID })
-                    .click(function () { setCourseDetail(this); })
+                $("<option></option>")
+                    .val(value.ID)
                     .text(value.CourseName)
                     .appendTo("#course");
             });
-
-            $("#course").append("<div class='dropdown-bottom-border'></div>");
-
-            $(".dropdown-item").hide();
         });
 
     });
-
-    function setCourseDetail(event) {
-
-        $(event).parent().find('.dropdown-item').hide();
-        $(event).parent().find('.dropdown-hidden').hide();
-
-        $(event).parent().find('.dropdown-deploy').text(event.innerText);
-        $(event).parent().find('.dropdown-deploy').show();
-
-        var courseId = event.attributes.value.value;
-        $("#CourseId").val(courseId);
-        $("#ScalingFactorCourseId").val(courseId);
-
-    };
  $(function () {
+        $('#course').on('change', function () {
+          $('#CourseId').val(this.value);
+        });
         $('#gr').on('submit', function (e) {
           e.preventDefault();
           $.ajax({
@@ -138,15 +121,11 @@ font-family: 'Roboto', sans-serif;}
 
 
                 <h1 style="color:#fff;">Course</h1>
-                <p style="color:#fff;"> Please select the course number</p>
+                <label for="course" class="picker-label">Please select the course number</label>
 
-                <div class="dropdown-menu" id="course" style="background-color:#fff;">
-
-                    <a href="#" class="dropdown-deploy" style="background-color:#fff;"><em class="left-dropdown bg-dark"></em>Select Course Number</a>
-                    <a href="#" class="dropdown-hidden" style="background-color:#fff;"><em class="left-dropdown bg-dark"></em>Hide Course Number</a>
-
-
-            </div>
+                <select id="course" class="picker" data-role="none">
+                    <option value="">Select Course Number</option>
+                </select>
 
                 <div class="toggle-container-v4">
                     <div class="toggle-v4">

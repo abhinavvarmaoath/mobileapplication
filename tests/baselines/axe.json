@@ -4,7 +4,7 @@
     "html-has-lang": 1
   },
   "grade.html": {
-    "color-contrast": 7,
+    "color-contrast": 5,
     "html-has-lang": 1,
     "meta-viewport": 1
   },
@@ -27,17 +27,17 @@
     "html-has-lang": 1
   },
   "set.html": {
-    "color-contrast": 6,
+    "color-contrast": 5,
     "html-has-lang": 1,
     "meta-viewport": 1
   },
   "set1.html": {
-    "color-contrast": 6,
+    "color-contrast": 5,
     "html-has-lang": 1,
     "meta-viewport": 1
   },
   "set2.html": {
-    "color-contrast": 6,
+    "color-contrast": 5,
     "html-has-lang": 1,
     "meta-viewport": 1
   },
