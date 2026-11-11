@@ -94,7 +94,7 @@ test("says nothing when the computation fails", async ({ app }) => {
 	await expect(app.page.locator("#totalMarksSaveStatus")).toHaveText("");
 });
 
-// Known bug S2: the grade and the student names are inserted as HTML.
+// Known bug S2: the grade is inserted as HTML.
 test("runs script hidden in the computed grade", async ({ app }) => {
 	app.backend.reply("compute_and_save_grade.php", {
 		json: {
@@ -111,22 +111,15 @@ test("runs script hidden in the computed grade", async ({ app }) => {
 		.toBe(1);
 });
 
-test("runs script hidden in a student name", async ({ app }) => {
+// Student names are text, whatever they contain.
+test("shows markup in a student name as plain text", async ({ app }) => {
+	const first = '</option></select><img src=x onerror="window.__xss=1">';
 	app.backend.reply("get_students_by_course.php", {
-		json: [
-			{
-				ID: "7",
-				FirstName: '</option></select><img src=x onerror="window.__xss=1">',
-				LastName: "Lovelace",
-			},
-		],
+		json: [{ ID: "7", FirstName: first, LastName: "Lovelace" }],
 	});
 	await chooseCourse(app.page, "CMPE 235");
-	await expect
-		.poll(() =>
-			app.page.evaluate(() => (window as unknown as { __xss?: number }).__xss),
-		)
-		.toBe(1);
+	await expect(studentItems(app.page)).toHaveText(`${first} Lovelace`);
+	await expect(studentItems(app.page).locator("*")).toHaveCount(0);
 });
 
 // Known bug B8: the page replaces window.print and logs the form on every click.

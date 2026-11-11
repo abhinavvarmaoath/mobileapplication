@@ -58,7 +58,11 @@ font-family: 'Roboto', sans-serif;}
             var items = [];
 
             $.each(data, function(key, value) {
-                $("#course").append("<a href='#' onclick='loadStudents(this)' class='dropdown-item bg-light' id='course" + value.ID + "' value='" + value.ID + "'>" + value.CourseName + "</a> ");
+                $("<a href='#' class='dropdown-item bg-light'></a>")
+                    .attr({ id: "course" + value.ID, value: value.ID })
+                    .click(function () { loadStudents(this); })
+                    .text(value.CourseName)
+                    .appendTo("#course");
            
             });
 
@@ -86,7 +90,11 @@ font-family: 'Roboto', sans-serif;}
             var items = [];
 
             $.each(data, function(key, value) {
-                $("#student").append("<a href='#' onclick='showStudentInformation(this)' class='dropdown-item bg-light' id='student" + value.ID + "' value='" + value.ID + "'>" + value.FirstName + " " + value.LastName + "</a> ");
+                $("<a href='#' class='dropdown-item bg-light'></a>")
+                    .attr({ id: "student" + value.ID, value: value.ID })
+                    .click(function () { showStudentInformation(this); })
+                    .text(value.FirstName + " " + value.LastName)
+                    .appendTo("#student");
             });
 
             $("#student").append("<div class='dropdown-bottom-border'></div>");

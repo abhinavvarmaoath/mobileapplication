@@ -103,26 +103,16 @@ for (const setup of setupPages) {
 			]);
 		});
 
-		// Known bug S2: course names are inserted into the page as HTML. The
-		// payload runs whether it lands in a link or in a select.
-		test("runs script hidden in a course name", async ({ app }) => {
+		// Course names are text, whatever they contain.
+		test("shows markup in a course name as plain text", async ({ app }) => {
+			const name =
+				'</option></select><img src=x onerror="window.__xss=1">Injected';
 			app.backend.reply("get_course.php", {
-				json: [
-					{
-						ID: "1",
-						CourseName:
-							'</option></select><img src=x onerror="window.__xss=1">Injected',
-					},
-				],
+				json: [{ ID: "1", CourseName: name }],
 			});
 			await app.open(setup.path);
-			await expect
-				.poll(() =>
-					app.page.evaluate(
-						() => (window as unknown as { __xss?: number }).__xss,
-					),
-				)
-				.toBe(1);
+			await expect(courseItems(app.page)).toHaveText(name);
+			await expect(courseItems(app.page).locator("*")).toHaveCount(0);
 		});
 	});
 }

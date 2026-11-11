@@ -58,7 +58,11 @@ font-family: 'Roboto', sans-serif;}
             var items = [];
 
             $.each(data, function(key, value) {
-                $("#course").append("<a href='#' onclick='setCourseDetail(this)' class='dropdown-item bg-light' id='course" + value.ID + "' value='" + value.ID + "'>" + value.CourseName + "</a> ");
+                $("<a href='#' class='dropdown-item bg-light'></a>")
+                    .attr({ id: "course" + value.ID, value: value.ID })
+                    .click(function () { setCourseDetail(this); })
+                    .text(value.CourseName)
+                    .appendTo("#course");
             });
 
             $("#course").append("<div class='dropdown-bottom-border'></div>");
