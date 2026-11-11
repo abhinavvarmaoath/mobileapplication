@@ -1,3 +1,4 @@
+import type { Page } from "@playwright/test";
 import { type App, expect, test } from "../support/app";
 import { chooseCourse, courseItems, openSettings } from "../support/screens";
 
@@ -7,6 +8,8 @@ interface SetupPage {
 	courseField: string;
 	status: string;
 	fields: Record<string, string[]>;
+	/** Puts the form into a state that can be saved. */
+	prepare?: (page: Page) => Promise<void>;
 }
 
 const categories = [
@@ -22,12 +25,35 @@ function perCategory(prefix: string): Record<string, string[]> {
 	return Object.fromEntries(categories.map((c) => [`${prefix}${c}`, ["60"]]));
 }
 
+const gradeScale: Record<string, [number, number]> = {
+	A: [90, 100],
+	B: [80, 89],
+	C: [70, 79],
+	D: [60, 69],
+	F: [0, 59],
+};
+
 const gradeRanges = Object.fromEntries(
-	["A", "B", "C", "D", "F"].flatMap((grade) => [
-		[`${grade}RangeStart`, ["0"]],
-		[`${grade}RangeEnd`, ["100"]],
+	Object.entries(gradeScale).flatMap(([grade, [start, end]]) => [
+		[`${grade}RangeStart`, [String(start)]],
+		[`${grade}RangeEnd`, [String(end)]],
 	]),
 );
+
+async function setRanges(
+	page: Page,
+	ranges: Record<string, [number, number]>,
+): Promise<void> {
+	await openSettings(page);
+	for (const [grade, [start, end]] of Object.entries(ranges)) {
+		await page.locator(`#${grade}RangeStart`).fill(String(start));
+		await page.locator(`#${grade}RangeEnd`).fill(String(end));
+	}
+}
+
+function setGradeScale(page: Page): Promise<void> {
+	return setRanges(page, gradeScale);
+}
 
 const setupPages: SetupPage[] = [
 	{
@@ -50,6 +76,7 @@ const setupPages: SetupPage[] = [
 		courseField: "#courseId",
 		status: "#gcSaveStatus",
 		fields: gradeRanges,
+		prepare: setGradeScale,
 	},
 ];
 
@@ -60,6 +87,12 @@ async function save(app: App): Promise<void> {
 
 async function saveForCourse(app: App): Promise<void> {
 	await chooseCourse(app.page, "CMPE 235");
+	await save(app);
+}
+
+async function saveWithScale(app: App): Promise<void> {
+	await chooseCourse(app.page, "CMPE 235");
+	await setGradeScale(app.page);
 	await save(app);
 }
 
@@ -82,9 +115,10 @@ for (const setup of setupPages) {
 			await expect(app.page.locator(setup.courseField)).toHaveValue("2");
 		});
 
-		test("saves the defaults for the chosen course", async ({ app }) => {
+		test("saves the form for the chosen course", async ({ app }) => {
 			await app.open(setup.path);
 			await chooseCourse(app.page, "ENGR 297");
+			await setup.prepare?.(app.page);
 			await save(app);
 			await expect
 				.poll(() => app.backend.callsTo(setup.endpoint))
@@ -192,7 +226,7 @@ test.describe("set1.html messages", () => {
 test.describe("set2.html messages", () => {
 	test("reports success after a save", async ({ app }) => {
 		await app.open("set2.html");
-		await saveForCourse(app);
+		await saveWithScale(app);
 		await expect(app.page.locator("#gcSaveStatus")).toHaveText(
 			"Grade Settings Saved",
 		);
@@ -201,9 +235,29 @@ test.describe("set2.html messages", () => {
 	test("reports a failed save", async ({ app }) => {
 		app.backend.reply("save_grade_setting.php", { status: 500 });
 		await app.open("set2.html");
-		await saveForCourse(app);
+		await saveWithScale(app);
 		await expect(app.page.locator("#gcSaveStatus")).toHaveText(
 			"Grade settings could not be saved. Please try again.",
 		);
+	});
+
+	test("refuses ranges that overlap and sends nothing", async ({ app }) => {
+		await app.open("set2.html");
+		await saveForCourse(app);
+		await expect(app.page.locator("#gcSaveStatus")).toHaveText(
+			"Grade ranges must not overlap.",
+		);
+		expect(app.backend.callsTo("save_grade_setting.php")).toHaveLength(0);
+	});
+
+	test("refuses ranges that share an edge", async ({ app }) => {
+		await app.open("set2.html");
+		await chooseCourse(app.page, "CMPE 235");
+		await setRanges(app.page, { ...gradeScale, B: [80, 90] });
+		await save(app);
+		await expect(app.page.locator("#gcSaveStatus")).toHaveText(
+			"Grade ranges must not overlap.",
+		);
+		expect(app.backend.callsTo("save_grade_setting.php")).toHaveLength(0);
 	});
 });

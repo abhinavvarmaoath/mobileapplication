@@ -29,6 +29,21 @@ font-family: 'Roboto', sans-serif;}
         });
 
     });
+    function gradeRangesOverlap() {
+        var ranges = [];
+        $.each(["A", "B", "C", "D", "F"], function (index, grade) {
+            ranges.push({
+                start: Number($("#" + grade + "RangeStart").val()),
+                end: Number($("#" + grade + "RangeEnd").val())
+            });
+        });
+        for (var i = 0; i < ranges.length; i++) {
+            for (var j = i + 1; j < ranges.length; j++) {
+                if (ranges[i].start <= ranges[j].end && ranges[j].start <= ranges[i].end) return true;
+            }
+        }
+        return false;
+    }
  $(function () {
         $('#course').on('change', function () {
           $('#courseId').val(this.value);
@@ -37,6 +52,10 @@ font-family: 'Roboto', sans-serif;}
           e.preventDefault();
           if (!$('#courseId').val()) {
             document.getElementById('gcSaveStatus').textContent = "Choose a course first.";
+            return;
+          }
+          if (gradeRangesOverlap()) {
+            document.getElementById('gcSaveStatus').textContent = "Grade ranges must not overlap.";
             return;
           }
           $.ajax({
@@ -97,45 +116,44 @@ font-family: 'Roboto', sans-serif;}
 <input type="hidden" name="courseId" type="number" style="display: none;" id="courseId">
 <div class="fieldcontain">
     <div data-role="rangeslider" data-mini="true" data-highlight="true">
-        <label for="range-4a">A:</label>
+        <label for="ARangeStart">A:</label>
         <input type="range" name="ARangeStart" id="ARangeStart" min="0" max="100" value="0">
-        <label for="range-4b">A:</label>
+        <label for="ARangeEnd">A:</label>
         <input type="range" name="ARangeEnd" id="ARangeEnd" min="0" max="100" value="100">
     </div>
 </div>
 <div class="fieldcontain">
     <div data-role="rangeslider" data-mini="true" data-highlight="true">
-        <label for="range-4a">B:</label>
+        <label for="BRangeStart">B:</label>
         <input type="range" name="BRangeStart" id="BRangeStart" min="0" max="100" value="0">
-        <label for="range-4b">B:</label>
+        <label for="BRangeEnd">B:</label>
         <input type="range" name="BRangeEnd" id="BRangeEnd" min="0" max="100" value="100">
     </div>
 </div>
 <div class="fieldcontain">
     <div data-role="rangeslider" data-mini="true" data-highlight="true">
-        <label for="range-4a">C:</label>
+        <label for="CRangeStart">C:</label>
         <input type="range" name="CRangeStart" id="CRangeStart" min="0" max="100" value="0">
-        <label for="range-4b">C</label>
+        <label for="CRangeEnd">C:</label>
         <input type="range" name="CRangeEnd" id="CRangeEnd" min="0" max="100" value="100">
     </div>
 </div>
 <div class="fieldcontain">
     <div data-role="rangeslider" data-mini="true" data-highlight="true">
-        <label for="range-4a">D:</label>
+        <label for="DRangeStart">D:</label>
         <input type="range" name="DRangeStart" id="DRangeStart" min="0" max="100" value="0">
-        <label for="range-4b">D:</label>
+        <label for="DRangeEnd">D:</label>
         <input type="range" name="DRangeEnd" id="DRangeEnd" min="0" max="100" value="100">
     </div>
 </div>
 <div class="fieldcontain">
     <div data-role="rangeslider" data-mini="true" data-highlight="true">
-        <label for="range-4a">F:</label>
+        <label for="FRangeStart">F:</label>
         <input type="range" name="FRangeStart" id="FRangeStart" min="0" max="100" value="0">
-        <label for="range-4b">F:</label>
+        <label for="FRangeEnd">F:</label>
         <input type="range" name="FRangeEnd" id="FRangeEnd" min="0" max="100" value="100">
     </div>
 </div>
-\
                                 <fieldset class="ui-grid-a">
 							<div class="ui-block-a"><button type="submit" data-theme="c">Save</button></div>
 							<div class="ui-block-b"><button type="reset" data-theme="f">Cancel</button></div>
