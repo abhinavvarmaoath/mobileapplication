@@ -126,14 +126,9 @@ font-family: 'Roboto', sans-serif;}
 
 
       
-                <div class="toggle-container-v4">
-                    <div class="toggle-v4">
-                        <a href="#" class="show-toggle-v4" style="display: none;">Marks Settings</a>
-                        <a href="#" class="hide-toggle-v4" style="display: block;">Marks Settings</a>
-                        <div class="clear"></div>
-                        <div class="toggle-content-v4" style="display: none;">
-
-                            <form id="gr" name="gr">
+                <details class="settings">
+                    <summary>Marks Settings</summary>
+                    <form id="gr" name="gr">
                                 <fieldset>
                                 
                                     <input type="hidden" name="courseId" type="number" style="display: none;" id="CourseId">
@@ -181,11 +176,8 @@ font-family: 'Roboto', sans-serif;}
 							<div class="ui-block-b"><button type="reset" data-theme="f">Cancel</button></div>
 					    </fieldset>
                             </form>
-                            <div class="clear"></div>
-                            <label id="totalMarksSaveStatus" style="font:bold  20px; color:#000;"></label>
-                        </div>
-                    </div>
-                </div>
+                    <label id="totalMarksSaveStatus" style="font:bold  20px; color:#000;"></label>
+                </details>
 
 
             </div>

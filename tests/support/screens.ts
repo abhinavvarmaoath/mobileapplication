@@ -33,5 +33,5 @@ export function chooseStudent(page: Page, name: string): Promise<void> {
 
 /** Opens the collapsed form on the setup and grading pages. */
 export async function openSettings(page: Page): Promise<void> {
-	await page.locator(".hide-toggle-v4").click();
+	await page.locator("details.settings summary").click();
 }

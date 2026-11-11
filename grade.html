@@ -156,14 +156,9 @@ $(document).ready(function(){
                 </select>
                       <h1 style="color:#fff;">Marks</h1>
 
-                <div class="toggle-container-v4">
-                    <div class="toggle-v4">
-                        <a href="#" class="show-toggle-v4" style="display: none;">Marks</a>
-                        <a href="#" class="hide-toggle-v4" style="display: block;">Marks</a>
-                        <div class="clear"></div>
-                        <div class="toggle-content-v4" style="display: none;">
-
-                            <form name="gr" id="gr">
+                <details class="settings">
+                    <summary>Marks</summary>
+                    <form name="gr" id="gr">
                                 <fieldset>
                                 
                                     <input type="hidden" name="CourseId" type="number" style="display: none;" id="CourseId">
@@ -214,11 +209,8 @@ $(document).ready(function(){
 							<div class="ui-block-b"><button type="reset" data-theme="f">Cancel</button></div>
 					    </fieldset>
                             </form>
-                            <div class="clear"></div>
-                            <label id="totalMarksSaveStatus" style="font:bold  20px; color:#000;"></label>
-                        </div>
-                    </div>
-                </div>
+                    <label id="totalMarksSaveStatus" style="font:bold  20px; color:#000;"></label>
+                </details>
 
 
 

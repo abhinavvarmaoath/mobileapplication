@@ -17,3 +17,23 @@
 	border: 1px solid #888;
 	border-radius: 4px;
 }
+
+.settings {
+	margin: 0 0 1em;
+	color: #333;
+	background: #f2f2f2;
+	border-radius: 4px;
+}
+
+.settings summary {
+	padding: 0.8em 1em;
+	font-weight: bold;
+	text-transform: uppercase;
+	cursor: pointer;
+}
+
+.settings form,
+.settings > label {
+	display: block;
+	padding: 0 1em 1em;
+}
