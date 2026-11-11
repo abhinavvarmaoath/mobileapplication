@@ -11,11 +11,6 @@
       "!**/*.html",
       "!**/*.md",
       "!themes",
-      "!styles",
-      "!scripts",
-      "!images",
-      "!preview",
-      "!Student",
       "!tests/fixtures",
       "!package-lock.json"
     ],
