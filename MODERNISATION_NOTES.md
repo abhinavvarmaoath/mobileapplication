@@ -43,9 +43,30 @@ Held until the open questions are answered: B1, B4, B11, the LICENSE choice.
 
 | Phase | State |
 | --- | --- |
-| 1 Safety net | in progress |
-| 2 Clean-up | not started |
-| 3 Bug fixes | not started |
+| 1 Safety net | done |
+| 2 Clean-up | done |
+| 3 Bug fixes | in progress |
+
+Commands are in `README.md`. In a sandbox without Playwright's own browser,
+set `CHROMIUM_EXECUTABLE_PATH` to a Chromium binary before `npm test`.
+
+Where the work differs from the plan:
+
+- Vite is deferred. Nothing is bundled yet, so `tools/serve.mjs` serves the
+  pages exactly as a static host would. Add Vite with the new front end.
+- Vitest is deferred until there is logic to unit-test.
+- Workflow actions use major tags (`checkout@v6`, `setup-node@v6`,
+  `upload-artifact@v4`). Pin them to commit SHAs once the SHAs can be checked
+  against the official repositories; Dependabot keeps the tags current.
+- Secret scanning uses secretlint instead of gitleaks so it runs locally and
+  in CI without a third-party action.
+- The pages are tested against jQuery Mobile 1.4.1, the nearest release on
+  npm, in place of 1.4.0 and 1.4.5. Check the pages in a real browser,
+  especially the setup pages, which used to load both releases.
+
+Tool versions at the time of writing: Node 24 (22.22 minimum), Biome 2.6,
+TypeScript 7.0, Playwright 1.64, axe-core 4.14, html-validate 11.17,
+secretlint 13.1.
 
 ## Backlog
 
@@ -63,25 +84,27 @@ Bugs
 - B6 `student.html` has six popups with the same id.
 - B7 The student list accumulates across courses and can show stale replies.
 - B8 `grade.html` redefines `print()` and logs form values on every click.
-- B9 Links point at a developer's local `file:///` path.
+- B9 Links point at a developer's local `file:///` path. Done.
 - B10 Student pages use fixed student and course ids. Blocked on the backend.
 - B11 Setup allows marks up to 500 but grading stops at 100. Held: needs a
   product answer.
 - B12 Grade ranges are not validated; a stray backslash is rendered.
-- B13 Four pages load two jQuery and two jQuery Mobile copies.
+- B13 Four pages load two jQuery and two jQuery Mobile copies. Done.
 - B14 Smaller navigation and markup slips.
 
 Security
 
 - S1 HTTPS end to end. Blocked on the backend.
-- S2 Server strings are built into HTML (XSS).
+- S2 Server strings are built into HTML (XSS). Pickers done; result and
+  grade text still to do.
 - S3 Retire jQuery 1.8.2 and jQuery Mobile with the UI replacement.
 - S4 Server-side authentication and access control. Blocked on the backend.
 - S5 Third-party iframes (chat, video, materials).
 - S6 Content-Security-Policy.
 - S7 Form hygiene (`autocomplete`, input types, logging).
-- S8 Supply-chain guardrails.
-- S9 Licence and privacy clean-up.
+- S8 Supply-chain guardrails. Done except SHA pinning of actions.
+- S9 Licence and privacy clean-up. Template and names removed; LICENSE is
+  waiting on question 6.
 
 Later phases, not approved yet
 
