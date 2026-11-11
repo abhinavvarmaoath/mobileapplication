@@ -71,19 +71,16 @@ test.describe("grade estimator", () => {
 		);
 	});
 
-	// Known bug S2: the estimate is inserted as HTML.
-	test("runs script hidden in the estimate", async ({ app }) => {
+	test("shows markup in the estimate as plain text", async ({ app }) => {
+		const grade = '<img src=x onerror="window.__xss=1">';
 		app.backend.reply("computegradestudent.php", {
-			json: { grade: '<img src=x onerror="window.__xss=1">', percentage: "1" },
+			json: { grade, percentage: "1" },
 		});
 		await app.page.getByRole("button", { name: "COMPUTE GRADE" }).click();
-		await expect
-			.poll(() =>
-				app.page.evaluate(
-					() => (window as unknown as { __xss?: number }).__xss,
-				),
-			)
-			.toBe(1);
+		await expect(app.page.locator("#totalMarksSaveStatus")).toContainText(
+			grade,
+		);
+		await expect(app.page.locator("#totalMarksSaveStatus img")).toHaveCount(0);
 	});
 
 	test("leaves window.print alone and does not log the form values", async ({
@@ -138,21 +135,13 @@ test.describe("grades list", () => {
 		await expect(app.page.locator("#finalLabs")).toHaveText("TBD");
 	});
 
-	// Known bug S2: the grades are inserted as HTML.
-	test("runs script hidden in a grade", async ({ app }) => {
+	test("shows markup in a grade as plain text", async ({ app }) => {
+		const homework = '<img src=x onerror="window.__xss=1">';
 		app.backend.reply("student.php", {
-			json: {
-				...studentGrades,
-				Homework: '<img src=x onerror="window.__xss=1">',
-			},
+			json: { ...studentGrades, Homework: homework },
 		});
 		await app.open("grades.html");
-		await expect
-			.poll(() =>
-				app.page.evaluate(
-					() => (window as unknown as { __xss?: number }).__xss,
-				),
-			)
-			.toBe(1);
+		await expect(app.page.locator("#finalHomeworks")).toHaveText(homework);
+		await expect(app.page.locator("#finalHomeworks img")).toHaveCount(0);
 	});
 });

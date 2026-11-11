@@ -24,7 +24,7 @@
             document.getElementById('totalMarksSaveStatus').textContent="The grade could not be estimated. Please try again.";
 			},
             success: function (data) {
-            document.getElementById('totalMarksSaveStatus').innerHTML="Estimated Grade is :"+data.grade+"<br/><br/> Percentage :"+data.percentage;
+            document.getElementById('totalMarksSaveStatus').textContent="Estimated Grade is :"+data.grade+"\n\n Percentage :"+data.percentage;
 			}
           });
 
@@ -102,7 +102,7 @@
 					    </fieldset>
                             </form>
 <div class="clear"></div>
-                            <label id="totalMarksSaveStatus" style="font:bold  20px; color:#fff;"></label>
+                            <label id="totalMarksSaveStatus" style="font:bold  20px; color:#fff; white-space:pre-line;"></label>
                         </div>
 				<p>
 				</p>

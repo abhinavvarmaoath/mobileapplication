@@ -123,21 +123,14 @@ test("reports a failed computation", async ({ app }) => {
 	);
 });
 
-// Known bug S2: the grade is inserted as HTML.
-test("runs script hidden in the computed grade", async ({ app }) => {
+test("shows markup in the computed grade as plain text", async ({ app }) => {
+	const grade = '<img src=x onerror="window.__xss=1">';
 	app.backend.reply("compute_and_save_grade.php", {
-		json: {
-			grade: '<img src=x onerror="window.__xss=1">',
-			percentage: "1",
-			totalMarks: "1",
-		},
+		json: { grade, percentage: "1", totalMarks: "1" },
 	});
 	await computeForStudent(app);
-	await expect
-		.poll(() =>
-			app.page.evaluate(() => (window as unknown as { __xss?: number }).__xss),
-		)
-		.toBe(1);
+	await expect(app.page.locator("#totalMarksSaveStatus")).toContainText(grade);
+	await expect(app.page.locator("#totalMarksSaveStatus img")).toHaveCount(0);
 });
 
 // Student names are text, whatever they contain.

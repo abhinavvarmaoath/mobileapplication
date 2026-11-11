@@ -69,7 +69,7 @@ font-family: 'Roboto', sans-serif;}
             document.getElementById('totalMarksSaveStatus').textContent="The grade could not be computed. Please try again.";
 			},
             success: function (data) {
-            document.getElementById('totalMarksSaveStatus').innerHTML="Computed Grade is :"+data.grade+"<br/>Total Grade :"+data.percentage+"%"+"<br/>Marks :"+data.totalMarks;
+            document.getElementById('totalMarksSaveStatus').textContent="Computed Grade is :"+data.grade+"\nTotal Grade :"+data.percentage+"%"+"\nMarks :"+data.totalMarks;
 			}
           });
 
@@ -166,7 +166,7 @@ font-family: 'Roboto', sans-serif;}
 							<div class="ui-block-b"><button type="reset" data-theme="f">Cancel</button></div>
 					    </fieldset>
                             </form>
-                    <label id="totalMarksSaveStatus" style="font:bold  20px; color:#000;"></label>
+                    <label id="totalMarksSaveStatus" style="font:bold  20px; color:#000; white-space:pre-line;"></label>
                 </details>
 
 
