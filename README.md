@@ -22,15 +22,16 @@ npm run dev
 ```
 
 This serves the pages at <http://127.0.0.1:5173/>. `index.html` is the login
-page and needs the backend. Pages can also be opened directly, for example
-`set.html`.
+page and needs the backend, or demo mode (see Demo). Pages can also be opened
+directly, for example `set.html`.
 
 ## Test
 
 ```sh
 npx playwright install chromium   # once, on a fresh machine
 npm test                          # Playwright against a stubbed backend
-npm run check                     # lint, types, HTML and secret checks, tests
+npm run check                     # lint, types, HTML, vendor, policy and secret
+                                  # checks, then the tests
 ```
 
 If Playwright's browser cannot be downloaded, point `CHROMIUM_EXECUTABLE_PATH`
@@ -54,15 +55,15 @@ that file run:
 npm run csp
 ```
 
-Set `embedTools` there to open the third-party tools in a sandboxed frame in
-the page instead of a new tab; the policy then allows frames from those
-addresses and no others.
-
 `npm run check` fails when a page is out of date. The policy allows scripts,
 styles and images only from the app's own origin, requests only to that origin
 and the configured backend, and no frames. A meta tag cannot carry
 `frame-ancestors`, `sandbox` or `report-uri`; set those as response headers
 where the app is hosted.
+
+The third-party tools open in a new tab. Set `embedTools` in `js/config.js` to
+open them in a sandboxed frame in the page instead; the policy then allows
+frames from those addresses and no others.
 
 ## Demo
 
