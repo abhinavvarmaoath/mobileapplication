@@ -11,69 +11,7 @@
 		<script src="vendor/jquery-1.8.2.min.js"></script>
     <script src="vendor/jquery.mobile-1.4.1.min.js"></script>
 		<link rel="stylesheet" href="vendor/jquery.mobile.structure-1.4.1.min.css" />
-    <script>
-    $(document).on("pagebeforecreate", function() {
-
-        $.getJSON("http://rubypals.com/cmpe235/phpcode/get_course.php", function(data) {
-            $.each(data, function(key, value) {
-                $("<option></option>")
-                    .val(value.ID)
-                    .text(value.CourseName)
-                    .appendTo("#course");
-            });
-        });
-
-    });
-    function gradeRangesOverlap() {
-        var ranges = [];
-        $.each(["A", "B", "C", "D", "F"], function (index, grade) {
-            ranges.push({
-                start: Number($("#" + grade + "RangeStart").val()),
-                end: Number($("#" + grade + "RangeEnd").val())
-            });
-        });
-        for (var i = 0; i < ranges.length; i++) {
-            for (var j = i + 1; j < ranges.length; j++) {
-                if (ranges[i].start <= ranges[j].end && ranges[j].start <= ranges[i].end) return true;
-            }
-        }
-        return false;
-    }
- $(function () {
-        $('#course').on('change', function () {
-          $('#courseId').val(this.value);
-        });
-        $('#gr').on('submit', function (e) {
-          e.preventDefault();
-          if (!$('#courseId').val()) {
-            document.getElementById('gcSaveStatus').textContent = "Choose a course first.";
-            return;
-          }
-          if (gradeRangesOverlap()) {
-            document.getElementById('gcSaveStatus').textContent = "Grade ranges must not overlap.";
-            return;
-          }
-          $.ajax({
-            type: 'post',
-            url: 'http://rubypals.com/phonegapstyle/phpcode/save_grade_setting.php',
-            data: $('#gr').serialize(),
-            error: function () {
-        document.getElementById('gcSaveStatus').textContent="Grade settings could not be saved. Please try again.";
-			},
-            success: function (data) {
-        document.getElementById('gcSaveStatus').textContent="Grade Settings Saved";
-			}
-          });
-
-        });
-
-      });
-    // $(document).on("pagecreate", function(event) {
-
-    //     $(".ui-btn").val("");
-
-    // });
-    </script>
+    <script src="js/set2.js"></script>
 	</head>
 		<body>
 		<div data-role="page" data-theme="f"  style="background-color:#000;">

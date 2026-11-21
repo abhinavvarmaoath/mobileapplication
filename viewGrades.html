@@ -11,27 +11,7 @@
 		<script src="vendor/jquery-1.8.2.min.js"></script>
 		<script src="vendor/jquery.mobile-1.4.1.min.js"></script>
 
-<script>
- $(function () {
-        $('#gr').on('submit', function (e) {
-          e.preventDefault();
-          $.ajax({
-            type: 'post',
-            url: 'http://rubypals.com/phonegapstyle/phpcode/computegradestudent.php',
-            data: $('#gr').serialize(),
-            error: function () {
-            document.getElementById('totalMarksSaveStatus').textContent="The grade could not be estimated. Please try again.";
-			},
-            success: function (data) {
-            document.getElementById('totalMarksSaveStatus').textContent="Estimated Grade is :"+data.grade+"\n\n Percentage :"+data.percentage;
-			}
-          });
-
-        });
-
-      });
-
-    </script>
+<script src="js/viewGrades.js"></script>
 	</head>
 	<body>
 		<div data-role="page" data-theme="d" style="background-color:#000;">

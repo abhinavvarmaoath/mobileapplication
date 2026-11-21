@@ -10,27 +10,7 @@
 		<link rel="stylesheet" href="themes/jquery.mobile.icons.min.css" />
 		<script src="vendor/jquery-1.8.2.min.js"></script>
 		<script src="vendor/jquery.mobile-1.4.1.min.js"></script>
-<script>
-$(document).ready(function(){
-          $.ajax({
-            type: 'get',
-            url: 'http://rubypals.com/phonegapstyle/phpcode/student.php',
-            success: function (data, xhr) {
-            document.getElementById('finalHomeworks').textContent=data.Homework;
-            document.getElementById('finalLabs').textContent=data.Labs;
-            document.getElementById('finalProject').textContent=data.Project;
-                        document.getElementById('finalPresentation').textContent=data.Presentation;
-                        document.getElementById('finalMidterm').textContent=data.Midterm;
-                        document.getElementById('final').textContent=data.Final;
-                        document.getElementById('finalGrade').textContent=data.Grade;
-
-			}
-			
-          });
-
-        });
-
-</script>
+<script src="js/grades.js"></script>
 
 	</head>
 	<body>
