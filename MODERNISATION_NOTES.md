@@ -51,6 +51,7 @@ Held until the open questions are answered: B1, B4, B11, the LICENSE choice.
 | 2 Clean-up | done |
 | 3 Bug fixes | done, except the held items |
 | 4 Hardening | done: S1, S5, S6, T7 (the Pages deploy is switched off) |
+| 5 New front end | in progress, see the plan below |
 
 Commands are in `README.md`. In a sandbox without Playwright's own browser,
 set `CHROMIUM_EXECUTABLE_PATH` to a Chromium binary before `npm test`.
@@ -88,6 +89,47 @@ exist.
 Tool versions at the time of writing: Node 24 (22.22 minimum), Biome 2.6,
 TypeScript 7.0, Playwright 1.64, axe-core 4.14, html-validate 11.17,
 secretlint 13.1.
+
+## Phase 5 plan: the new front end
+
+Scope from the roadmap: U1 and U2, then screen by screen with M3 to M5 and U3
+to U9, and finally S3 and A2. Exit: zero advisories on shipped libraries, no
+serious axe findings, budgets met (50 KB gzipped per page). "Go ahead with
+phase 5" was taken as the approval to replace jQuery Mobile and to delete each
+old page once its replacement matches it.
+
+Decisions
+
+- No UI framework (the default for question 4). Vite and TypeScript with the
+  DOM, plus a few small helpers. Vitest for logic, Playwright as before.
+- Multi-page app with the same page names as today. Each screen is a small
+  HTML shell and a TypeScript module.
+- New code is in `app/` (the Vite root) and builds to `dist/`. The old pages
+  stay at the repo root and are copied into `dist/` until replaced, so the
+  existing specs run against the real build the whole way.
+- `js/config.js` stays a separate classic script, so the addresses can change
+  after a build. The CSP for new pages is added by a Vite plugin from the same
+  config; old pages keep their committed meta tag until they go.
+- The API client takes a transport. Production uses `fetch`. Demo mode uses an
+  in-browser backend that is loaded only when `demo` is on.
+- Specs find things by role, label and text, and wait for `html[data-ready]`
+  and `aria-busy`, not for jQuery Mobile's classes.
+
+Per screen
+
+1. Make that screen's specs describe behaviour, not jQuery Mobile markup, and
+   see them pass on the old page.
+2. Build the new screen, swap it in under the same file name, and delete the
+   old page and its script in the same commit.
+3. The screen's specs pass and its HTML and axe baselines go down or go away.
+
+Order: login, signup, the student screens, then the professor screens (home,
+students, the three setup pages, grading). `viewTeams.html` is an orphan that
+posts nowhere and is dropped at the end.
+
+U4 (setup as one screen) and U5 (the what-if calculator) come after parity,
+because each needs a backend answer: a read endpoint for saved values, and the
+weights.
 
 ## Backlog
 
