@@ -60,7 +60,7 @@ Where the work differs from the plan:
 
 - Vite is deferred. Nothing is bundled yet, so `tools/serve.mjs` serves the
   pages exactly as a static host would. Add Vite with the new front end.
-- Vitest is deferred until there is logic to unit-test.
+- Vitest runs the unit tests in `app/src`; it came with the typed API client.
 - Workflow actions use major tags (`checkout@v6`, `setup-node@v6`,
   `upload-artifact@v4`, and in `pages.yml` `configure-pages@v6`,
   `upload-pages-artifact@v5`, `deploy-pages@v5`). The Pages versions came from

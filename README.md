@@ -29,7 +29,9 @@ directly, for example `set.html`.
 
 ```sh
 npx playwright install chromium   # once, on a fresh machine
-npm test                          # Playwright against a stubbed backend
+npm run test:unit                 # Vitest, for the TypeScript in app/
+npm run test:e2e                  # Playwright against a stubbed backend
+npm test                          # both
 npm run check                     # lint, types, HTML, vendor, policy and secret
                                   # checks, then the tests
 ```

@@ -11,8 +11,10 @@
     "lint": "biome check .",
     "format": "biome format --write .",
     "dev": "node tools/serve.mjs",
-    "typecheck": "tsc --noEmit",
-    "test": "playwright test",
+    "typecheck": "tsc --noEmit && tsc --noEmit -p app",
+    "test": "npm run test:unit && npm run test:e2e",
+    "test:unit": "vitest run",
+    "test:e2e": "playwright test",
     "check": "npm run lint && npm run typecheck && npm run lint:html && npm run check:vendor && npm run check:csp && npm run scan:secrets && npm test",
     "lint:html": "node tools/check-html.mjs",
     "check:vendor": "node tools/check-vendor.mjs",
@@ -28,6 +30,8 @@
     "@types/node": "^22.20.5",
     "html-validate": "^11.17.0",
     "secretlint": "^13.1.0",
-    "typescript": "^7.0.2"
+    "typescript": "^7.0.2",
+    "vite": "^8.3.8",
+    "vitest": "^5.1.1"
   }
 }

@@ -12,5 +12,5 @@
     "isolatedModules": true,
     "skipLibCheck": true
   },
-  "include": ["playwright.config.ts", "tests", "tools"]
+  "include": ["playwright.config.ts", "vitest.config.ts", "tests", "tools"]
 }
