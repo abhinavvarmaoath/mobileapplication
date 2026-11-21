@@ -60,9 +60,9 @@ Where the work differs from the plan:
   against the official repositories; Dependabot keeps the tags current.
 - Secret scanning uses secretlint instead of gitleaks so it runs locally and
   in CI without a third-party action.
-- The pages are tested against jQuery Mobile 1.4.1, the nearest release on
-  npm, in place of 1.4.0 and 1.4.5. Check the pages in a real browser,
-  especially the setup pages, which used to load both releases.
+- jQuery and jQuery Mobile are served from `vendor/`, not a CDN. jQuery Mobile
+  is 1.4.1, where the pages asked for 1.4.0 (and the setup pages also for
+  1.4.5): 1.4.0 is not on npm and 1.4.1 is what the tests have always run.
 
 Tool versions at the time of writing: Node 24 (22.22 minimum), Biome 2.6,
 TypeScript 7.0, Playwright 1.64, axe-core 4.14, html-validate 11.17,
@@ -122,8 +122,6 @@ Not done, and worth doing soon
 - The orange header and nav fail contrast (see `tests/baselines/axe.json`),
   and the Logout button on the two home pages is clipped to 30 by 10 pixels.
 - Pin the workflow actions to commit SHAs.
-- Check the setup pages in a real browser: they used to load jQuery Mobile
-  1.4.0 and 1.4.5 together and now load 1.4.0 only.
 
 Later phases, not approved yet
 

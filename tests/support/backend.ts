@@ -1,25 +1,7 @@
-import { readFile } from "node:fs/promises";
 import type { BrowserContext, Route } from "@playwright/test";
 import { courses, studentGrades, studentsByCourse } from "./data";
 
 const apiHost = "rubypals.com";
-const cdnDir = new URL("../fixtures/cdn/", import.meta.url);
-
-// The pages ask for jQuery 1.8.2 and jQuery Mobile 1.4.0 or 1.4.5; see
-// tests/fixtures/cdn/README.md for what is served instead.
-const cdnFiles: Array<[RegExp, string, string]> = [
-	[/^\/jquery-1\.8\.2\.min\.js$/, "jquery-1.8.2.min.js", "text/javascript"],
-	[
-		/^\/mobile\/1\.4\.[05]\/jquery\.mobile-1\.4\.[05]\.min\.js$/,
-		"jquery.mobile.min.js",
-		"text/javascript",
-	],
-	[
-		/^\/mobile\/1\.4\.0\/jquery\.mobile\.structure-1\.4\.0\.min\.css$/,
-		"jquery.mobile.structure.min.css",
-		"text/css",
-	],
-];
 
 /** One request a page made to the stubbed API. */
 export interface Call {
@@ -74,8 +56,8 @@ function parseForm(body: string | null): Record<string, string[]> {
 }
 
 /**
- * Stands in for everything outside the local server: the CDN, fonts, the PHP
- * API and third-party iframes. Nothing leaves the machine.
+ * Stands in for everything outside the local server: fonts, the PHP API and
+ * third-party iframes. Nothing leaves the machine.
  */
 export class Backend {
 	readonly calls: Call[] = [];
@@ -109,7 +91,6 @@ export class Backend {
 		const url = new URL(request.url());
 		if (!this.hosts.includes(url.hostname)) this.hosts.push(url.hostname);
 
-		if (url.hostname === "code.jquery.com") return this.cdn(route, url);
 		if (url.hostname === "fonts.googleapis.com") {
 			return route.fulfill({ contentType: "text/css", body: "" });
 		}
@@ -123,19 +104,6 @@ export class Backend {
 		}
 		this.blocked.push(request.url());
 		return route.abort("blockedbyclient");
-	}
-
-	private async cdn(route: Route, url: URL): Promise<void> {
-		const match = cdnFiles.find(([pattern]) => pattern.test(url.pathname));
-		if (!match) {
-			this.blocked.push(url.href);
-			return route.abort("blockedbyclient");
-		}
-		const [, file, contentType] = match;
-		return route.fulfill({
-			contentType,
-			body: await readFile(new URL(file, cdnDir)),
-		});
 	}
 
 	private async api(route: Route, url: URL): Promise<void> {

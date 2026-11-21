@@ -48,7 +48,7 @@ npm run lint:html -- --update
 
 - `*.html` in the root are the pages.
 - `css/app.css` holds the app's own styles; `themes/` is the jQuery Mobile
-  theme.
-- `tests/e2e` holds the specs, `tests/support` the stubbed backend,
-  `tests/fixtures` the CDN stand-ins and `tests/baselines` the recorded counts.
-- `tools/` holds the static server and the HTML check.
+  theme; `vendor/` holds jQuery and jQuery Mobile (see its README).
+- `tests/e2e` holds the specs, `tests/support` the stubbed backend and
+  `tests/baselines` the recorded counts.
+- `tools/` holds the static server and the HTML and vendor checks.
