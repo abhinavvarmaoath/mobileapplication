@@ -1,0 +1,149 @@
+.page {
+	width: min(100% - 2 * var(--space-4), 28rem);
+	margin-inline: auto;
+	padding-block: var(--space-6);
+}
+
+.page > h1 {
+	margin: 0 0 var(--space-5);
+	font-size: var(--text-xl);
+}
+
+.aside {
+	margin-top: var(--space-5);
+	color: var(--text-muted);
+}
+
+.form {
+	display: grid;
+	gap: var(--space-4);
+}
+
+.field {
+	display: grid;
+	gap: var(--space-2);
+	border: 0;
+	margin: 0;
+	padding: 0;
+}
+
+.field label,
+.field legend {
+	padding: 0;
+	font-weight: 600;
+}
+
+.field input:not([type="radio"]) {
+	min-height: var(--tap);
+	padding: var(--space-2) var(--space-3);
+	color: var(--text);
+	background: var(--surface);
+	border: 2px solid var(--border-strong);
+	border-radius: var(--radius);
+}
+
+.field input[aria-invalid="true"] {
+	border-color: var(--danger);
+}
+
+.hint,
+.field-error {
+	margin: 0;
+	font-size: var(--text-sm);
+}
+
+.hint {
+	color: var(--text-muted);
+}
+
+.field-error {
+	color: var(--danger);
+}
+
+/* Radio buttons shown as a segmented control. */
+.choice-options {
+	display: grid;
+	grid-auto-flow: column;
+	grid-auto-columns: 1fr;
+	overflow: hidden;
+	border: 2px solid var(--border-strong);
+	border-radius: var(--radius);
+}
+
+.choice-option {
+	position: relative;
+	display: grid;
+}
+
+.choice-option input {
+	position: absolute;
+	inset: 0;
+	margin: 0;
+	opacity: 0;
+}
+
+.choice-option label {
+	display: grid;
+	place-items: center;
+	min-height: var(--tap);
+	padding-inline: var(--space-3);
+	cursor: pointer;
+}
+
+.choice-option input:checked + label {
+	color: var(--on-brand);
+	background: var(--brand);
+}
+
+.choice-option input:focus-visible + label {
+	outline: 3px solid var(--focus);
+	outline-offset: -3px;
+}
+
+.actions {
+	display: flex;
+	flex-wrap: wrap;
+	gap: var(--space-3);
+}
+
+.button {
+	flex: 1;
+	min-height: var(--tap);
+	padding: var(--space-2) var(--space-5);
+	font-weight: 600;
+	color: var(--brand);
+	cursor: pointer;
+	background: transparent;
+	border: 2px solid var(--brand);
+	border-radius: var(--radius);
+}
+
+.button-primary {
+	color: var(--on-brand);
+	background: var(--brand);
+}
+
+.button:disabled {
+	cursor: progress;
+	opacity: 0.6;
+}
+
+.error-summary,
+.form-error {
+	margin: 0;
+	padding: var(--space-3) var(--space-4);
+	border: 0 solid var(--danger);
+	border-left-width: 6px;
+	border-radius: var(--radius);
+	background: var(--surface-raised);
+}
+
+.error-summary h2 {
+	margin: 0 0 var(--space-2);
+	font-size: var(--text-md);
+}
+
+.error-summary ul {
+	margin: 0;
+	padding-left: var(--space-5);
+}

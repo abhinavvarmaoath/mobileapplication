@@ -1,6 +1,6 @@
 import { readFileSync } from "node:fs";
 import { readConfig } from "../../tools/config.mjs";
-import { metaFor, metaPattern, policyFor } from "../../tools/csp.mjs";
+import { metaPattern, policyFor, withPolicy } from "../../tools/csp.mjs";
 import { expect, test } from "../support/app";
 import { pages } from "../support/pages";
 
@@ -29,14 +29,31 @@ test("frames are allowed only from the tools, and only when embedding is on", ()
 	);
 });
 
-test("every page carries the policy built from js/config.js", () => {
-	const meta = metaFor(readConfig());
+test("pages without jQuery Mobile get a policy that allows no inline style", () => {
+	expect(policyFor(readConfig(), { jqueryMobile: false })).toBe(
+		[
+			"default-src 'none'",
+			"script-src 'self'",
+			"style-src 'self'",
+			"img-src 'self' data:",
+			"connect-src 'self' https://rubypals.com",
+			"frame-src 'none'",
+			"base-uri 'self'",
+			"form-action 'self'",
+		].join("; "),
+	);
+});
+
+test("every built page carries the policy built from js/config.js", () => {
+	const config = readConfig();
 	for (const page of pages) {
 		const html = readFileSync(
-			new URL(`../../${page}`, import.meta.url),
+			new URL(`../../dist/${page}`, import.meta.url),
 			"utf8",
 		);
-		expect(html.match(metaPattern)?.[0], page).toBe(meta);
+		expect(html.match(metaPattern), page).not.toBeNull();
+		// Putting the right policy in again changes nothing.
+		expect(withPolicy(html, config), page).toBe(html);
 	}
 });
 
@@ -45,7 +62,9 @@ test.describe("the browser enforces it", () => {
 		await app.open("index.html");
 	});
 
-	test("no inline script runs and eval is refused", async ({ app }) => {
+	test("no inline script runs and code from a string is refused", async ({
+		app,
+	}) => {
 		// Playwright's own evaluation is exempt from the policy, so the attempts
 		// are made later, from the page's event loop, as injected code would be.
 		await app.page.evaluate(`
@@ -54,7 +73,7 @@ test.describe("the browser enforces it", () => {
 			document.head.append(script);
 			setTimeout(() => {
 				try {
-					jQuery.globalEval("window.ranEval = true");
+					new Function("window.ranEval = true")();
 					window.evalResult = "ran";
 				} catch (error) {
 					window.evalResult = error.name;

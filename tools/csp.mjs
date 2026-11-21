@@ -23,8 +23,12 @@ function originsOf(addresses) {
 	return [...new Set(addresses.map((address) => new URL(address).origin))];
 }
 
-/** @param {Record<string, unknown>} config */
-export function policyFor(config) {
+/**
+ * @param {Record<string, unknown>} config
+ * @param {{ jqueryMobile?: boolean }} [options] jQuery Mobile pages need its
+ *   popup styles allowed; pages without it do not.
+ */
+export function policyFor(config, { jqueryMobile = true } = {}) {
 	// A demo answers every request itself, so it needs no backend origin.
 	const backends = config.demo
 		? []
@@ -37,7 +41,9 @@ export function policyFor(config) {
 		"default-src 'none'",
 		"script-src 'self'",
 		"style-src 'self'",
-		`style-src-attr 'unsafe-hashes' ${popupStyles.map(hashOf).join(" ")}`,
+		...(jqueryMobile
+			? [`style-src-attr 'unsafe-hashes' ${popupStyles.map(hashOf).join(" ")}`]
+			: []),
 		"img-src 'self' data:",
 		["connect-src 'self'", ...backends].join(" "),
 		["frame-src", ...(frames.length > 0 ? frames : ["'none'"])].join(" "),
@@ -49,9 +55,12 @@ export function policyFor(config) {
 export const metaPattern =
 	/<meta http-equiv="Content-Security-Policy" content="[^"]*">/;
 
-/** @param {Record<string, unknown>} config */
-export function metaFor(config) {
-	return `<meta http-equiv="Content-Security-Policy" content="${policyFor(config)}">`;
+/**
+ * @param {Record<string, unknown>} config
+ * @param {{ jqueryMobile?: boolean }} [options]
+ */
+export function metaFor(config, options) {
+	return `<meta http-equiv="Content-Security-Policy" content="${policyFor(config, options)}">`;
 }
 
 /**
@@ -65,16 +74,27 @@ export function withMeta(html, meta) {
 	return html.replace(viewport, (line, indent) => `${line}\n${indent}${meta}`);
 }
 
+/**
+ * The page with the policy it needs: only pages that load jQuery Mobile get
+ * its popup styles allowed.
+ * @param {string} html
+ * @param {Record<string, unknown>} config
+ */
+export function withPolicy(html, config) {
+	const jqueryMobile = html.includes("jquery.mobile");
+	return withMeta(html, metaFor(config, { jqueryMobile }));
+}
+
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
 	const root = new URL("../", import.meta.url);
 	const check = process.argv.includes("--check");
-	const meta = metaFor(readConfig());
+	const config = readConfig();
 	const pages = (await readdir(root)).filter((name) => name.endsWith(".html"));
 	const stale = [];
 	for (const page of pages.sort()) {
 		const file = new URL(page, root);
 		const html = await readFile(file, "utf8");
-		const updated = withMeta(html, meta);
+		const updated = withPolicy(html, config);
 		if (updated === html) continue;
 		stale.push(page);
 		if (!check) await writeFile(file, updated);

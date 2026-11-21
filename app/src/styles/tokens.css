@@ -1,0 +1,35 @@
+:root {
+	color-scheme: light dark;
+
+	--font:
+		system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial,
+		sans-serif;
+	--text-sm: 0.875rem;
+	--text-md: 1rem;
+	--text-lg: 1.25rem;
+	--text-xl: 1.75rem;
+	--leading: 1.5;
+
+	--space-1: 0.25rem;
+	--space-2: 0.5rem;
+	--space-3: 0.75rem;
+	--space-4: 1rem;
+	--space-5: 1.5rem;
+	--space-6: 2rem;
+
+	--radius: 0.625rem;
+	/* The smallest comfortable touch target. */
+	--tap: 2.75rem;
+
+	--surface: light-dark(#ffffff, #15181e);
+	--surface-raised: light-dark(#f4f6f9, #1e232b);
+	--text: light-dark(#1a1d23, #eceff4);
+	--text-muted: light-dark(#4a5260, #aab2c0);
+	--border: light-dark(#c5ccd8, #3a424e);
+	/* Controls need 3:1 against what is around them. */
+	--border-strong: light-dark(#6b7482, #7b8594);
+	--brand: light-dark(#1d4fa8, #8db4ff);
+	--on-brand: light-dark(#ffffff, #0b1426);
+	--danger: light-dark(#b3261e, #ffaaa3);
+	--focus: light-dark(#1d4fa8, #8db4ff);
+}

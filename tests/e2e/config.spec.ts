@@ -2,7 +2,6 @@ import { readdirSync, readFileSync } from "node:fs";
 import { metaPattern } from "../../tools/csp.mjs";
 import { type App, expect, test } from "../support/app";
 import { useConfig } from "../support/config";
-import { pages } from "../support/pages";
 import { chooseCourse, chooseStudent, openSettings } from "../support/screens";
 
 // grade.html makes all three kinds of call: the course list, the student
@@ -43,15 +42,25 @@ test("calls the addresses set in js/config.js", async ({ app }) => {
 	]);
 });
 
-test("nothing but js/config.js names a host", () => {
-	const scripts = new URL("../../js/", import.meta.url);
+test("nothing but the config names a host", () => {
+	const repo = new URL("../../", import.meta.url);
+	const names = (dir: string, keep: (name: string) => boolean, deep = true) =>
+		readdirSync(new URL(dir, repo), { recursive: deep })
+			.map(String)
+			.filter(keep)
+			.map((name) => new URL(`${dir}${name}`, repo));
 	const files = [
-		...readdirSync(scripts)
-			.filter((name) => name.endsWith(".js") && name !== "config.js")
-			.map((name) => new URL(name, scripts)),
-		...pages.map((page) => new URL(`../../${page}`, import.meta.url)),
+		// The old pages and their scripts, until they are replaced.
+		...names("", (name) => name.endsWith(".html"), false),
+		...names("js/", (name) => name.endsWith(".js")),
+		// The new pages and the code behind them.
+		...names("app/", (name) => name.endsWith(".html")),
+		...names(
+			"app/src/",
+			(name) => name.endsWith(".ts") && !name.endsWith(".test.ts"),
+		),
 	];
-	expect(files.length).toBeGreaterThan(pages.length);
+	expect(files.length).toBeGreaterThan(10);
 	for (const file of files) {
 		// The policy meta is generated from the config and checked by csp.spec.
 		const source = readFileSync(file, "utf8").replace(metaPattern, "");

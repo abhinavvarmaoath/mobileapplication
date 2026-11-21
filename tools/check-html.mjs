@@ -1,5 +1,6 @@
 // Fails when a page has more HTML problems than its recorded baseline, so the
 // count can only go down. Run with --update to record the current counts.
+// Checks the old pages in the repo root and the new ones in app/.
 import { readdir, readFile, writeFile } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 import { FileSystemConfigLoader, HtmlValidate } from "html-validate/node";
@@ -9,9 +10,19 @@ const baselineFile = new URL("tests/baselines/html-validate.json", root);
 const update = process.argv.includes("--update");
 
 const htmlvalidate = new HtmlValidate(new FileSystemConfigLoader());
-const files = (await readdir(root))
-	.filter((name) => name.endsWith(".html"))
-	.sort();
+// The old pages are in the repo root and the new ones in app/. A page is one
+// or the other, never both.
+const folders = [root, new URL("app/", root)];
+/** @type {Map<string, URL>} */
+const locations = new Map();
+for (const folder of folders) {
+	for (const name of await readdir(folder)) {
+		if (!name.endsWith(".html")) continue;
+		if (locations.has(name)) throw new Error(`${name} is in both places`);
+		locations.set(name, new URL(name, folder));
+	}
+}
+const files = [...locations.keys()].sort();
 
 /** @type {Record<string, number>} */
 const counts = {};
@@ -19,7 +30,7 @@ const counts = {};
 const rules = {};
 for (const file of files) {
 	const report = await htmlvalidate.validateFile(
-		fileURLToPath(new URL(file, root)),
+		fileURLToPath(/** @type {URL} */ (locations.get(file))),
 	);
 	counts[file] = report.errorCount + report.warningCount;
 	rules[file] = {};

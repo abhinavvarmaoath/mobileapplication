@@ -35,16 +35,24 @@ export class App {
 
 	async open(path: string): Promise<void> {
 		await this.page.goto(`/${path}`);
-		await this.page.locator(".ui-page-active").waitFor();
+		// An old page is ready when jQuery Mobile has made its first page
+		// active. A new page says so itself.
+		await this.page
+			.locator(".ui-page-active, html[data-ready]")
+			.first()
+			.waitFor({ state: "attached" });
 	}
 
-	/** Waits until jQuery has no request in flight and its callbacks have run. */
+	/**
+	 * Waits until nothing is in flight: no jQuery request on an old page, and
+	 * no element marked aria-busy on a new one.
+	 */
 	async idle(): Promise<void> {
-		await this.page.waitForFunction(
-			() =>
-				(window as unknown as { jQuery: { active: number } }).jQuery.active ===
-				0,
-		);
+		await this.page.waitForFunction(() => {
+			const { jQuery } = window as unknown as { jQuery?: { active: number } };
+			const quiet = !jQuery || jQuery.active === 0;
+			return quiet && !document.querySelector('[aria-busy="true"]');
+		});
 	}
 }
 

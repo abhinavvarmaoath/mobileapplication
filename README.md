@@ -58,7 +58,8 @@ that file run:
 npm run csp
 ```
 
-`npm run check` fails when a page is out of date. The policy allows scripts,
+New pages get the policy when they are built. `npm run check` fails when an
+old page is out of date. The policy allows scripts,
 styles and images only from the app's own origin, requests only to that origin
 and the configured backend, and no frames. A meta tag cannot carry
 `frame-ancestors`, `sandbox` or `report-uri`; set those as response headers
@@ -85,9 +86,11 @@ to deploy from GitHub Actions.
 
 ## Layout
 
-- `*.html` in the root are the pages.
-- `css/app.css` holds the app's own styles; `themes/` is the jQuery Mobile
-  theme; `vendor/` holds jQuery and jQuery Mobile (see its README).
+- `app/` is the new front end, in TypeScript with Vite: `*.html` are page
+  shells, `src/` the code and styles, `public/js/config.js` the config.
+  `npm run build` assembles `dist/` from it and from the old pages.
+- `*.html` in the root are the old jQuery Mobile pages, replaced one at a time;
+  `css/`, `js/`, `themes/` and `vendor/` are theirs (see `vendor/README.md`).
 - `tests/e2e` holds the specs, `tests/support` the stubbed backend and
   `tests/baselines` the recorded counts.
 - `tools/` holds the static server, the HTML and vendor checks, the policy

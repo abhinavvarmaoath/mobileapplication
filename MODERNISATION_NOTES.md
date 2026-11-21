@@ -127,6 +127,18 @@ Order: login, signup, the student screens, then the professor screens (home,
 students, the three setup pages, grading). `viewTeams.html` is an orphan that
 posts nowhere and is dropped at the end.
 
+Progress
+
+- Done: the typed API client (M3), the config reader, the demo backend as a
+  transport, the form rules, the build that assembles `dist/`, design tokens
+  with light and dark (U1), a table-driven form renderer with an error summary
+  and a busy state (M4, U3, U9), and the login screen. The login screen has no
+  axe or HTML findings, where the old page had seven and two.
+- Old pages left at the repo root: signup, the student screens and the
+  professor screens. New pages get a stricter policy than old ones, because
+  nothing needs jQuery Mobile's popup styles.
+- Next: signup, then the student screens, then the professor screens.
+
 U4 (setup as one screen) and U5 (the what-if calculator) come after parity,
 because each needs a backend answer: a read endpoint for saved values, and the
 weights.

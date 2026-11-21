@@ -3,7 +3,7 @@ import { mkdtemp, readdir, readFile, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { readConfig } from "../../tools/config.mjs";
-import { metaFor, metaPattern, policyFor } from "../../tools/csp.mjs";
+import { metaPattern, policyFor, withPolicy } from "../../tools/csp.mjs";
 import { type App, expect, test } from "../support/app";
 import { useConfig } from "../support/config";
 import { pages } from "../support/pages";
@@ -58,9 +58,13 @@ test.describe("demo mode", () => {
 	] as const) {
 		test(`logs a ${account} in and opens their home page`, async ({ app }) => {
 			await app.open("index.html");
-			await app.page.locator("#ID").fill("ada");
-			await app.page.locator("#password").fill("secret");
-			await app.page.locator("#flip-c").selectOption(account, { force: true });
+			await app.page.getByLabel("Username", { exact: true }).fill("ada");
+			await app.page.getByLabel("Password", { exact: true }).fill("secret");
+			await app.page
+				.getByRole("radio", {
+					name: account === "professor" ? "Professor" : "Student",
+				})
+				.check();
 			await app.page.getByRole("button", { name: "Login" }).click();
 			await expect(app.page).toHaveURL(new RegExp(`/${home}$`));
 		});
@@ -164,7 +168,8 @@ test("the demo build is the app with demo mode on and its own policy", async () 
 		expect(config.demo).toBe(true);
 		for (const page of pages) {
 			const html = await readFile(join(site, page), "utf8");
-			expect(html.match(metaPattern)?.[0], page).toBe(metaFor(config));
+			expect(html.match(metaPattern), page).not.toBeNull();
+			expect(withPolicy(html, config), page).toBe(html);
 		}
 		expect(await readdir(site)).toEqual(
 			expect.arrayContaining(["css", "js", "themes", "vendor", "index.html"]),

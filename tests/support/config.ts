@@ -1,6 +1,6 @@
 import type { Page } from "@playwright/test";
 import { readConfig } from "../../tools/config.mjs";
-import { metaFor, withMeta } from "../../tools/csp.mjs";
+import { withPolicy } from "../../tools/csp.mjs";
 
 type Settings = Record<string, unknown>;
 
@@ -35,7 +35,7 @@ export async function useConfig(
 	// the one this config would produce, as running npm run csp would.
 	await page.route("**/*.html", async (route) => {
 		const response = await route.fetch();
-		const body = withMeta(await response.text(), metaFor(config));
+		const body = withPolicy(await response.text(), config);
 		await route.fulfill({ response, body });
 	});
 }
