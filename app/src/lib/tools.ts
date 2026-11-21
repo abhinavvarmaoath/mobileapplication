@@ -8,7 +8,13 @@ const permissions: Record<string, string> = {
 
 function embed(name: string, address: string, label: string): HTMLElement {
 	const dialog = h("dialog", { class: "tool-dialog", "aria-label": label });
-	const close = h("button", { type: "button", class: "button" }, "Close");
+	// First, and focused when the dialog opens: a key pressed inside the frame
+	// goes to the frame, so Escape would not reach the dialog from there.
+	const close = h(
+		"button",
+		{ type: "button", class: "button", autofocus: true },
+		"Close",
+	);
 	const open = h(
 		"button",
 		{ type: "button", class: "button button-primary" },
@@ -27,7 +33,7 @@ function embed(name: string, address: string, label: string): HTMLElement {
 			allow,
 			src: address,
 		});
-		dialog.replaceChildren(frame, close);
+		dialog.replaceChildren(close, frame);
 		dialog.showModal();
 	});
 	close.addEventListener("click", () => dialog.close());

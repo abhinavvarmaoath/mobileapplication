@@ -141,8 +141,26 @@ test.describe("with embedTools set", () => {
 				await expect(frame).not.toHaveAttribute("allow", /.*/);
 			}
 			await expect.poll(() => app.backend.frames).toContain(address);
+			// A new page puts focus on its Close button, so Escape reaches the
+			// dialog even when the frame has loaded; an old popup has no such button.
+			const close = app.page.getByRole("button", { name: "Close" });
+			if ((await close.count()) > 0) await expect(close).toBeFocused();
 
 			await app.page.keyboard.press("Escape");
+			await expect(app.page.locator("iframe")).toHaveCount(0);
+		});
+	}
+
+	for (const { page, button } of tools) {
+		test(`${page} closes the tool with its Close button`, async ({ app }) => {
+			await app.open(page);
+			await opener(app.page, button).click();
+			const close = app.page.getByRole("button", { name: "Close" });
+			test.skip(
+				(await close.count()) === 0,
+				"an old popup has no Close button",
+			);
+			await close.click();
 			await expect(app.page.locator("iframe")).toHaveCount(0);
 		});
 	}

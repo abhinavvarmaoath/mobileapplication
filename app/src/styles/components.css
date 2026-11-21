@@ -294,13 +294,13 @@ a.button {
 
 .tool-dialog .button {
 	width: 100%;
+	margin-bottom: var(--space-3);
 }
 
 .tool-frame {
 	display: block;
 	width: 100%;
 	height: min(70dvh, 36rem);
-	margin-bottom: var(--space-3);
 	border: 0;
 }
 
