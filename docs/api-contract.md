@@ -15,6 +15,8 @@ The pages used to call these over plain HTTP. HTTPS is an assumption: the
 server is never contacted from here, so nobody has checked that it answers on
 HTTPS. If it does not, change the two addresses.
 
+In demo mode `js/demo.js` answers these endpoints in the browser instead.
+
 Requests are form-encoded (`application/x-www-form-urlencoded`). Replies are
 read as JSON. No request carries a session, token or user id.
 

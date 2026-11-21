@@ -46,7 +46,7 @@ Held until the open questions are answered: B1, B4, B11, the LICENSE choice.
 | 1 Safety net | done |
 | 2 Clean-up | done |
 | 3 Bug fixes | done, except the held items |
-| 4 Hardening | in progress: S1 and S6 done, S5 half done, T7 to do |
+| 4 Hardening | S1, S6 and T7 done; S5 half done (links, no optional embedding) |
 
 Commands are in `README.md`. In a sandbox without Playwright's own browser,
 set `CHROMIUM_EXECUTABLE_PATH` to a Chromium binary before `npm test`.
@@ -122,6 +122,13 @@ Security
   a small script that restores the markup's values. Remove it with jQuery
   Mobile.
 - S8 Supply-chain guardrails. Done except SHA pinning of actions.
+- T7 Demo mode. Done: `js/demo.js` answers the contract in the browser when
+  `demo` is true in `js/config.js`, and `tools/build-demo.mjs` writes a demo
+  copy. `.github/workflows/pages.yml` publishes it but is skipped until the
+  repository variable `DEMO_PAGES` is `true` and Pages is set to deploy from
+  GitHub Actions; switching that on is the owner's call. The demo's rules (the
+  percentages must total 100, grades from the saved weights and ranges) are
+  read from the page code, not from the real server.
 - S9 Licence and privacy clean-up. Template and names removed; LICENSE is
   waiting on question 6.
 
@@ -138,7 +145,6 @@ Later phases, not approved yet
 - One API module, table-driven forms, shared shell (M3-M5).
 - Vite and TypeScript front end replacing jQuery Mobile screen by screen (A2).
 - Design tokens, tab-bar shell, native forms, WCAG 2.2 AA (U1-U10).
-- Demo deploy on GitHub Pages (T7).
 - OpenAPI contract and an optional replacement backend (A3).
 - PWA or Capacitor wrapper (A4).
 - Syllabus import with evals (AI1).
@@ -163,6 +169,6 @@ every commit: a sandbox that is reclaimed loses anything that was not pushed.
 2. Does the backend support HTTPS?
 3. What does "max marks" mean in setup, and are marks graded out of it?
 4. Framework for the new front end: none (default), or React, Vue, Svelte?
-5. Approval needed for: replacing jQuery Mobile, the GitHub Pages demo, any AI
-   server component.
+5. Approval needed for: replacing jQuery Mobile, any AI server component. The
+   GitHub Pages demo is built but switched off; see T7.
 6. Which LICENSE should the repo carry?

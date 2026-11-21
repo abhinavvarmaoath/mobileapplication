@@ -5,3 +5,4 @@ node_modules/
 /blob-report/
 /dist/
 *.log
+_site/

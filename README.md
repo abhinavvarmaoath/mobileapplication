@@ -60,6 +60,21 @@ and the configured backend, and no frames. A meta tag cannot carry
 `frame-ancestors`, `sandbox` or `report-uri`; set those as response headers
 where the app is hosted.
 
+## Demo
+
+Without a backend the app can still run: set `demo: true` in `js/config.js`
+and `js/demo.js` answers every call in the browser, with two courses, a few
+students, and added classes and saved settings that last for the browser
+session. Nothing is sent anywhere. To write a copy of the app in demo mode:
+
+```sh
+node tools/build-demo.mjs <empty directory>
+```
+
+`.github/workflows/pages.yml` publishes that copy to GitHub Pages. It stays
+skipped until the repository variable `DEMO_PAGES` is `true` and Pages is set
+to deploy from GitHub Actions.
+
 ## Layout
 
 - `*.html` in the root are the pages.
@@ -67,5 +82,5 @@ where the app is hosted.
   theme; `vendor/` holds jQuery and jQuery Mobile (see its README).
 - `tests/e2e` holds the specs, `tests/support` the stubbed backend and
   `tests/baselines` the recorded counts.
-- `tools/` holds the static server, the HTML and vendor checks and the policy
-  generator.
+- `tools/` holds the static server, the HTML and vendor checks, the policy
+  generator and the demo build.

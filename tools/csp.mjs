@@ -20,16 +20,19 @@ function hashOf(text) {
 
 /** @param {Record<string, unknown>} config */
 export function policyFor(config) {
-	const backends = [config.apiBase, config.lookupBase].map(
-		(address) => new URL(String(address)).origin,
-	);
+	// A demo answers every request itself, so it needs no backend origin.
+	const backends = config.demo
+		? []
+		: [config.apiBase, config.lookupBase].map(
+				(address) => new URL(String(address)).origin,
+			);
 	return [
 		"default-src 'none'",
 		"script-src 'self'",
 		"style-src 'self'",
 		`style-src-attr 'unsafe-hashes' ${popupStyles.map(hashOf).join(" ")}`,
 		"img-src 'self' data:",
-		`connect-src 'self' ${[...new Set(backends)].join(" ")}`,
+		["connect-src 'self'", ...new Set(backends)].join(" "),
 		"frame-src 'none'",
 		"base-uri 'self'",
 		"form-action 'self'",
