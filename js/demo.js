@@ -105,7 +105,14 @@
 		},
 		"get_course.php": (_form, _query, state) => [
 			200,
-			[...courses, ...(state.classes ?? [])],
+			// Classes added by a page on the new stack are stored as {id, name}.
+			[
+				...courses,
+				...(state.classes ?? []).map((added) => ({
+					ID: added.ID ?? added.id,
+					CourseName: added.CourseName ?? added.name,
+				})),
+			],
 		],
 		"get_students_by_course.php": (_form, query) => [
 			200,

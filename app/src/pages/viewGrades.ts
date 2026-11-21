@@ -15,7 +15,7 @@ void boot(({ api, root }) => {
 	});
 	// A live region that is always there, so a new estimate is announced.
 	const result = h("div", { class: "result", role: "status" });
-	const form = renderForm({
+	const { element: form } = renderForm({
 		fields: categories.map((name) => ({
 			name,
 			label: name,

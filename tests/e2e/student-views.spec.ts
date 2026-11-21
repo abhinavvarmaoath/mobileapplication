@@ -138,7 +138,7 @@ test.describe("grade estimator", () => {
 		await compute(app);
 		await expect(app.page.getByRole("alert")).toBeVisible();
 		// Empty, and so hidden, which is why role lookup would not find it.
-		await expect(app.page.locator("[role=status]")).toBeEmpty();
+		await expect(app.page.locator(".result")).toBeEmpty();
 	});
 
 	test("shows markup in the estimate as plain text", async ({ app }) => {

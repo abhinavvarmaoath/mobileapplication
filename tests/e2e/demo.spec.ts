@@ -82,11 +82,10 @@ test.describe("demo mode", () => {
 
 	test("shows a class that was added in the course lists", async ({ app }) => {
 		await app.open("prohome.html");
-		await app.page.getByRole("button", { name: "Add a class" }).click();
-		await app.page.locator("#class").fill("CS 101");
-		await app.page.locator("#description").fill("Intro");
-		await app.page.getByRole("button", { name: "Add", exact: true }).click();
-		await expect.poll(() => app.dialogs).toEqual(["Class added!"]);
+		await app.page.getByLabel("Class number", { exact: true }).fill("CS 101");
+		await app.page.getByLabel("Description", { exact: true }).fill("Intro");
+		await app.page.getByRole("button", { name: "Add class" }).click();
+		await expect(app.page.getByRole("status")).toHaveText("Class added.");
 
 		await app.open("set.html");
 		await expect(courseItems(app.page)).toHaveText([

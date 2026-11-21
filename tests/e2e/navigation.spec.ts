@@ -16,8 +16,8 @@ const studentNav = ["stuhome.html", "team.html", "viewGrades.html"];
 const links: Record<string, string[]> = {
 	"index.html": ["signup.html"],
 	"signup.html": ["index.html"],
-	"prohome.html": [...professorNav, "index.html", "student.html"],
-	"student.html": professorNav,
+	"prohome.html": ["index.html", ...professorNav, "student.html"],
+	"student.html": ["index.html", ...professorNav],
 	"stuhome.html": ["index.html", ...studentNav],
 	"set.html": professorNav,
 	"set1.html": professorNav,

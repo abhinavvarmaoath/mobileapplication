@@ -4,7 +4,7 @@ import { h } from "../lib/dom";
 import { FormProblem, renderForm } from "../lib/form";
 
 void boot(({ api, root }) => {
-	const form = renderForm({
+	const { element: form } = renderForm({
 		fields: [
 			{
 				name: "ID",

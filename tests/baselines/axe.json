@@ -6,10 +6,7 @@
   },
   "grades.html": {},
   "index.html": {},
-  "prohome.html": {
-    "color-contrast": 8,
-    "html-has-lang": 1
-  },
+  "prohome.html": {},
   "set.html": {
     "color-contrast": 5,
     "html-has-lang": 1
@@ -23,10 +20,7 @@
     "html-has-lang": 1
   },
   "signup.html": {},
-  "student.html": {
-    "color-contrast": 5,
-    "html-has-lang": 1
-  },
+  "student.html": {},
   "stuhome.html": {},
   "team.html": {},
   "videoCall.html": {},

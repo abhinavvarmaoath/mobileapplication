@@ -33,7 +33,8 @@
 	font-weight: 600;
 }
 
-.field input:not([type="radio"]) {
+.field input:not([type="radio"]),
+.field textarea {
 	min-height: var(--tap);
 	padding: var(--space-2) var(--space-3);
 	color: var(--text);
@@ -126,6 +127,19 @@
 .button:disabled {
 	cursor: progress;
 	opacity: 0.6;
+}
+
+.form-status:empty {
+	display: none;
+}
+
+.form-status {
+	margin: 0;
+	padding: var(--space-3) var(--space-4);
+	border: 0 solid var(--brand);
+	border-left-width: 6px;
+	border-radius: var(--radius);
+	background: var(--surface-raised);
 }
 
 .error-summary,
@@ -354,4 +368,13 @@ a.button {
 
 .result .grade {
 	font-size: var(--text-xl);
+}
+
+.section {
+	margin-top: var(--space-5);
+}
+
+.screen h2 {
+	margin: 0;
+	font-size: var(--text-lg);
 }

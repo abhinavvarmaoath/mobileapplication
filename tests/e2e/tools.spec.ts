@@ -1,9 +1,8 @@
-import type { Page } from "@playwright/test";
 import { expect, test } from "../support/app";
 import { useConfig } from "../support/config";
 
 // The third-party tools. Each is a link to the address in js/config.js that
-// opens in a new tab; nothing is framed.
+// opens in a new tab, or with embedTools a button that opens a sandboxed frame.
 const tools = [
 	{
 		page: "prohome.html",
@@ -32,13 +31,14 @@ const tools = [
 	},
 ];
 
-// An old page makes the tool a jQuery Mobile button, a new one a link, or with
-// embedTools a button; the label is the same.
-function opener(page: Page, name: string) {
-	return page
-		.getByRole("link", { name })
-		.or(page.getByRole("button", { name }));
-}
+const students = [
+	"Ada Lovelace",
+	"Alan Turing",
+	"Charles Babbage",
+	"Edsger Dijkstra",
+	"Grace Hopper",
+	"Katherine Johnson",
+];
 
 for (const { page, key, button, address } of tools) {
 	test.describe(page, () => {
@@ -46,7 +46,7 @@ for (const { page, key, button, address } of tools) {
 			app,
 		}) => {
 			await app.open(page);
-			const link = opener(app.page, button);
+			const link = app.page.getByRole("link", { name: button });
 			await expect(link).toHaveAttribute("href", address);
 			await expect(link).toHaveAttribute("target", "_blank");
 			await expect(link).toHaveAttribute("rel", "noopener noreferrer");
@@ -58,7 +58,7 @@ for (const { page, key, button, address } of tools) {
 			await app.open(page);
 			const [tab] = await Promise.all([
 				app.page.context().waitForEvent("page"),
-				opener(app.page, button).click(),
+				app.page.getByRole("link", { name: button }).click(),
 			]);
 			await tab.waitForLoadState();
 			expect(tab.url()).toBe(address);
@@ -70,16 +70,15 @@ for (const { page, key, button, address } of tools) {
 				tools: { [key]: "https://tool.example.test/room" },
 			});
 			await app.open(page);
-			await expect(opener(app.page, button)).toHaveAttribute(
-				"href",
-				"https://tool.example.test/room",
-			);
+			await expect(
+				app.page.getByRole("link", { name: button }),
+			).toHaveAttribute("href", "https://tool.example.test/room");
 		});
 
 		test("leaves the tool out when it has no address", async ({ app }) => {
 			await useConfig(app.page, { tools: { [key]: "" } });
 			await app.open(page);
-			await expect(opener(app.page, button)).toHaveCount(0);
+			await expect(app.page.getByRole("link", { name: button })).toHaveCount(0);
 		});
 	});
 }
@@ -89,15 +88,8 @@ test.describe("student.html", () => {
 		app,
 	}) => {
 		await app.open("student.html");
-		const links = app.page.locator("a[data-tool=student]");
-		await expect(links).toHaveText([
-			"Ada Lovelace",
-			"Alan Turing",
-			"Charles Babbage",
-			"Edsger Dijkstra",
-			"Grace Hopper",
-			"Katherine Johnson",
-		]);
+		const links = app.page.getByRole("main").getByRole("link");
+		await expect(links).toHaveText(students);
 		for (const link of await links.all()) {
 			await expect(link).toHaveAttribute("href", "https://varmapp.com/");
 			await expect(link).toHaveAttribute("target", "_blank");
@@ -114,17 +106,15 @@ test.describe("with embedTools set", () => {
 	});
 
 	for (const { page, key, button, address } of tools) {
-		test(`${page} shows the tool in a sandboxed frame while the popup is open`, async ({
+		test(`${page} shows the tool in a sandboxed frame while the dialog is open`, async ({
 			app,
 		}) => {
 			await app.open(page);
 			await expect(app.page.locator("iframe")).toHaveCount(0);
 			expect(app.backend.hosts, "hosts contacted before the click").toEqual([]);
 
-			await opener(app.page, button).click();
-			const frame = app.page.locator(
-				".ui-popup-active iframe, dialog[open] iframe",
-			);
+			await app.page.getByRole("button", { name: button }).click();
+			const frame = app.page.locator("dialog[open] iframe");
 			await expect(frame).toHaveAttribute("src", address);
 			await expect(frame).toHaveAttribute(
 				"sandbox",
@@ -141,43 +131,32 @@ test.describe("with embedTools set", () => {
 				await expect(frame).not.toHaveAttribute("allow", /.*/);
 			}
 			await expect.poll(() => app.backend.frames).toContain(address);
-			// A new page puts focus on its Close button, so Escape reaches the
-			// dialog even when the frame has loaded; an old popup has no such button.
-			const close = app.page.getByRole("button", { name: "Close" });
-			if ((await close.count()) > 0) await expect(close).toBeFocused();
+			// Focus starts on Close, so Escape reaches the dialog even when the
+			// frame has loaded.
+			await expect(
+				app.page.getByRole("button", { name: "Close" }),
+			).toBeFocused();
 
 			await app.page.keyboard.press("Escape");
 			await expect(app.page.locator("iframe")).toHaveCount(0);
 		});
-	}
 
-	for (const { page, button } of tools) {
 		test(`${page} closes the tool with its Close button`, async ({ app }) => {
 			await app.open(page);
-			await opener(app.page, button).click();
-			const close = app.page.getByRole("button", { name: "Close" });
-			test.skip(
-				(await close.count()) === 0,
-				"an old popup has no Close button",
-			);
-			await close.click();
+			await app.page.getByRole("button", { name: button }).click();
+			await app.page.getByRole("button", { name: "Close" }).click();
 			await expect(app.page.locator("iframe")).toHaveCount(0);
 		});
 	}
 
-	test("student.html gives each button its own popup", async ({ app }) => {
+	test("student.html gives each student a button of their own", async ({
+		app,
+	}) => {
 		await app.open("student.html");
-		const buttons = app.page.locator("a[data-tool=student]");
-		await expect(buttons).toHaveCount(6);
-		const targets = await buttons.evaluateAll((links) =>
-			links.map((link) => link.getAttribute("href")),
-		);
-		expect(new Set(targets).size).toBe(6);
-
+		const buttons = app.page.getByRole("main").getByRole("button");
+		await expect(buttons).toHaveText(students);
 		await buttons.nth(2).click();
-		await expect(
-			app.page.locator(".ui-popup-active iframe, dialog[open] iframe"),
-		).toHaveCount(1);
+		await expect(app.page.locator("dialog[open] iframe")).toHaveCount(1);
 		await expect(app.page.locator("iframe")).toHaveCount(1);
 		await app.page.keyboard.press("Escape");
 		await expect(app.page.locator("iframe")).toHaveCount(0);

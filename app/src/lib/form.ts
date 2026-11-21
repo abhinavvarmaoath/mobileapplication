@@ -4,6 +4,7 @@ import { describeFailure } from "./failure";
 
 export type Control =
 	| { kind: "text" | "password" | "email" | "tel"; autocomplete?: string }
+	| { kind: "textarea"; rows?: number }
 	| { kind: "number"; min?: number; max?: number; step?: number | "any" }
 	| {
 			kind: "choice";
@@ -24,14 +25,22 @@ export interface FormSpec {
 	fields: readonly FormField[];
 	submit: string;
 	cancel?: string;
+	/** Said after a successful submit, in a live region. */
+	saved?: string;
 	/** Called with the values once they pass the rules. A throw is shown. */
 	onSubmit(values: Record<string, string>): Promise<void>;
 }
 
+type FieldControl = HTMLInputElement | HTMLTextAreaElement;
+
 interface Rendered {
 	element: HTMLElement;
-	controls: HTMLInputElement[];
+	controls: FieldControl[];
 	error: HTMLElement;
+}
+
+export interface Form {
+	element: HTMLFormElement;
 }
 
 function renderField(field: FormField): Rendered {
@@ -74,6 +83,28 @@ function renderField(field: FormField): Rendered {
 		return { element, controls, error };
 	}
 
+	if (control.kind === "textarea") {
+		const area = h(
+			"textarea",
+			{
+				name: field.name,
+				id: field.name,
+				rows: String(control.rows ?? 3),
+				"aria-describedby": hint ? `${field.name}-hint` : undefined,
+			},
+			field.value,
+		);
+		const element = h(
+			"div",
+			{ class: "field" },
+			h("label", { for: field.name }, field.label),
+			hint,
+			area,
+			error,
+		);
+		return { element, controls: [area], error };
+	}
+
 	const input = h("input", {
 		type: control.kind,
 		name: field.name,
@@ -107,7 +138,7 @@ function renderField(field: FormField): Rendered {
 }
 
 /** A form built from a list of fields, with its rules, messages and busy state. */
-export function renderForm(spec: FormSpec): HTMLFormElement {
+export function renderForm(spec: FormSpec): Form {
 	const fields = spec.fields.map((field) => ({ field, ...renderField(field) }));
 	const summary = h("div", {
 		class: "error-summary",
@@ -116,6 +147,8 @@ export function renderForm(spec: FormSpec): HTMLFormElement {
 		hidden: true,
 	});
 	const failure = h("p", { class: "form-error", role: "alert", hidden: true });
+	// Always present, so that what it says when it fills is announced.
+	const saved = h("p", { class: "form-status", role: "status" });
 	const submit = h(
 		"button",
 		{ type: "submit", class: "button button-primary" },
@@ -130,6 +163,7 @@ export function renderForm(spec: FormSpec): HTMLFormElement {
 		summary,
 		...fields.map((f) => f.element),
 		failure,
+		saved,
 		h("div", { class: "actions" }, cancel, submit),
 	);
 
@@ -138,6 +172,7 @@ export function renderForm(spec: FormSpec): HTMLFormElement {
 		summary.replaceChildren();
 		failure.hidden = true;
 		failure.textContent = "";
+		saved.textContent = "";
 		for (const { controls, error } of fields) {
 			error.hidden = true;
 			error.textContent = "";
@@ -197,6 +232,7 @@ export function renderForm(spec: FormSpec): HTMLFormElement {
 		submit.disabled = true;
 		try {
 			await spec.onSubmit(entered);
+			if (spec.saved) saved.textContent = spec.saved;
 		} catch (error) {
 			failure.textContent =
 				error instanceof FormProblem ? error.message : describeFailure(error);
@@ -206,5 +242,5 @@ export function renderForm(spec: FormSpec): HTMLFormElement {
 			submit.disabled = false;
 		}
 	});
-	return form;
+	return { element: form };
 }
