@@ -28,7 +28,6 @@ const links: Record<string, string[]> = {
 	"team.html": ["index.html", ...studentNav, "chat.html", "videoCall.html"],
 	"chat.html": ["index.html", ...studentNav],
 	"videoCall.html": ["index.html", ...studentNav],
-	"viewTeams.html": studentNav,
 };
 
 test("every page has an expectation", () => {

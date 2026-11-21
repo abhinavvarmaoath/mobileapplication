@@ -1,12 +1,12 @@
-// Serves a directory, the repository root by default, the way a static host
-// would. Used for local work and by the Playwright tests.
+// Serves a directory, dist/ by default, the way a static host would. Used by
+// the Playwright tests and to look at a build.
 import { readFile, stat } from "node:fs/promises";
 import { createServer } from "node:http";
 import { extname, join, resolve, sep } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const root = resolve(
-	process.argv[2] ?? fileURLToPath(new URL("..", import.meta.url)),
+	process.argv[2] ?? fileURLToPath(new URL("../dist", import.meta.url)),
 );
 const port = Number(process.env.PORT ?? 5173);
 

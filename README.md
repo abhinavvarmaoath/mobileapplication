@@ -2,8 +2,8 @@
 
 Mobile web front end for a course grading app. Professors set marks, weights
 and grade ranges per course and grade students. Students estimate and view
-their grades. It was written in 2016 with jQuery Mobile and is being
-modernised step by step; progress and open questions are in
+their grades. It was written in 2016 with jQuery Mobile and has been rebuilt in
+TypeScript with Vite and no framework; the history and open questions are in
 `MODERNISATION_NOTES.md`.
 
 The PHP backend is not in this repo. The pages call it at the addresses in
@@ -21,62 +21,56 @@ npm ci
 npm run dev
 ```
 
-This builds the site into `dist/` and serves it at <http://127.0.0.1:5173/>. `index.html` is the login
-page and needs the backend, or demo mode (see Demo). Pages can also be opened
-directly, for example `set.html`.
+This starts Vite at <http://127.0.0.1:5173/>. The login page needs the backend,
+or demo mode (see Demo). `npm run build` writes the site to `dist/`, and
+`node tools/serve.mjs` serves it the way a static host would.
 
 ## Test
 
 ```sh
 npx playwright install chromium   # once, on a fresh machine
 npm run test:unit                 # Vitest, for the TypeScript in app/
-npm run test:e2e                  # Playwright against a stubbed backend
+npm run test:e2e                  # Playwright against a build, with a stubbed backend
 npm test                          # both
-npm run check                     # lint, types, HTML, vendor, policy and secret
-                                  # checks, then the tests
+npm run check                     # lint, types, HTML, secret and size checks, then the tests
 ```
 
 If Playwright's browser cannot be downloaded, point `CHROMIUM_EXECUTABLE_PATH`
 at a Chromium binary.
 
-Accessibility and HTML problems are counted per page and may only go down.
-After fixing a page, record the new numbers and commit them with the fix:
-
-```sh
-UPDATE_BASELINES=1 npx playwright test accessibility
-npm run lint:html -- --update
-```
+A page may have no axe finding (WCAG 2.2 AA and best practice, in light and
+dark, and in its main states), no HTML problem, and may load at most 50 KB,
+gzipped. Each is a check that fails the build.
 
 ## Configuration
 
 `app/public/js/config.js` holds the backend addresses and the links to
-third-party tools.
-Every page carries a content security policy built from it, so after editing
-that file run:
+third-party tools. It is a separate script, so it can be edited in a built site
+too. Every page carries a content security policy built from it. The build
+writes the policy into the pages; after editing the config in `dist/`, run:
 
 ```sh
 npm run csp
 ```
 
-New pages get the policy when they are built. `npm run check` fails when an
-old page is out of date. The policy allows scripts,
-styles and images only from the app's own origin, requests only to that origin
-and the configured backend, and no frames. A meta tag cannot carry
-`frame-ancestors`, `sandbox` or `report-uri`; set those as response headers
-where the app is hosted.
+The policy allows scripts, styles and images only from the app's own origin,
+requests only to that origin and the configured backend, and no frames. A meta
+tag cannot carry `frame-ancestors`, `sandbox` or `report-uri`; set those as
+response headers where the app is hosted.
 
-The third-party tools open in a new tab. Set `embedTools` in the config to
-open them in a sandboxed frame in the page instead; the policy then allows
-frames from those addresses and no others.
+The third-party tools open in a new tab. Set `embedTools` in the config to open
+them in a sandboxed frame in the page instead; the policy then allows frames
+from those addresses and no others.
 
 ## Demo
 
-Without a backend the app can still run: set `demo: true` in the config
-and `js/demo.js` answers every call in the browser, with two courses, a few
+Without a backend the app can still run: set `demo: true` in the config and an
+in-browser stand-in (`app/src/demo`) answers every call, with two courses, a few
 students, and added classes and saved settings that last for the browser
-session. Nothing is sent anywhere. To write a copy of the app in demo mode:
+session. Nothing is sent anywhere. To write a copy of a build in demo mode:
 
 ```sh
+npm run build
 node tools/build-demo.mjs <empty directory>
 ```
 
@@ -86,12 +80,12 @@ to deploy from GitHub Actions.
 
 ## Layout
 
-- `app/` is the new front end, in TypeScript with Vite: `*.html` are page
-  shells, `src/` the code and styles, `public/js/config.js` the config.
-  `npm run build` assembles `dist/` from it and from the old pages.
-- `*.html` in the root are the old jQuery Mobile pages, replaced one at a time;
-  `css/`, `js/`, `themes/` and `vendor/` are theirs (see `vendor/README.md`).
-- `tests/e2e` holds the specs, `tests/support` the stubbed backend and
-  `tests/baselines` the recorded counts.
-- `tools/` holds the static server, the HTML and vendor checks, the policy
-  generator and the demo build.
+- `app/*.html` are the page shells, one per screen, with the same names the
+  pages have always had. `app/src` holds the code: `api` is the typed client
+  for the backend, `forms` the field rules, `lib` the shell, form renderer and
+  other shared pieces, `pages` one module per screen, `demo` the stand-in
+  backend, `styles` the design tokens and components.
+- `tests/e2e` holds the Playwright specs and `tests/support` the stubbed
+  backend. Unit tests sit beside the code in `app/src`.
+- `tools/` holds the static server, the HTML, size and policy tools and the
+  demo build.

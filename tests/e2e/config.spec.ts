@@ -1,5 +1,4 @@
 import { readdirSync, readFileSync } from "node:fs";
-import { metaPattern } from "../../tools/csp.mjs";
 import { type App, expect, test } from "../support/app";
 import { useConfig } from "../support/config";
 import { chooseCourse, chooseStudent } from "../support/screens";
@@ -59,20 +58,16 @@ test("nothing but the config names a host", () => {
 			.filter(keep)
 			.map((name) => new URL(`${dir}${name}`, repo));
 	const files = [
-		// The old pages and their scripts, until they are replaced.
-		...names("", (name) => name.endsWith(".html"), false),
-		...names("js/", (name) => name.endsWith(".js")),
-		// The new pages and the code behind them.
 		...names("app/", (name) => name.endsWith(".html")),
 		...names(
 			"app/src/",
 			(name) => name.endsWith(".ts") && !name.endsWith(".test.ts"),
 		),
 	];
-	expect(files.length).toBeGreaterThan(10);
+	expect(files.length).toBeGreaterThan(20);
 	for (const file of files) {
-		// The policy meta is generated from the config and checked by csp.spec.
-		const source = readFileSync(file, "utf8").replace(metaPattern, "");
-		expect(source, file.pathname).not.toMatch(/https?:\/\//);
+		expect(readFileSync(file, "utf8"), file.pathname).not.toMatch(
+			/https?:\/\//,
+		);
 	}
 });

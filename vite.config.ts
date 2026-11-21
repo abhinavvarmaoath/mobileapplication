@@ -28,16 +28,13 @@ function policy(): Plugin {
 	};
 }
 
-// tools/build.mjs owns dist/: it copies app/public and the old pages, and runs
-// this build for the pages in app/.
 export default defineConfig({
 	customLogger: logger,
 	root,
 	base: "./",
-	publicDir: false,
 	build: {
 		outDir: "../dist",
-		emptyOutDir: false,
+		emptyOutDir: true,
 		rollupOptions: {
 			input: Object.fromEntries(
 				pages.map((name) => [

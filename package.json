@@ -10,18 +10,17 @@
   "scripts": {
     "lint": "biome check .",
     "format": "biome format --write .",
-    "dev": "node tools/build.mjs && node tools/serve.mjs dist",
-    "build": "node tools/build.mjs",
+    "dev": "vite",
+    "build": "vite build",
     "typecheck": "tsc --noEmit && tsc --noEmit -p app",
     "test": "npm run test:unit && npm run test:e2e",
     "test:unit": "vitest run",
     "test:e2e": "playwright test",
-    "check": "npm run lint && npm run typecheck && npm run lint:html && npm run check:vendor && npm run check:csp && npm run scan:secrets && npm test",
+    "check": "npm run lint && npm run typecheck && npm run lint:html && npm run scan:secrets && npm run check:budget && npm test",
     "lint:html": "node tools/check-html.mjs",
-    "check:vendor": "node tools/check-vendor.mjs",
     "csp": "node tools/csp.mjs",
-    "check:csp": "node tools/csp.mjs --check",
-    "scan:secrets": "secretlint \"**/*\""
+    "scan:secrets": "secretlint \"**/*\"",
+    "check:budget": "npm run build && node tools/check-budget.mjs"
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.14.0",

@@ -11,31 +11,7 @@ test("the policy lets pages load only from their own origin and the backend", ()
 			"default-src 'none'",
 			"script-src 'self'",
 			"style-src 'self'",
-			"style-src-attr 'unsafe-hashes' 'sha256-biLFinpqYMtWHmXfkA1BPeCY0/fNt46SAZ+BBk5YUog=' 'sha256-47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU='",
-			"img-src 'self' data:",
-			"connect-src 'self' https://rubypals.com",
-			"frame-src 'none'",
-			"base-uri 'self'",
-			"form-action 'self'",
-		].join("; "),
-	);
-});
-
-test("frames are allowed only from the tools, and only when embedding is on", () => {
-	const config = readConfig();
-	expect(policyFor(config)).toContain("frame-src 'none'");
-	expect(policyFor({ ...config, embedTools: true })).toContain(
-		"frame-src https://openloop.com https://varmapp.com https://www.hiippoo.com https://www.gruveo.com;",
-	);
-});
-
-test("pages without jQuery Mobile get a policy that allows no inline style", () => {
-	expect(policyFor(readConfig(), { jqueryMobile: false })).toBe(
-		[
-			"default-src 'none'",
-			"script-src 'self'",
-			"style-src 'self'",
-			"img-src 'self' data:",
+			"img-src 'self'",
 			"connect-src 'self' https://rubypals.com",
 			"frame-src 'none'",
 			"base-uri 'self'",

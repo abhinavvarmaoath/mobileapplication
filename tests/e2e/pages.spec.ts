@@ -18,7 +18,6 @@ const hostsOnLoad: Record<string, string[]> = {
 	"team.html": [],
 	"chat.html": [],
 	"videoCall.html": [],
-	"viewTeams.html": [],
 };
 
 test("every page has an expectation", () => {

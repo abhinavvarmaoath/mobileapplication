@@ -6,14 +6,7 @@
     "useIgnoreFile": true
   },
   "files": {
-    "includes": [
-      "**",
-      "!**/*.html",
-      "!**/*.md",
-      "!themes",
-      "!vendor",
-      "!package-lock.json"
-    ],
+    "includes": ["**", "!**/*.html", "!**/*.md", "!package-lock.json"],
     "ignoreUnknown": true
   },
   "formatter": {

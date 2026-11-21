@@ -194,7 +194,7 @@ test("the demo build is the app with demo mode on and its own policy", async () 
 			expect(withPolicy(html, config), page).toBe(html);
 		}
 		expect(await readdir(site)).toEqual(
-			expect.arrayContaining(["css", "js", "themes", "vendor", "index.html"]),
+			expect.arrayContaining(["assets", "js", "index.html"]),
 		);
 		// It will not write over an existing site.
 		expect(() =>

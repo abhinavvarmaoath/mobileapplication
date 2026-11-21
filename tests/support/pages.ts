@@ -14,5 +14,4 @@ export const pages = [
 	"team.html",
 	"chat.html",
 	"videoCall.html",
-	"viewTeams.html",
 ];
