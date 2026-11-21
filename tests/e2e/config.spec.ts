@@ -1,6 +1,7 @@
 import { readdirSync, readFileSync } from "node:fs";
 import { type App, expect, test } from "../support/app";
 import { useConfig } from "../support/config";
+import { pages } from "../support/pages";
 import { chooseCourse, chooseStudent, openSettings } from "../support/screens";
 
 // grade.html makes all three kinds of call: the course list, the student
@@ -41,14 +42,18 @@ test("calls the addresses set in js/config.js", async ({ app }) => {
 	]);
 });
 
-test("no page script names a host except config.js", () => {
-	const dir = new URL("../../js/", import.meta.url);
-	const scripts = readdirSync(dir).filter(
-		(name) => name.endsWith(".js") && name !== "config.js",
-	);
-	expect(scripts.length).toBeGreaterThan(0);
-	for (const name of scripts) {
-		const source = readFileSync(new URL(name, dir), "utf8");
-		expect(source, name).not.toMatch(/https?:\/\//);
+test("nothing but js/config.js names a host", () => {
+	const scripts = new URL("../../js/", import.meta.url);
+	const files = [
+		...readdirSync(scripts)
+			.filter((name) => name.endsWith(".js") && name !== "config.js")
+			.map((name) => new URL(name, scripts)),
+		...pages.map((page) => new URL(`../../${page}`, import.meta.url)),
+	];
+	expect(files.length).toBeGreaterThan(pages.length);
+	for (const file of files) {
+		expect(readFileSync(file, "utf8"), file.pathname).not.toMatch(
+			/https?:\/\//,
+		);
 	}
 });

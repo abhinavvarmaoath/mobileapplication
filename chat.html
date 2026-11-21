@@ -10,6 +10,8 @@
 		<link rel="stylesheet" href="themes/jquery.mobile.icons.min.css" />
 		<script src="vendor/jquery-1.8.2.min.js"></script>
 		<script src="vendor/jquery.mobile-1.4.1.min.js"></script>
+		<script src="js/config.js"></script>
+		<script src="js/tools.js"></script>
 
 	</head>
 	<body>
@@ -28,10 +30,7 @@
 			
 			<div data-role="content" data-theme="b" style="background-color:#000;">
 			<h2 style="color:#fff">Chat now</h2>
-<a href="#popupVideo" data-rel="popup" data-position-to="window" data-role="button">Chat now!</a>
-<div data-role="popup" id="popupVideo" data-overlay-theme="b" data-theme="a" data-tolerance="15,15" class="ui-content">
-<iframe width="600" height="600" src="http://www.hiippoo.com/chatroom1.php?team=hello" frameborder="0" allowfullscreen></iframe>
-</div>
+<a data-tool="chat" data-role="button">Chat now!</a>
 
 				<p>
 				</p>

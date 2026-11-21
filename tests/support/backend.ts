@@ -66,7 +66,7 @@ export class Backend {
 	readonly frames: string[] = [];
 	/** Requests that were refused. */
 	readonly blocked: string[] = [];
-	/** API requests that were not made over HTTPS. */
+	/** Requests that were not made over HTTPS. */
 	readonly insecure: string[] = [];
 	/** Hosts that answer as the backend. */
 	readonly apiHosts = new Set(["rubypals.com"]);
@@ -93,6 +93,7 @@ export class Backend {
 		const request = route.request();
 		const url = new URL(request.url());
 		if (!this.hosts.includes(url.hostname)) this.hosts.push(url.hostname);
+		if (url.protocol !== "https:") this.insecure.push(request.url());
 
 		if (this.apiHosts.has(url.hostname)) return this.api(route, url);
 		if (request.resourceType() === "document") {
@@ -109,7 +110,6 @@ export class Backend {
 	private async api(route: Route, url: URL): Promise<void> {
 		const request = route.request();
 		const endpoint = url.pathname.split("/").pop() ?? "";
-		if (url.protocol !== "https:") this.insecure.push(request.url());
 		const call: Call = {
 			url: request.url(),
 			method: request.method(),

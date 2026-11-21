@@ -46,7 +46,7 @@ export const test = base.extend<{ app: App }>({
 		expect(app.consoleLogs, "the page wrote to the console").toEqual([]);
 		expect(
 			app.backend.insecure,
-			"the page called the backend without HTTPS",
+			"the page made a request without HTTPS",
 		).toEqual([]);
 	},
 });

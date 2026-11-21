@@ -46,7 +46,7 @@ Held until the open questions are answered: B1, B4, B11, the LICENSE choice.
 | 1 Safety net | done |
 | 2 Clean-up | done |
 | 3 Bug fixes | done, except the held items |
-| 4 Hardening | in progress: S1 done, S5, S6 and T7 to do |
+| 4 Hardening | in progress: S1 done, S5 under way, S6 and T7 to do |
 
 Commands are in `README.md`. In a sandbox without Playwright's own browser,
 set `CHROMIUM_EXECUTABLE_PATH` to a Chromium binary before `npm test`.
@@ -108,7 +108,9 @@ Security
   `innerHTML`.
 - S3 Retire jQuery 1.8.2 and jQuery Mobile with the UI replacement.
 - S4 Server-side authentication and access control. Blocked on the backend.
-- S5 Third-party iframes (chat, video, materials).
+- S5 Third-party iframes (chat, video, materials). The tools now open as links
+  in a new tab, with their addresses in `js/config.js`. Optional embedding in
+  sandboxed frames is still to do.
 - S6 Content-Security-Policy.
 - S7 Form hygiene (`autocomplete`, input types, logging). Done. jQuery
   Mobile forces `autocomplete="off"`, so `index.html` and `signup.html` carry

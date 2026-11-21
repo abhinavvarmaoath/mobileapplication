@@ -6,8 +6,8 @@ import { pages } from "../support/pages";
 const hostsOnLoad: Record<string, string[]> = {
 	"index.html": [],
 	"signup.html": [],
-	"prohome.html": ["openloop.com"],
-	"student.html": ["varmapp.com"],
+	"prohome.html": [],
+	"student.html": [],
 	"stuhome.html": [],
 	"set.html": ["rubypals.com"],
 	"set1.html": ["rubypals.com"],
@@ -15,9 +15,9 @@ const hostsOnLoad: Record<string, string[]> = {
 	"grade.html": ["rubypals.com"],
 	"grades.html": ["rubypals.com"],
 	"viewGrades.html": [],
-	"team.html": ["varmapp.com"],
-	"chat.html": ["www.hiippoo.com"],
-	"videoCall.html": ["www.gruveo.com"],
+	"team.html": [],
+	"chat.html": [],
+	"videoCall.html": [],
 	"viewTeams.html": [],
 };
 

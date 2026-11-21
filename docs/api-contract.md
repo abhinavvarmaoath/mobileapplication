@@ -34,13 +34,21 @@ read as JSON. No request carries a session, token or user id.
 
 `viewGrades.html` always sends `CourseId=1` and `StudentId=1`.
 
-## Embedded third-party pages
+## Third-party tools
 
-| Host | Used for | Page |
-| --- | --- | --- |
-| `openloop.com` | course greensheet | `prohome.html` |
-| `varmapp.com` | course material list, student popups | `team.html`, `student.html` |
-| `www.hiippoo.com` | chat room `team=hello` | `chat.html` |
-| `www.gruveo.com` | video call widget | `videoCall.html` |
+The pages link to these tools and each opens in a new tab. The addresses are
+`tools` in `js/config.js`, and a tool with an empty address is left out.
+
+| Tool | Default address | Used for | Page |
+| --- | --- | --- | --- |
+| `greensheet` | `https://openloop.com/education/classes/sjsu_engr/engr_mobile_dev/fall2015/index.php` | course greensheet | `prohome.html` |
+| `materials` | `https://varmapp.com/list_files.php` | course material list | `team.html` |
+| `chat` | `https://www.hiippoo.com/chatroom1.php?team=hello` | chat room `team=hello` | `chat.html` |
+| `video` | `https://www.gruveo.com/embed/` | video call widget | `videoCall.html` |
+| `student` | `https://varmapp.com/` | the same page for every student | `student.html` |
+
+The tools used to be framed inside the pages over plain HTTP. The HTTPS
+addresses are assumptions: those sites have not been checked and some may no
+longer exist.
 
 jQuery and jQuery Mobile are served from `vendor/`, not from a CDN.

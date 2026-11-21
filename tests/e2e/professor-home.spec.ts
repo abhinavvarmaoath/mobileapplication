@@ -1,8 +1,5 @@
 import { type App, expect, test } from "../support/app";
 
-const greensheet =
-	"http://openloop.com/education/classes/sjsu_engr/engr_mobile_dev/fall2015/index.php";
-
 async function addClass(app: App): Promise<void> {
 	const { page } = app;
 	await page.getByRole("button", { name: "Add a class" }).click();
@@ -47,45 +44,6 @@ test.describe("professor home", () => {
 		await expect(app.page.locator("a", { hasText: "Logout" })).toHaveAttribute(
 			"href",
 			"index.html",
-		);
-	});
-
-	test("embeds the greensheet from a third-party host on every load", async ({
-		app,
-	}) => {
-		const frame = app.page.locator("iframe");
-		await expect(frame).toHaveAttribute("src", greensheet);
-		expect(new Set(app.backend.frames)).toEqual(new Set([greensheet]));
-	});
-});
-
-test.describe("student list", () => {
-	test.beforeEach(async ({ app }) => {
-		await app.open("student.html");
-	});
-
-	test("lists six students, each with its own button", async ({ app }) => {
-		await expect(app.page.locator('a[data-rel="popup"]')).toHaveCount(6);
-	});
-
-	test("gives each popup its own id", async ({ app }) => {
-		for (const number of [1, 2, 3, 4, 5, 6]) {
-			await expect(
-				app.page.locator(`[id="popupStudent${number}"]`),
-			).toHaveCount(1);
-		}
-	});
-
-	test("opens the popup of the button that was pressed", async ({ app }) => {
-		const popupFrame = app.page.locator(".ui-popup-active iframe");
-		await app.page.locator('a[data-rel="popup"]').nth(2).click();
-		await expect(popupFrame).toHaveAttribute("src", "http://varmapp.com");
-		await app.page.keyboard.press("Escape");
-		await expect(popupFrame).toHaveCount(0);
-		await app.page.locator('a[data-rel="popup"]').first().click();
-		await expect(popupFrame).toHaveAttribute(
-			"src",
-			"http://varmapp.com/index.html",
 		);
 	});
 });

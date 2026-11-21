@@ -11,7 +11,8 @@ const professorNav = [
 const studentNav = ["stuhome.html", "team.html", "viewGrades.html"];
 
 // Every link target on each page, in document order. Links that only open a
-// popup (href="#...") are left out.
+// popup (href="#...") and links to third-party tools, which tools.spec covers,
+// are left out.
 const links: Record<string, string[]> = {
 	"index.html": ["signup.html"],
 	"signup.html": [],
@@ -42,7 +43,7 @@ for (const [path, expected] of Object.entries(links)) {
 			.evaluateAll((anchors) =>
 				anchors
 					.map((anchor) => anchor.getAttribute("href") ?? "")
-					.filter((href) => !href.startsWith("#")),
+					.filter((href) => !/^(#|https:)/.test(href)),
 			);
 		expect(hrefs).toEqual(expected);
 	});

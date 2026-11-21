@@ -10,6 +10,8 @@
 		<link rel="stylesheet" href="themes/jquery.mobile.icons.min.css" />
 		<script src="vendor/jquery-1.8.2.min.js"></script>
 		<script src="vendor/jquery.mobile-1.4.1.min.js"></script>
+		<script src="js/config.js"></script>
+		<script src="js/tools.js"></script>
 
 	</head>
 	<body>
@@ -31,10 +33,7 @@
 <br/>
     <div data-role="controlgroup" data-type="vertical">
     
-    <a href="#popupVideo" data-rel="popup" data-position-to="window" data-role="button">Download Course Material</a>
-<div data-role="popup" id="popupVideo" data-overlay-theme="b" data-theme="a" data-tolerance="15,15" class="ui-content">
-<iframe width="400" height="500" src="http://varmapp.com/list_files.php" frameborder="0" allowfullscreen></iframe>
-</div>
+    <a data-tool="materials" data-role="button">Download Course Material</a>
       <a href="chat.html" rel="external" class="ui-btn" style="color:#000; background-color:#fff;">Chat</a>
      
      
