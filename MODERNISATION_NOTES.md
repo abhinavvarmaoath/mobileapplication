@@ -36,6 +36,10 @@ session.
    `select` and `details` in place of the template widgets, delete dead
    weight, neutral demo data.
 3. Bug fixes: B2, B3, B5-B8, B12, B14, S2, S7.
+4. Hardening: S1, S5, S6, T7. The roadmap listed T7 and the optional embedding
+   as needing approval; "go ahead with phase 4" was taken to cover them. The
+   Pages deploy is the one part left switched off, because turning it on is a
+   repository setting.
 
 Held until the open questions are answered: B1, B4, B11, the LICENSE choice.
 
@@ -57,13 +61,29 @@ Where the work differs from the plan:
   pages exactly as a static host would. Add Vite with the new front end.
 - Vitest is deferred until there is logic to unit-test.
 - Workflow actions use major tags (`checkout@v6`, `setup-node@v6`,
-  `upload-artifact@v4`). Pin them to commit SHAs once the SHAs can be checked
-  against the official repositories; Dependabot keeps the tags current.
+  `upload-artifact@v4`, and in `pages.yml` `configure-pages@v6`,
+  `upload-pages-artifact@v5`, `deploy-pages@v5`). The Pages versions came from
+  a web search of cached results, so confirm them on the official releases
+  pages. Pin the tags to commit SHAs once the SHAs can be checked against the
+  official repositories; Dependabot keeps the tags current.
 - Secret scanning uses secretlint instead of gitleaks so it runs locally and
   in CI without a third-party action.
 - jQuery and jQuery Mobile are served from `vendor/`, not a CDN. jQuery Mobile
   is 1.4.1, where the pages asked for 1.4.0 (and the setup pages also for
   1.4.5): 1.4.0 is not on npm and 1.4.1 is what the tests have always run.
+
+What Phase 4 changed that a visitor can see:
+
+- Google Fonts is gone, so every page uses the theme's font stack.
+- The header title is dark on every page, as it already was on four.
+- Chat, video, materials, the greensheet and the student buttons open in a new
+  tab instead of a popup frame. The six student buttons all go to
+  `https://varmapp.com/`; the first used to go to `/index.html`.
+- Setting `demo` in `js/config.js` runs the whole app without a backend.
+
+Assumptions nobody has checked: that the backend and the tool sites answer on
+HTTPS (the backend is never contacted from here), and that those sites still
+exist.
 
 Tool versions at the time of writing: Node 24 (22.22 minimum), Biome 2.6,
 TypeScript 7.0, Playwright 1.64, axe-core 4.14, html-validate 11.17,
@@ -139,10 +159,16 @@ Security
 Not done, and worth doing soon
 
 - Double-submit protection on the save buttons.
-- `<html lang>` is missing on every page and the iframes have no `title`.
-- The orange header and nav fail contrast (see `tests/baselines/axe.json`),
+- `<html lang>` is missing on every page.
+- The orange nav buttons still fail contrast (see `tests/baselines/axe.json`),
   and the Logout button on the two home pages is clipped to 30 by 10 pixels.
 - Pin the workflow actions to commit SHAs.
+- jQuery 1.8.2 and jQuery Mobile 1.4.1 are old and unmaintained, and
+  `npm audit` cannot see them. The policy limits what an injected script could
+  do; retiring them is S3.
+- The policy needs `'unsafe-hashes'` for jQuery Mobile's popup styles
+  (Chrome 69, Firefox 105, Safari 15.4). Older browsers lose only the popups.
+- Only Chromium has run the specs.
 
 Later phases, not approved yet
 
@@ -161,16 +187,17 @@ npm ci
 npm run check
 ```
 
-`npm run check` runs lint, types, the HTML and secret checks and the
-Playwright suite (123 specs). After a fix that improves a page, record the
-new counts and commit them with the fix (commands in `README.md`). Push after
-every commit: a sandbox that is reclaimed loses anything that was not pushed.
+`npm run check` runs lint, types, the HTML, vendor, policy and secret checks and
+the Playwright suite (158 specs). After editing `js/config.js` run
+`npm run csp`. After a fix that improves a page, record the new counts and
+commit them with the fix (commands in `README.md`). Push after every commit: a
+sandbox that is reclaimed loses anything that was not pushed.
 
 ## Open questions
 
 1. Can sample live replies be captured (login success and failure per role,
    save errors), or is the backend gone?
-2. Does the backend support HTTPS?
+2. Does the backend, and each third-party tool site, support HTTPS?
 3. What does "max marks" mean in setup, and are marks graded out of it?
 4. Framework for the new front end: none (default), or React, Vue, Svelte?
 5. Approval needed for: replacing jQuery Mobile, any AI server component. The
