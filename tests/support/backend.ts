@@ -56,7 +56,7 @@ function parseForm(body: string | null): Record<string, string[]> {
 }
 
 /**
- * Stands in for everything outside the local server: fonts, the PHP API and
+ * Stands in for everything outside the local server: the PHP API and
  * third-party iframes. Nothing leaves the machine.
  */
 export class Backend {
@@ -91,9 +91,6 @@ export class Backend {
 		const url = new URL(request.url());
 		if (!this.hosts.includes(url.hostname)) this.hosts.push(url.hostname);
 
-		if (url.hostname === "fonts.googleapis.com") {
-			return route.fulfill({ contentType: "text/css", body: "" });
-		}
 		if (url.hostname === apiHost) return this.api(route, url);
 		if (request.resourceType() === "document") {
 			this.frames.push(request.url());

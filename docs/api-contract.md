@@ -36,6 +36,5 @@ read as JSON. No request carries a session, token or user id.
 | `varmapp.com` | course material list, student popups | `team.html`, `student.html` |
 | `www.hiippoo.com` | chat room `team=hello` | `chat.html` |
 | `www.gruveo.com` | video call widget | `videoCall.html` |
-| `fonts.googleapis.com` | Roboto | most pages |
 
 jQuery and jQuery Mobile are served from `vendor/`, not from a CDN.
