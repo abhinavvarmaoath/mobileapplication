@@ -99,3 +99,73 @@ test.describe("student.html", () => {
 		expect(app.backend.hosts, "hosts contacted before a click").toEqual([]);
 	});
 });
+
+test.describe("with embedTools set", () => {
+	test.beforeEach(async ({ app }) => {
+		await useConfig(app.page, { embedTools: true });
+	});
+
+	for (const { page, key, button, address } of tools) {
+		test(`${page} shows the tool in a sandboxed frame while the popup is open`, async ({
+			app,
+		}) => {
+			await app.open(page);
+			await expect(app.page.locator("iframe")).toHaveCount(0);
+			expect(app.backend.hosts, "hosts contacted before the click").toEqual([]);
+
+			await app.page.getByRole("button", { name: button }).click();
+			const frame = app.page.locator(".ui-popup-active iframe");
+			await expect(frame).toHaveAttribute("src", address);
+			await expect(frame).toHaveAttribute(
+				"sandbox",
+				"allow-forms allow-popups allow-same-origin allow-scripts",
+			);
+			await expect(frame).toHaveAttribute("referrerpolicy", "no-referrer");
+			await expect(frame).toHaveAttribute("title", button);
+			if (key === "video") {
+				await expect(frame).toHaveAttribute(
+					"allow",
+					"camera; microphone; fullscreen",
+				);
+			} else {
+				await expect(frame).not.toHaveAttribute("allow", /.*/);
+			}
+			await expect.poll(() => app.backend.frames).toContain(address);
+
+			await app.page.keyboard.press("Escape");
+			await expect(app.page.locator("iframe")).toHaveCount(0);
+		});
+	}
+
+	test("student.html gives each button its own popup", async ({ app }) => {
+		await app.open("student.html");
+		const buttons = app.page.locator("a[data-tool=student]");
+		await expect(buttons).toHaveCount(6);
+		const targets = await buttons.evaluateAll((links) =>
+			links.map((link) => link.getAttribute("href")),
+		);
+		expect(new Set(targets).size).toBe(6);
+
+		await buttons.nth(2).click();
+		await expect(app.page.locator(".ui-popup-active iframe")).toHaveCount(1);
+		await expect(app.page.locator("iframe")).toHaveCount(1);
+		await app.page.keyboard.press("Escape");
+		await expect(app.page.locator("iframe")).toHaveCount(0);
+	});
+
+	test("a frame to a host that is not a tool is still refused", async ({
+		app,
+	}) => {
+		await app.open("chat.html");
+		await app.page.evaluate(() => {
+			const frame = document.createElement("iframe");
+			frame.src = "https://frame.example.test/";
+			document.body.append(frame);
+		});
+		await expect
+			.poll(() => app.cspViolations.join("\n"))
+			.toContain("frame-src https://openloop.com");
+		app.takeCspViolations();
+		expect(app.backend.hosts).toEqual([]);
+	});
+});

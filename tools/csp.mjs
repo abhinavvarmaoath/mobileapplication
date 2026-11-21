@@ -18,22 +18,29 @@ function hashOf(text) {
 	return `'sha256-${createHash("sha256").update(text).digest("base64")}'`;
 }
 
+/** @param {string[]} addresses */
+function originsOf(addresses) {
+	return [...new Set(addresses.map((address) => new URL(address).origin))];
+}
+
 /** @param {Record<string, unknown>} config */
 export function policyFor(config) {
 	// A demo answers every request itself, so it needs no backend origin.
 	const backends = config.demo
 		? []
-		: [config.apiBase, config.lookupBase].map(
-				(address) => new URL(String(address)).origin,
-			);
+		: originsOf([String(config.apiBase), String(config.lookupBase)]);
+	const tools = /** @type {Record<string, string>} */ (config.tools ?? {});
+	const frames = config.embedTools
+		? originsOf(Object.values(tools).filter(Boolean))
+		: [];
 	return [
 		"default-src 'none'",
 		"script-src 'self'",
 		"style-src 'self'",
 		`style-src-attr 'unsafe-hashes' ${popupStyles.map(hashOf).join(" ")}`,
 		"img-src 'self' data:",
-		["connect-src 'self'", ...new Set(backends)].join(" "),
-		"frame-src 'none'",
+		["connect-src 'self'", ...backends].join(" "),
+		["frame-src", ...(frames.length > 0 ? frames : ["'none'"])].join(" "),
 		"base-uri 'self'",
 		"form-action 'self'",
 	].join("; ");

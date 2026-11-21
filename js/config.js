@@ -9,6 +9,11 @@ window.EasyGrader = {
 	apiBase: "https://rubypals.com/phonegapstyle/phpcode/",
 	// get_course.php and get_students_by_course.php.
 	lookupBase: "https://rubypals.com/cmpe235/phpcode/",
+	// Open the tools in a sandboxed frame in the page instead of a new tab. Run
+	// npm run csp afterwards, so the policy allows those frames. A tool must be
+	// on another origin: a sandboxed frame that shares this origin and may run
+	// scripts can lift its own sandbox.
+	embedTools: false,
 	// Pages that link to a tool leave it out when its address is empty.
 	tools: {
 		greensheet:

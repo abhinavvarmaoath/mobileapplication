@@ -127,3 +127,10 @@ a.ui-btn.plain-button {
 button.ui-btn.submit-offset {
 	margin-left: 60%;
 }
+
+.tool-frame {
+	display: block;
+	width: min(90vw, 480px);
+	height: min(70vh, 560px);
+	border: 0;
+}

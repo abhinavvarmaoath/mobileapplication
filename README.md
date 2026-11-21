@@ -54,6 +54,10 @@ that file run:
 npm run csp
 ```
 
+Set `embedTools` there to open the third-party tools in a sandboxed frame in
+the page instead of a new tab; the policy then allows frames from those
+addresses and no others.
+
 `npm run check` fails when a page is out of date. The policy allows scripts,
 styles and images only from the app's own origin, requests only to that origin
 and the configured backend, and no frames. A meta tag cannot carry

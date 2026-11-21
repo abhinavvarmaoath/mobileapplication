@@ -46,7 +46,7 @@ Held until the open questions are answered: B1, B4, B11, the LICENSE choice.
 | 1 Safety net | done |
 | 2 Clean-up | done |
 | 3 Bug fixes | done, except the held items |
-| 4 Hardening | S1, S6 and T7 done; S5 half done (links, no optional embedding) |
+| 4 Hardening | done: S1, S5, S6, T7 (the Pages deploy is switched off) |
 
 Commands are in `README.md`. In a sandbox without Playwright's own browser,
 set `CHROMIUM_EXECUTABLE_PATH` to a Chromium binary before `npm test`.
@@ -108,9 +108,13 @@ Security
   `innerHTML`.
 - S3 Retire jQuery 1.8.2 and jQuery Mobile with the UI replacement.
 - S4 Server-side authentication and access control. Blocked on the backend.
-- S5 Third-party iframes (chat, video, materials). The tools now open as links
-  in a new tab, with their addresses in `js/config.js`. Optional embedding in
-  sandboxed frames is still to do.
+- S5 Third-party iframes (chat, video, materials). Done. The tools open as
+  links in a new tab, with their addresses in `js/config.js`. With
+  `embedTools` they open in a sandboxed frame in a popup (`sandbox`,
+  `referrerpolicy`, camera and microphone for the video tool only). The frame
+  is created when the popup opens and removed when it closes, and the policy
+  allows frames from the tool origins only while `embedTools` is on. The tool
+  sites themselves are unchecked and some may be gone.
 - S6 Content-Security-Policy. Done, as a meta tag built by `tools/csp.mjs` from
   `js/config.js`. The page scripts moved to `js/` and the inline styles into
   `css/app.css` first. jQuery Mobile's popup widget writes two style attributes

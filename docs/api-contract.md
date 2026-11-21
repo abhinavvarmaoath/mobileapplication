@@ -39,7 +39,8 @@ read as JSON. No request carries a session, token or user id.
 ## Third-party tools
 
 The pages link to these tools and each opens in a new tab. The addresses are
-`tools` in `js/config.js`, and a tool with an empty address is left out.
+`tools` in `js/config.js`, and a tool with an empty address is left out. With
+`embedTools` set there, each opens in a sandboxed frame in a popup instead.
 
 | Tool | Default address | Used for | Page |
 | --- | --- | --- | --- |

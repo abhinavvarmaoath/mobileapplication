@@ -21,6 +21,14 @@ test("the policy lets pages load only from their own origin and the backend", ()
 	);
 });
 
+test("frames are allowed only from the tools, and only when embedding is on", () => {
+	const config = readConfig();
+	expect(policyFor(config)).toContain("frame-src 'none'");
+	expect(policyFor({ ...config, embedTools: true })).toContain(
+		"frame-src https://openloop.com https://varmapp.com https://www.hiippoo.com https://www.gruveo.com;",
+	);
+});
+
 test("every page carries the policy built from js/config.js", () => {
 	const meta = metaFor(readConfig());
 	for (const page of pages) {
