@@ -6,6 +6,8 @@ export class App {
 	readonly consoleErrors: string[] = [];
 	readonly consoleLogs: string[] = [];
 	readonly pageErrors: string[] = [];
+	/** Messages the browser printed about the page's own policy. */
+	readonly cspViolations: string[] = [];
 	readonly dialogs: string[] = [];
 
 	constructor(
@@ -15,12 +17,20 @@ export class App {
 		page.on("console", (message) => {
 			if (message.type() === "error") this.consoleErrors.push(message.text());
 			if (message.type() === "log") this.consoleLogs.push(message.text());
+			if (/Content Security Policy/i.test(message.text())) {
+				this.cspViolations.push(message.text());
+			}
 		});
 		page.on("pageerror", (error) => this.pageErrors.push(error.message));
 		page.on("dialog", async (dialog) => {
 			this.dialogs.push(dialog.message());
 			await dialog.dismiss();
 		});
+	}
+
+	/** Returns the policy violations so far and forgets them. */
+	takeCspViolations(): string[] {
+		return this.cspViolations.splice(0);
 	}
 
 	async open(path: string): Promise<void> {
@@ -44,6 +54,10 @@ export const test = base.extend<{ app: App }>({
 		await use(app);
 		// Leftover debug output would show up here in every spec.
 		expect(app.consoleLogs, "the page wrote to the console").toEqual([]);
+		expect(
+			app.cspViolations,
+			"the page broke its own content security policy",
+		).toEqual([]);
 		expect(
 			app.backend.insecure,
 			"the page made a request without HTTPS",

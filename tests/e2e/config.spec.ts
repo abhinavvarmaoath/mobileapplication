@@ -1,4 +1,5 @@
 import { readdirSync, readFileSync } from "node:fs";
+import { metaPattern } from "../../tools/csp.mjs";
 import { type App, expect, test } from "../support/app";
 import { useConfig } from "../support/config";
 import { pages } from "../support/pages";
@@ -52,8 +53,8 @@ test("nothing but js/config.js names a host", () => {
 	];
 	expect(files.length).toBeGreaterThan(pages.length);
 	for (const file of files) {
-		expect(readFileSync(file, "utf8"), file.pathname).not.toMatch(
-			/https?:\/\//,
-		);
+		// The policy meta is generated from the config and checked by csp.spec.
+		const source = readFileSync(file, "utf8").replace(metaPattern, "");
+		expect(source, file.pathname).not.toMatch(/https?:\/\//);
 	}
 });

@@ -13,9 +13,11 @@
     "dev": "node tools/serve.mjs",
     "typecheck": "tsc --noEmit",
     "test": "playwright test",
-    "check": "npm run lint && npm run typecheck && npm run lint:html && npm run check:vendor && npm run scan:secrets && npm test",
+    "check": "npm run lint && npm run typecheck && npm run lint:html && npm run check:vendor && npm run check:csp && npm run scan:secrets && npm test",
     "lint:html": "node tools/check-html.mjs",
     "check:vendor": "node tools/check-vendor.mjs",
+    "csp": "node tools/csp.mjs",
+    "check:csp": "node tools/csp.mjs --check",
     "scan:secrets": "secretlint \"**/*\""
   },
   "devDependencies": {

@@ -44,6 +44,22 @@ UPDATE_BASELINES=1 npx playwright test accessibility
 npm run lint:html -- --update
 ```
 
+## Configuration
+
+`js/config.js` holds the backend addresses and the links to third-party tools.
+Every page carries a content security policy built from it, so after editing
+that file run:
+
+```sh
+npm run csp
+```
+
+`npm run check` fails when a page is out of date. The policy allows scripts,
+styles and images only from the app's own origin, requests only to that origin
+and the configured backend, and no frames. A meta tag cannot carry
+`frame-ancestors`, `sandbox` or `report-uri`; set those as response headers
+where the app is hosted.
+
 ## Layout
 
 - `*.html` in the root are the pages.
@@ -51,4 +67,5 @@ npm run lint:html -- --update
   theme; `vendor/` holds jQuery and jQuery Mobile (see its README).
 - `tests/e2e` holds the specs, `tests/support` the stubbed backend and
   `tests/baselines` the recorded counts.
-- `tools/` holds the static server and the HTML and vendor checks.
+- `tools/` holds the static server, the HTML and vendor checks and the policy
+  generator.

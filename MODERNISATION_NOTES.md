@@ -46,7 +46,7 @@ Held until the open questions are answered: B1, B4, B11, the LICENSE choice.
 | 1 Safety net | done |
 | 2 Clean-up | done |
 | 3 Bug fixes | done, except the held items |
-| 4 Hardening | in progress: S1 done, S5 under way, S6 and T7 to do |
+| 4 Hardening | in progress: S1 and S6 done, S5 half done, T7 to do |
 
 Commands are in `README.md`. In a sandbox without Playwright's own browser,
 set `CHROMIUM_EXECUTABLE_PATH` to a Chromium binary before `npm test`.
@@ -111,7 +111,12 @@ Security
 - S5 Third-party iframes (chat, video, materials). The tools now open as links
   in a new tab, with their addresses in `js/config.js`. Optional embedding in
   sandboxed frames is still to do.
-- S6 Content-Security-Policy.
+- S6 Content-Security-Policy. Done, as a meta tag built by `tools/csp.mjs` from
+  `js/config.js`. The page scripts moved to `js/` and the inline styles into
+  `css/app.css` first. jQuery Mobile's popup widget writes two style attributes
+  (`display: none;` and an empty one), which the policy allows by hash. The
+  headers a meta tag cannot carry (`frame-ancestors`, `sandbox`, `report-uri`)
+  are up to whoever hosts the app.
 - S7 Form hygiene (`autocomplete`, input types, logging). Done. jQuery
   Mobile forces `autocomplete="off"`, so `index.html` and `signup.html` carry
   a small script that restores the markup's values. Remove it with jQuery
