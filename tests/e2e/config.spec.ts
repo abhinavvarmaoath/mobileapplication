@@ -2,7 +2,7 @@ import { readdirSync, readFileSync } from "node:fs";
 import { metaPattern } from "../../tools/csp.mjs";
 import { type App, expect, test } from "../support/app";
 import { useConfig } from "../support/config";
-import { chooseCourse, chooseStudent, openSettings } from "../support/screens";
+import { chooseCourse, chooseStudent } from "../support/screens";
 
 // grade.html makes all three kinds of call: the course list, the student
 // list of a course, and a save.
@@ -10,8 +10,17 @@ async function gradeAStudent(app: App): Promise<string[]> {
 	await app.open("grade.html");
 	await chooseCourse(app.page, "CMPE 235");
 	await chooseStudent(app.page, "Ada Lovelace");
-	await openSettings(app.page);
-	await app.page.locator("#gr button[type=submit]").click();
+	for (const name of [
+		"Homework",
+		"Labs",
+		"Project",
+		"Presentation",
+		"Midterm",
+		"Final",
+	]) {
+		await app.page.getByLabel(name, { exact: true }).fill("60");
+	}
+	await app.page.getByRole("button", { name: "Compute grade" }).click();
 	await expect
 		.poll(() => app.backend.callsTo("compute_and_save_grade.php"))
 		.toHaveLength(1);

@@ -22,7 +22,7 @@ const links: Record<string, string[]> = {
 	"set.html": ["index.html", ...professorNav],
 	"set1.html": ["index.html", ...professorNav],
 	"set2.html": ["index.html", ...professorNav],
-	"grade.html": professorNav,
+	"grade.html": ["index.html", ...professorNav],
 	"grades.html": ["index.html", ...studentNav],
 	"viewGrades.html": ["index.html", ...studentNav, "grades.html"],
 	"team.html": ["index.html", ...studentNav, "chat.html", "videoCall.html"],

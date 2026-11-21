@@ -143,11 +143,12 @@ Progress
   started at 60, the weights must total 100 and grade ranges must not overlap
   or run backwards, all before anything is sent. B11 is untouched: marks can
   still go to 500.
-- Old pages left at the repo root: the grading page and the orphan
-  `viewTeams.html`. `js/demo.js` still serves the grading page in demo mode and
-  reads classes in both shapes until it is replaced. New pages get a stricter policy than old ones, because
+- The grading page is rebuilt: the student list follows the course, drops late
+  replies, and forgets the chosen student at once when the course changes.
+- Old files left at the repo root: the orphan `viewTeams.html`, and the old
+  stack that only it uses, `css/`, `js/demo.js`, `themes/` and `vendor/`. New pages get a stricter policy than old ones, because
   nothing needs jQuery Mobile's popup styles.
-- Next: the grading page, then retiring the old stack.
+- Next: retire the old stack, then the budget and accessibility checks.
 
 U4 (setup as one screen) and U5 (the what-if calculator) come after parity,
 because each needs a backend answer: a read endpoint for saved values, and the

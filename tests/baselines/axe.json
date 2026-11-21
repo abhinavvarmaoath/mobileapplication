@@ -1,9 +1,6 @@
 {
   "chat.html": {},
-  "grade.html": {
-    "color-contrast": 5,
-    "html-has-lang": 1
-  },
+  "grade.html": {},
   "grades.html": {},
   "index.html": {},
   "prohome.html": {},

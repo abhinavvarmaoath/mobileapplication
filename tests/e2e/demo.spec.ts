@@ -11,7 +11,6 @@ import {
 	chooseCourse,
 	chooseStudent,
 	courseItems,
-	openSettings,
 	studentItems,
 } from "../support/screens";
 
@@ -24,17 +23,19 @@ const categories = [
 	"Final",
 ];
 
-async function setSliders(
+async function setMarks(
 	app: App,
-	prefix: "M",
 	values: Record<string, number>,
 ): Promise<void> {
-	await openSettings(app.page);
 	for (const name of categories) {
 		await app.page
-			.locator(`[name=${prefix}${name}]`)
+			.getByLabel(name, { exact: true })
 			.fill(String(values[name] ?? 0));
 	}
+}
+
+async function computeGrade(app: App): Promise<void> {
+	await app.page.getByRole("button", { name: "Compute grade" }).click();
 }
 
 async function setWeights(
@@ -50,11 +51,6 @@ async function setWeights(
 
 async function saveWeights(app: App): Promise<void> {
 	await app.page.getByRole("button", { name: "Save weights" }).click();
-}
-
-async function submit(app: App): Promise<void> {
-	await openSettings(app.page);
-	await app.page.locator("#gr button[type=submit]").click();
 }
 
 test.describe("demo mode", () => {
@@ -138,12 +134,12 @@ test.describe("demo mode", () => {
 		await app.open("grade.html");
 		await chooseCourse(app.page, "CMPE 235");
 		await chooseStudent(app.page, "Ada Lovelace");
-		await setSliders(app, "M", { Homework: 80 });
-		await submit(app);
-		await expect(app.page.locator("#totalMarksSaveStatus")).toHaveText(
-			"Computed Grade is :B Total Grade :80% Marks :80",
-			{ useInnerText: true },
-		);
+		await setMarks(app, { Homework: 80 });
+		await computeGrade(app);
+		const result = app.page.getByRole("status");
+		await expect(result).toContainText("Computed grade B");
+		await expect(result).toContainText("Percentage 80");
+		await expect(result).toContainText("Marks 80");
 	});
 
 	test("grades with the default percentages and ranges when none are saved", async ({
@@ -152,11 +148,15 @@ test.describe("demo mode", () => {
 		await app.open("grade.html");
 		await chooseCourse(app.page, "CMPE 235");
 		await chooseStudent(app.page, "Ada Lovelace");
-		await submit(app);
-		await expect(app.page.locator("#totalMarksSaveStatus")).toHaveText(
-			"Computed Grade is :D Total Grade :60% Marks :360",
-			{ useInnerText: true },
+		await setMarks(
+			app,
+			Object.fromEntries(categories.map((name) => [name, 60])),
 		);
+		await computeGrade(app);
+		const result = app.page.getByRole("status");
+		await expect(result).toContainText("Computed grade D");
+		await expect(result).toContainText("Percentage 60");
+		await expect(result).toContainText("Marks 360");
 	});
 
 	test("shows a student's grades", async ({ app }) => {

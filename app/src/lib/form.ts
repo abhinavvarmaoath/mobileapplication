@@ -53,8 +53,21 @@ interface Rendered {
 	error: HTMLElement;
 }
 
+export interface Option {
+	value: string;
+	label: string;
+}
+
 export interface Form {
 	element: HTMLFormElement;
+	/** Replaces a select's options, for choices that depend on another field. */
+	setOptions(
+		name: string,
+		options: readonly Option[],
+		placeholder?: string,
+	): void;
+	/** Says something under a field, in the style of its problems; "" clears it. */
+	setNote(name: string, message: string): void;
 }
 
 function renderField(field: FormField): Rendered {
@@ -290,5 +303,32 @@ export function renderForm(spec: FormSpec): Form {
 			submit.disabled = false;
 		}
 	});
-	return { element: form };
+	function rendered(name: string) {
+		const found = fields.find((f) => f.field.name === name);
+		if (!found) throw new Error(`The form has no field ${name}`);
+		return found;
+	}
+
+	return {
+		element: form,
+		setOptions(name, options, placeholder) {
+			const select = rendered(name).controls[0];
+			if (!(select instanceof HTMLSelectElement)) {
+				throw new Error(`${name} is not a select`);
+			}
+			const first = placeholder ?? select.options[0]?.text ?? "";
+			select.replaceChildren(
+				h("option", { value: "" }, first),
+				...options.map((option) =>
+					h("option", { value: option.value }, option.label),
+				),
+			);
+			select.value = "";
+		},
+		setNote(name, message) {
+			const { error } = rendered(name);
+			error.textContent = message;
+			error.hidden = message === "";
+		},
+	};
 }

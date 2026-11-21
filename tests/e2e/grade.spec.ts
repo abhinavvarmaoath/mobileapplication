@@ -1,26 +1,37 @@
 import { type App, expect, test } from "../support/app";
 import { studentsByCourse } from "../support/data";
-import {
-	chooseCourse,
-	chooseStudent,
-	openSettings,
-	studentItems,
-} from "../support/screens";
+import { chooseCourse, chooseStudent, studentItems } from "../support/screens";
+
+const categories = [
+	"Homework",
+	"Labs",
+	"Project",
+	"Presentation",
+	"Midterm",
+	"Final",
+];
 
 const marks = Object.fromEntries(
-	["Homework", "Labs", "Project", "Presentation", "Midterm", "Final"].map(
-		(category) => [`M${category}`, ["60"]],
-	),
+	categories.map((category) => [`M${category}`, ["60"]]),
 );
 
+const studentPicker = (app: App) =>
+	app.page.getByLabel("Student", { exact: true });
+
+async function fillMarks(app: App, value = "60"): Promise<void> {
+	for (const name of categories) {
+		await app.page.getByLabel(name, { exact: true }).fill(value);
+	}
+}
+
 async function compute(app: App): Promise<void> {
-	await openSettings(app.page);
-	await app.page.locator("#gr button[type=submit]").click();
+	await app.page.getByRole("button", { name: "Compute grade" }).click();
 }
 
 async function computeForStudent(app: App): Promise<void> {
 	await chooseCourse(app.page, "CMPE 235");
 	await chooseStudent(app.page, "Ada Lovelace");
+	await fillMarks(app);
 	await compute(app);
 }
 
@@ -39,48 +50,66 @@ test("loads the students of the chosen course", async ({ app }) => {
 	expect(call?.query).toEqual({ courseId: "1" });
 });
 
-test("fills the hidden ids from the chosen course and student", async ({
-	app,
-}) => {
-	await chooseCourse(app.page, "CMPE 235");
-	await chooseStudent(app.page, "Alan Turing");
-	await expect(app.page.locator("#CourseId")).toHaveValue("1");
-	await expect(app.page.locator("#StudentId")).toHaveValue("8");
-});
-
 test("computes the grade for the chosen course and student", async ({
 	app,
 }) => {
-	await chooseCourse(app.page, "CMPE 235");
-	await chooseStudent(app.page, "Ada Lovelace");
-	await compute(app);
+	await computeForStudent(app);
 	await expect
 		.poll(() => app.backend.callsTo("compute_and_save_grade.php"))
 		.toHaveLength(1);
 	const [call] = app.backend.callsTo("compute_and_save_grade.php");
 	expect(call?.method).toBe("POST");
 	expect(call?.form).toEqual({ CourseId: ["1"], StudentId: ["7"], ...marks });
-	await expect(app.page.locator("#totalMarksSaveStatus")).toHaveText(
-		"Computed Grade is :B Total Grade :81% Marks :400",
-		{ useInnerText: true },
-	);
+	const result = app.page.getByRole("status");
+	await expect(result).toContainText("Computed grade B");
+	await expect(result).toContainText("Percentage 81");
+	await expect(result).toContainText("Marks 400");
 });
 
-test("asks for a course and a student instead of computing", async ({
+test("posts the student that was chosen", async ({ app }) => {
+	await chooseCourse(app.page, "CMPE 235");
+	await chooseStudent(app.page, "Alan Turing");
+	await fillMarks(app);
+	await compute(app);
+	await expect
+		.poll(() => app.backend.callsTo("compute_and_save_grade.php"))
+		.toHaveLength(1);
+	expect(
+		app.backend.callsTo("compute_and_save_grade.php")[0]?.form.StudentId,
+	).toEqual(["8"]);
+});
+
+test("asks for a course, a student and every mark instead of computing", async ({
 	app,
 }) => {
 	await compute(app);
-	await expect(app.page.locator("#totalMarksSaveStatus")).toHaveText(
-		"Choose a course and a student first.",
-	);
+	await expect(app.page.getByRole("alert").getByRole("link")).toHaveText([
+		"Choose a course",
+		"Choose a student",
+		...categories.map((name) => `${name} is required`),
+	]);
+	await app.idle();
 	expect(app.backend.callsTo("compute_and_save_grade.php")).toHaveLength(0);
 });
 
 test("asks for a student when only a course is chosen", async ({ app }) => {
 	await chooseCourse(app.page, "CMPE 235");
+	await fillMarks(app);
 	await compute(app);
-	await expect(app.page.locator("#totalMarksSaveStatus")).toHaveText(
-		"Choose a course and a student first.",
+	await expect(app.page.getByRole("alert").getByRole("link")).toHaveText([
+		"Choose a student",
+	]);
+	expect(app.backend.callsTo("compute_and_save_grade.php")).toHaveLength(0);
+});
+
+test("refuses a mark above 100", async ({ app }) => {
+	await chooseCourse(app.page, "CMPE 235");
+	await chooseStudent(app.page, "Ada Lovelace");
+	await fillMarks(app);
+	await app.page.getByLabel("Final", { exact: true }).fill("101");
+	await compute(app);
+	await expect(app.page.getByRole("alert")).toContainText(
+		"Final must be between 0 and 100",
 	);
 	expect(app.backend.callsTo("compute_and_save_grade.php")).toHaveLength(0);
 });
@@ -95,10 +124,43 @@ test("lists only the students of the chosen course", async ({ app }) => {
 test("forgets the chosen student when the course changes", async ({ app }) => {
 	await chooseCourse(app.page, "CMPE 235");
 	await chooseStudent(app.page, "Ada Lovelace");
-	await expect(app.page.locator("#StudentId")).toHaveValue("7");
+	await expect(studentPicker(app)).toHaveValue("7");
 	await chooseCourse(app.page, "ENGR 297");
-	await expect(app.page.locator("#StudentId")).toHaveValue("");
-	await expect(app.page.locator("#student")).toHaveValue("");
+	await expect(studentPicker(app)).toHaveValue("");
+});
+
+// The old student must not stay chosen while the new list is on its way, or
+// the old student could be sent with the new course.
+test("forgets the chosen student at once, before the new list arrives", async ({
+	app,
+}) => {
+	app.backend.reply("get_students_by_course.php", (call) => ({
+		json: studentsByCourse[call.query.courseId ?? ""] ?? [],
+		delayMs: call.query.courseId === "2" ? 600 : 0,
+	}));
+	await chooseCourse(app.page, "CMPE 235");
+	await chooseStudent(app.page, "Ada Lovelace");
+	await app.page
+		.getByLabel("Course", { exact: true })
+		.selectOption({ label: "ENGR 297" });
+	await expect(studentPicker(app)).toHaveValue("", { timeout: 150 });
+});
+
+test("says the students are loading until they arrive", async ({ app }) => {
+	app.backend.reply("get_students_by_course.php", {
+		json: studentsByCourse["1"],
+		delayMs: 400,
+	});
+	await app.page
+		.getByLabel("Course", { exact: true })
+		.selectOption({ label: "CMPE 235" });
+	await expect(studentPicker(app).locator("option").first()).toHaveText(
+		"Loading students…",
+	);
+	await expect(studentItems(app.page)).toHaveCount(2);
+	await expect(studentPicker(app).locator("option").first()).toHaveText(
+		"Select a student",
+	);
 });
 
 test("ignores a late reply for a course that is no longer chosen", async ({
@@ -112,15 +174,34 @@ test("ignores a late reply for a course that is no longer chosen", async ({
 	await chooseCourse(app.page, "ENGR 297");
 	await expect(studentItems(app.page)).toHaveText(["Grace Hopper"]);
 	await app.idle();
+	await new Promise((resolve) => setTimeout(resolve, 700));
 	await expect(studentItems(app.page)).toHaveText(["Grace Hopper"]);
+});
+
+test("says so when the students cannot be loaded", async ({ app }) => {
+	app.backend.reply("get_students_by_course.php", { status: 500 });
+	await chooseCourse(app.page, "CMPE 235");
+	await expect(
+		app.page.getByText("The students could not be loaded."),
+	).toBeVisible();
+	await expect(studentItems(app.page)).toHaveCount(0);
 });
 
 test("reports a failed computation", async ({ app }) => {
 	app.backend.reply("compute_and_save_grade.php", { status: 500 });
 	await computeForStudent(app);
-	await expect(app.page.locator("#totalMarksSaveStatus")).toHaveText(
-		"The grade could not be computed. Please try again.",
+	await expect(app.page.getByRole("alert")).toHaveText(
+		"The grade could not be computed. Try again.",
 	);
+});
+
+test("forgets an old result when computing a new one", async ({ app }) => {
+	await computeForStudent(app);
+	await expect(app.page.getByRole("status")).toContainText("Computed grade B");
+	app.backend.reply("compute_and_save_grade.php", { status: 500 });
+	await compute(app);
+	await expect(app.page.getByRole("alert")).toBeVisible();
+	await expect(app.page.locator(".result")).toBeEmpty();
 });
 
 test("shows markup in the computed grade as plain text", async ({ app }) => {
@@ -129,8 +210,9 @@ test("shows markup in the computed grade as plain text", async ({ app }) => {
 		json: { grade, percentage: "1", totalMarks: "1" },
 	});
 	await computeForStudent(app);
-	await expect(app.page.locator("#totalMarksSaveStatus")).toContainText(grade);
-	await expect(app.page.locator("#totalMarksSaveStatus img")).toHaveCount(0);
+	const result = app.page.getByRole("status");
+	await expect(result).toContainText(grade);
+	await expect(result.locator("img")).toHaveCount(0);
 });
 
 // Student names are text, whatever they contain.
