@@ -17,6 +17,9 @@ export interface FormField extends Field {
 	hint?: string;
 }
 
+/** Thrown by onSubmit to show this message instead of a generic one. */
+export class FormProblem extends Error {}
+
 export interface FormSpec {
 	fields: readonly FormField[];
 	submit: string;
@@ -195,7 +198,8 @@ export function renderForm(spec: FormSpec): HTMLFormElement {
 		try {
 			await spec.onSubmit(entered);
 		} catch (error) {
-			failure.textContent = describeFailure(error);
+			failure.textContent =
+				error instanceof FormProblem ? error.message : describeFailure(error);
 			failure.hidden = false;
 		} finally {
 			form.removeAttribute("aria-busy");

@@ -4,6 +4,8 @@ export interface Rule {
 	email?: boolean;
 	/** The value must be a number, within these bounds when they are given. */
 	number?: { min?: number; max?: number };
+	/** The value must equal the value of the field with this name. */
+	matches?: string;
 }
 
 export interface Field {
@@ -45,6 +47,18 @@ export function check(field: Field, value: string): string | undefined {
 	return undefined;
 }
 
+function mismatch(
+	field: Field,
+	value: string,
+	other: string,
+	fields: readonly Field[],
+	values: Record<string, string>,
+): string | undefined {
+	if (value.trim() === "" || value === (values[other] ?? "")) return undefined;
+	const label = fields.find((f) => f.name === other)?.label ?? other;
+	return `${field.label} must match ${label.toLowerCase()}`;
+}
+
 /** The problems with a form's values, by field name. Fields that pass are absent. */
 export function checkAll(
 	fields: readonly Field[],
@@ -52,7 +66,11 @@ export function checkAll(
 ): Record<string, string> {
 	const problems: Record<string, string> = {};
 	for (const field of fields) {
-		const problem = check(field, values[field.name] ?? "");
+		const value = values[field.name] ?? "";
+		const other = field.rule?.matches;
+		const problem =
+			check(field, value) ??
+			(other ? mismatch(field, value, other, fields, values) : undefined);
 		if (problem) problems[field.name] = problem;
 	}
 	return problems;

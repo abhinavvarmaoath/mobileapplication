@@ -99,3 +99,36 @@ describe("checkAll", () => {
 		expect(checkAll([username], { ID: "ada" })).toEqual({});
 	});
 });
+
+describe("matches", () => {
+	const fields: Field[] = [
+		{ name: "password", label: "Password", rule: { required: true } },
+		{
+			name: "again",
+			label: "Confirm password",
+			rule: { required: true, matches: "password" },
+		},
+	];
+
+	it("accepts the same value twice", () => {
+		expect(checkAll(fields, { password: "pw1", again: "pw1" })).toEqual({});
+	});
+
+	it("names the other field when the values differ", () => {
+		expect(checkAll(fields, { password: "pw1", again: "pw2" })).toEqual({
+			again: "Confirm password must match password",
+		});
+	});
+
+	it("says a missing value is missing, not different", () => {
+		expect(checkAll(fields, { password: "pw1", again: "" })).toEqual({
+			again: "Confirm password is required",
+		});
+	});
+
+	it("compares exactly, spaces included", () => {
+		expect(checkAll(fields, { password: "pw1", again: "pw1 " })).toEqual({
+			again: "Confirm password must match password",
+		});
+	});
+});

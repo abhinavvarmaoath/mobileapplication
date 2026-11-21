@@ -132,12 +132,12 @@ Progress
 - Done: the typed API client (M3), the config reader, the demo backend as a
   transport, the form rules, the build that assembles `dist/`, design tokens
   with light and dark (U1), a table-driven form renderer with an error summary
-  and a busy state (M4, U3, U9), and the login screen. The login screen has no
-  axe or HTML findings, where the old page had seven and two.
-- Old pages left at the repo root: signup, the student screens and the
-  professor screens. New pages get a stricter policy than old ones, because
+  and a busy state (M4, U3, U9), and the login and signup screens. Neither has
+  an axe or HTML finding; the old pages had seven rule groups each.
+- Old pages left at the repo root: the student screens and the professor
+  screens. New pages get a stricter policy than old ones, because
   nothing needs jQuery Mobile's popup styles.
-- Next: signup, then the student screens, then the professor screens.
+- Next: the student screens, then the professor screens.
 
 U4 (setup as one screen) and U5 (the what-if calculator) come after parity,
 because each needs a backend answer: a read endpoint for saved values, and the
@@ -156,7 +156,9 @@ Bugs
   fails.
 - B3 Saves are sent with no course or student selected. Done.
 - B4 Signup sends four fields under the name `name` and does not check the
-  password confirmation. Held: needs the server's field names.
+  password confirmation. Held: needs the server's field names. The new
+  signup screen compares the two passwords in the browser; the field names are
+  unchanged.
 - B5 Login Cancel is a submit button. Done.
 - B6 `student.html` has six popups with the same id. Done.
 - B7 The student list accumulates across courses and can show stale replies.

@@ -28,15 +28,7 @@
     "color-contrast": 5,
     "html-has-lang": 1
   },
-  "signup.html": {
-    "aria-allowed-role": 1,
-    "aria-valid-attr-value": 1,
-    "color-contrast": 2,
-    "html-has-lang": 1,
-    "label": 5,
-    "role-img-alt": 2,
-    "select-name": 1
-  },
+  "signup.html": {},
   "student.html": {
     "color-contrast": 5,
     "html-has-lang": 1

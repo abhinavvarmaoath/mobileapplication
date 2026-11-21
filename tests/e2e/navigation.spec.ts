@@ -15,7 +15,7 @@ const studentNav = ["stuhome.html", "team.html", "viewGrades.html"];
 // are left out.
 const links: Record<string, string[]> = {
 	"index.html": ["signup.html"],
-	"signup.html": [],
+	"signup.html": ["index.html"],
 	"prohome.html": [...professorNav, "index.html", "student.html"],
 	"student.html": professorNav,
 	"stuhome.html": [...studentNav, "index.html"],
