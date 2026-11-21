@@ -16,7 +16,7 @@ $(() => {
 		e.preventDefault();
 		$.ajax({
 			type: "post",
-			url: "http://rubypals.com/phonegapstyle/phpcode/signup.php",
+			url: `${EasyGrader.apiBase}signup.php`,
 			data: $("#gr").serialize(),
 			success: (data) => {
 				if (data.status === "True") {

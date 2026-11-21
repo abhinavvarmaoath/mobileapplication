@@ -6,9 +6,9 @@ their grades. It was written in 2016 with jQuery Mobile and is being
 modernised step by step; progress and open questions are in
 `MODERNISATION_NOTES.md`.
 
-The PHP backend is not in this repo. The pages call it at
-`http://rubypals.com`; see `docs/api-contract.md`. The tests stub it, so
-nothing here needs the network.
+The PHP backend is not in this repo. The pages call it at the addresses in
+`js/config.js`, `https://rubypals.com` by default; see
+`docs/api-contract.md`. The tests stub it, so nothing here needs the network.
 
 ## Requirements
 

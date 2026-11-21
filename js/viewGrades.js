@@ -3,7 +3,7 @@ $(() => {
 		e.preventDefault();
 		$.ajax({
 			type: "post",
-			url: "http://rubypals.com/phonegapstyle/phpcode/computegradestudent.php",
+			url: `${EasyGrader.apiBase}computegradestudent.php`,
 			data: $("#gr").serialize(),
 			error: () => {
 				document.getElementById("totalMarksSaveStatus").textContent =

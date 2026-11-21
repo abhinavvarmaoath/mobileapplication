@@ -3,7 +3,7 @@ $(() => {
 		e.preventDefault();
 		$.ajax({
 			type: "post",
-			url: "http://rubypals.com/phonegapstyle/phpcode/adduser.php",
+			url: `${EasyGrader.apiBase}adduser.php`,
 			data: $("#gr").serialize(),
 			error: () => {
 				alert("The class could not be added. Please try again.");

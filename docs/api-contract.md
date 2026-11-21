@@ -4,10 +4,16 @@ The backend is not in this repo. This is what the pages send and read,
 taken from the page code and checked by the specs in `tests/e2e`. The server
 itself has not been inspected, so anything it does beyond this is unknown.
 
-Two base paths on `http://rubypals.com`:
+The pages build every URL from two addresses in `js/config.js`:
 
-- `phonegapstyle/phpcode/` for everything except the two lookups below
-- `cmpe235/phpcode/` for `get_course.php` and `get_students_by_course.php`
+- `apiBase`, `https://rubypals.com/phonegapstyle/phpcode/` by default, for
+  everything except the two lookups below
+- `lookupBase`, `https://rubypals.com/cmpe235/phpcode/` by default, for
+  `get_course.php` and `get_students_by_course.php`
+
+The pages used to call these over plain HTTP. HTTPS is an assumption: the
+server is never contacted from here, so nobody has checked that it answers on
+HTTPS. If it does not, change the two addresses.
 
 Requests are form-encoded (`application/x-www-form-urlencoded`). Replies are
 read as JSON. No request carries a session, token or user id.

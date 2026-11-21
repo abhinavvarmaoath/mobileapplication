@@ -1,5 +1,5 @@
 $(document).on("pagebeforecreate", () => {
-	$.getJSON("http://rubypals.com/cmpe235/phpcode/get_course.php", (data) => {
+	$.getJSON(`${EasyGrader.lookupBase}get_course.php`, (data) => {
 		$.each(data, (_key, value) => {
 			$("<option></option>")
 				.val(value.ID)
@@ -15,9 +15,7 @@ function loadStudents(courseId) {
 	$("#student option:gt(0)").remove();
 	if (!courseId) return;
 
-	var url =
-		"http://rubypals.com/cmpe235/phpcode/get_students_by_course.php?courseId=" +
-		courseId;
+	const url = `${EasyGrader.lookupBase}get_students_by_course.php?courseId=${courseId}`;
 
 	$.getJSON(url, (data) => {
 		if ($("#course").val() !== courseId) return;
@@ -45,7 +43,7 @@ $(() => {
 		}
 		$.ajax({
 			type: "post",
-			url: "http://rubypals.com/phonegapstyle/phpcode/compute_and_save_grade.php",
+			url: `${EasyGrader.apiBase}compute_and_save_grade.php`,
 			data: $("#gr").serialize(),
 			error: () => {
 				document.getElementById("totalMarksSaveStatus").textContent =

@@ -46,6 +46,7 @@ Held until the open questions are answered: B1, B4, B11, the LICENSE choice.
 | 1 Safety net | done |
 | 2 Clean-up | done |
 | 3 Bug fixes | done, except the held items |
+| 4 Hardening | in progress: S1 done, S5, S6 and T7 to do |
 
 Commands are in `README.md`. In a sandbox without Playwright's own browser,
 set `CHROMIUM_EXECUTABLE_PATH` to a Chromium binary before `npm test`.
@@ -100,7 +101,9 @@ Bugs
 
 Security
 
-- S1 HTTPS end to end. Blocked on the backend.
+- S1 HTTPS end to end. The backend addresses are in `js/config.js` and
+  default to HTTPS; whether the server answers on HTTPS is unknown. The
+  libraries are served from `vendor/`.
 - S2 Server strings are built into HTML (XSS). Done; no page uses
   `innerHTML`.
 - S3 Retire jQuery 1.8.2 and jQuery Mobile with the UI replacement.

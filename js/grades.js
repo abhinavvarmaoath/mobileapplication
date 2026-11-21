@@ -1,7 +1,7 @@
 $(document).ready(() => {
 	$.ajax({
 		type: "get",
-		url: "http://rubypals.com/phonegapstyle/phpcode/student.php",
+		url: `${EasyGrader.apiBase}student.php`,
 		success: (data) => {
 			document.getElementById("finalHomeworks").textContent = data.Homework;
 			document.getElementById("finalLabs").textContent = data.Labs;

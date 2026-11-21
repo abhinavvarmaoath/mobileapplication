@@ -1,10 +1,9 @@
 import type { BrowserContext, Route } from "@playwright/test";
 import { courses, studentGrades, studentsByCourse } from "./data";
 
-const apiHost = "rubypals.com";
-
 /** One request a page made to the stubbed API. */
 export interface Call {
+	url: string;
 	method: string;
 	endpoint: string;
 	query: Record<string, string>;
@@ -67,6 +66,10 @@ export class Backend {
 	readonly frames: string[] = [];
 	/** Requests that were refused. */
 	readonly blocked: string[] = [];
+	/** API requests that were not made over HTTPS. */
+	readonly insecure: string[] = [];
+	/** Hosts that answer as the backend. */
+	readonly apiHosts = new Set(["rubypals.com"]);
 	private readonly handlers = new Map<string, Handler>(defaults);
 
 	static async attach(context: BrowserContext): Promise<Backend> {
@@ -91,7 +94,7 @@ export class Backend {
 		const url = new URL(request.url());
 		if (!this.hosts.includes(url.hostname)) this.hosts.push(url.hostname);
 
-		if (url.hostname === apiHost) return this.api(route, url);
+		if (this.apiHosts.has(url.hostname)) return this.api(route, url);
 		if (request.resourceType() === "document") {
 			this.frames.push(request.url());
 			return route.fulfill({
@@ -106,7 +109,9 @@ export class Backend {
 	private async api(route: Route, url: URL): Promise<void> {
 		const request = route.request();
 		const endpoint = url.pathname.split("/").pop() ?? "";
+		if (url.protocol !== "https:") this.insecure.push(request.url());
 		const call: Call = {
+			url: request.url(),
 			method: request.method(),
 			endpoint,
 			query: Object.fromEntries(url.searchParams),

@@ -44,6 +44,10 @@ export const test = base.extend<{ app: App }>({
 		await use(app);
 		// Leftover debug output would show up here in every spec.
 		expect(app.consoleLogs, "the page wrote to the console").toEqual([]);
+		expect(
+			app.backend.insecure,
+			"the page called the backend without HTTPS",
+		).toEqual([]);
 	},
 });
 

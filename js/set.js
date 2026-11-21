@@ -1,5 +1,5 @@
 $(document).on("pagebeforecreate", () => {
-	$.getJSON("http://rubypals.com/cmpe235/phpcode/get_course.php", (data) => {
+	$.getJSON(`${EasyGrader.lookupBase}get_course.php`, (data) => {
 		$.each(data, (_key, value) => {
 			$("<option></option>")
 				.val(value.ID)
@@ -21,7 +21,7 @@ $(() => {
 		}
 		$.ajax({
 			type: "post",
-			url: "http://rubypals.com/phonegapstyle/phpcode/save_marks_setting.php",
+			url: `${EasyGrader.apiBase}save_marks_setting.php`,
 			data: $("#gr").serialize(),
 			error: () => {
 				document.getElementById("totalMarksSaveStatus").textContent =
