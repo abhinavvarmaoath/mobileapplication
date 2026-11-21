@@ -1,4 +1,4 @@
-import { expect, test } from "../support/app";
+import { type App, expect, test } from "../support/app";
 import { studentGrades } from "../support/data";
 
 const marks = Object.fromEntries(
@@ -34,19 +34,36 @@ test.describe("student home", () => {
 	});
 });
 
+const categories = [
+	"Homework",
+	"Labs",
+	"Project",
+	"Presentation",
+	"Midterm",
+	"Final",
+];
+
+async function fillMarks(app: App, value: string): Promise<void> {
+	for (const name of categories) {
+		await app.page.getByLabel(name, { exact: true }).fill(value);
+	}
+}
+
+async function compute(app: App): Promise<void> {
+	await app.page.getByRole("button", { name: "Compute grade" }).click();
+}
+
 test.describe("grade estimator", () => {
 	test.beforeEach(async ({ app }) => {
 		await app.open("viewGrades.html");
 	});
 
 	// Known bug B10: the page always acts for student 1 in course 1.
-	test("uses a fixed student and course", async ({ app }) => {
-		await expect(app.page.locator("#CourseId")).toHaveValue("1");
-		await expect(app.page.locator("#StudentId")).toHaveValue("1");
-	});
-
-	test("posts the marks and shows the estimate", async ({ app }) => {
-		await app.page.getByRole("button", { name: "COMPUTE GRADE" }).click();
+	test("posts the marks and shows the estimate, for a fixed student and course", async ({
+		app,
+	}) => {
+		await fillMarks(app, "60");
+		await compute(app);
 		await expect
 			.poll(() => app.backend.callsTo("computegradestudent.php"))
 			.toHaveLength(1);
@@ -57,24 +74,71 @@ test.describe("grade estimator", () => {
 			StudentId: ["1"],
 			...marks,
 		});
-		await expect(app.page.locator("#totalMarksSaveStatus")).toHaveText(
-			"Estimated Grade is :B Percentage :81",
-			{ useInnerText: true },
+		const result = app.page.getByRole("status");
+		await expect(result).toContainText("Estimated grade B");
+		await expect(result).toContainText("Percentage 81");
+	});
+
+	test("asks for every mark instead of sending nothing", async ({ app }) => {
+		await compute(app);
+		await expect(app.page.getByRole("alert").getByRole("link")).toHaveText(
+			categories.map((name) => `${name} is required`),
 		);
+		await app.idle();
+		expect(app.backend.callsTo("computegradestudent.php")).toHaveLength(0);
+	});
+
+	test("refuses a mark outside 0 to 100", async ({ app }) => {
+		await fillMarks(app, "60");
+		await app.page.getByLabel("Homework", { exact: true }).fill("101");
+		await compute(app);
+		await expect(app.page.getByRole("alert")).toContainText(
+			"Homework must be between 0 and 100",
+		);
+		expect(app.backend.callsTo("computegradestudent.php")).toHaveLength(0);
+	});
+
+	test("accepts a mark with a decimal part", async ({ app }) => {
+		await fillMarks(app, "60");
+		await app.page.getByLabel("Final", { exact: true }).fill("72.5");
+		await compute(app);
+		await expect
+			.poll(() => app.backend.callsTo("computegradestudent.php"))
+			.toHaveLength(1);
+		expect(
+			app.backend.callsTo("computegradestudent.php")[0]?.form.MFinal,
+		).toEqual(["72.5"]);
 	});
 
 	test("links to the grades list", async ({ app }) => {
 		await expect(
-			app.page.locator("a", { hasText: "View Grades" }),
+			app.page.getByRole("link", { name: "View grades" }),
 		).toHaveAttribute("href", "grades.html");
 	});
 
-	test("reports a failed estimate", async ({ app }) => {
+	test("reports a failed estimate and keeps the marks", async ({ app }) => {
 		app.backend.reply("computegradestudent.php", { status: 500 });
-		await app.page.getByRole("button", { name: "COMPUTE GRADE" }).click();
-		await expect(app.page.locator("#totalMarksSaveStatus")).toHaveText(
-			"The grade could not be estimated. Please try again.",
+		await fillMarks(app, "60");
+		await compute(app);
+		await expect(app.page.getByRole("alert")).toHaveText(
+			"The server did not accept that. Try again.",
 		);
+		await expect(app.page.getByLabel("Homework", { exact: true })).toHaveValue(
+			"60",
+		);
+	});
+
+	test("forgets an old estimate when computing a new one", async ({ app }) => {
+		await fillMarks(app, "60");
+		await compute(app);
+		await expect(app.page.getByRole("status")).toContainText(
+			"Estimated grade B",
+		);
+		app.backend.reply("computegradestudent.php", { status: 500 });
+		await compute(app);
+		await expect(app.page.getByRole("alert")).toBeVisible();
+		// Empty, and so hidden, which is why role lookup would not find it.
+		await expect(app.page.locator("[role=status]")).toBeEmpty();
 	});
 
 	test("shows markup in the estimate as plain text", async ({ app }) => {
@@ -82,11 +146,11 @@ test.describe("grade estimator", () => {
 		app.backend.reply("computegradestudent.php", {
 			json: { grade, percentage: "1" },
 		});
-		await app.page.getByRole("button", { name: "COMPUTE GRADE" }).click();
-		await expect(app.page.locator("#totalMarksSaveStatus")).toContainText(
-			grade,
-		);
-		await expect(app.page.locator("#totalMarksSaveStatus img")).toHaveCount(0);
+		await fillMarks(app, "60");
+		await compute(app);
+		const result = app.page.getByRole("status");
+		await expect(result).toContainText(grade);
+		await expect(result.locator("img")).toHaveCount(0);
 	});
 
 	test("leaves window.print alone and does not log the form values", async ({
@@ -96,7 +160,8 @@ test.describe("grade estimator", () => {
 			String(window.print).includes("[native code]"),
 		);
 		expect(native).toBe(true);
-		await app.page.getByRole("button", { name: "COMPUTE GRADE" }).click();
+		await fillMarks(app, "60");
+		await compute(app);
 		await app.idle();
 		expect(app.consoleLogs.some((line) => line.startsWith("courseId="))).toBe(
 			false,
@@ -105,20 +170,9 @@ test.describe("grade estimator", () => {
 });
 
 test.describe("grades list", () => {
-	const spans: Record<string, keyof typeof studentGrades> = {
-		"#finalHomeworks": "Homework",
-		"#finalLabs": "Labs",
-		"#finalProject": "Project",
-		"#finalPresentation": "Presentation",
-		"#finalMidterm": "Midterm",
-		"#final": "Final",
-		"#finalGrade": "Grade",
-	};
-
 	// Known bug B10: the request carries no student or course.
 	test("asks for the grades without saying whose", async ({ app }) => {
 		await app.open("grades.html");
-		await app.idle();
 		const [call] = app.backend.callsTo("student.php");
 		expect(app.backend.callsTo("student.php")).toHaveLength(1);
 		expect(call?.method).toBe("GET");
@@ -128,17 +182,45 @@ test.describe("grades list", () => {
 
 	test("shows each grade in its own place", async ({ app }) => {
 		await app.open("grades.html");
-		for (const [selector, key] of Object.entries(spans)) {
-			await expect(app.page.locator(selector)).toHaveText(studentGrades[key]);
-		}
+		await expect(app.page.getByRole("term")).toHaveText([
+			...categories,
+			"Grade",
+		]);
+		await expect(app.page.getByRole("definition")).toHaveText([
+			...categories.map(
+				(name) => studentGrades[name as keyof typeof studentGrades],
+			),
+			studentGrades.Grade,
+		]);
 	});
 
-	test("keeps the placeholders when the request fails", async ({ app }) => {
+	test("says it is loading until the grades arrive", async ({ app }) => {
+		app.backend.reply("student.php", { json: studentGrades, delayMs: 400 });
+		await app.page.goto("/grades.html");
+		await expect(app.page.getByRole("status")).toHaveText(
+			"Loading your grades…",
+		);
+		await expect(app.page.locator("main")).toHaveAttribute("aria-busy", "true");
+		await expect(app.page.getByRole("definition")).toHaveCount(7);
+		await expect(app.page.locator("main")).not.toHaveAttribute(
+			"aria-busy",
+			"true",
+		);
+	});
+
+	test("says so when the request fails, and tries again on request", async ({
+		app,
+	}) => {
 		app.backend.reply("student.php", { status: 500 });
 		await app.open("grades.html");
-		await app.idle();
-		await expect(app.page.locator("#finalGrade")).toHaveText("TBD");
-		await expect(app.page.locator("#finalLabs")).toHaveText("TBD");
+		await expect(app.page.getByRole("alert")).toContainText(
+			"Your grades could not be loaded.",
+		);
+		await expect(app.page.getByRole("definition")).toHaveCount(0);
+		app.backend.reply("student.php", { json: studentGrades });
+		await app.page.getByRole("button", { name: "Try again" }).click();
+		await expect(app.page.getByRole("definition")).toHaveCount(7);
+		await expect(app.page.getByRole("alert")).toHaveCount(0);
 	});
 
 	test("shows markup in a grade as plain text", async ({ app }) => {
@@ -147,7 +229,7 @@ test.describe("grades list", () => {
 			json: { ...studentGrades, Homework: homework },
 		});
 		await app.open("grades.html");
-		await expect(app.page.locator("#finalHomeworks")).toHaveText(homework);
-		await expect(app.page.locator("#finalHomeworks img")).toHaveCount(0);
+		await expect(app.page.getByRole("definition").first()).toHaveText(homework);
+		await expect(app.page.locator("dd img")).toHaveCount(0);
 	});
 });

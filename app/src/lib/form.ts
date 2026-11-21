@@ -4,7 +4,7 @@ import { describeFailure } from "./failure";
 
 export type Control =
 	| { kind: "text" | "password" | "email" | "tel"; autocomplete?: string }
-	| { kind: "number"; min?: number; max?: number; step?: number }
+	| { kind: "number"; min?: number; max?: number; step?: number | "any" }
 	| {
 			kind: "choice";
 			options: ReadonlyArray<{ value: string; label: string }>;

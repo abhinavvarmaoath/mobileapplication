@@ -4,10 +4,7 @@
     "color-contrast": 5,
     "html-has-lang": 1
   },
-  "grades.html": {
-    "color-contrast": 3,
-    "html-has-lang": 1
-  },
+  "grades.html": {},
   "index.html": {},
   "prohome.html": {
     "color-contrast": 8,
@@ -33,12 +30,7 @@
   "stuhome.html": {},
   "team.html": {},
   "videoCall.html": {},
-  "viewGrades.html": {
-    "aria-allowed-role": 6,
-    "color-contrast": 3,
-    "html-has-lang": 1,
-    "label": 6
-  },
+  "viewGrades.html": {},
   "viewTeams.html": {
     "color-contrast": 3,
     "html-has-lang": 1

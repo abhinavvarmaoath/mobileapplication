@@ -1,7 +1,7 @@
 {
   "chat.html": 0,
   "grade.html": 3,
-  "grades.html": 2,
+  "grades.html": 0,
   "index.html": 0,
   "prohome.html": 1,
   "set.html": 3,
@@ -12,6 +12,6 @@
   "stuhome.html": 0,
   "team.html": 0,
   "videoCall.html": 0,
-  "viewGrades.html": 3,
+  "viewGrades.html": 0,
   "viewTeams.html": 1
 }

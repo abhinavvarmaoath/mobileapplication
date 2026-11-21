@@ -147,7 +147,15 @@ test.describe("demo mode", () => {
 
 	test("shows a student's grades", async ({ app }) => {
 		await app.open("grades.html");
-		await expect(app.page.locator("#finalGrade")).toHaveText("B");
+		await expect(app.page.getByRole("definition")).toHaveText([
+			"90",
+			"80",
+			"70",
+			"60",
+			"50",
+			"40",
+			"B",
+		]);
 	});
 });
 

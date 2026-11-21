@@ -134,13 +134,14 @@ Progress
   with light and dark (U1), a table-driven form renderer with an error summary
   and a busy state (M4, U3, U9), the app shell with a tab bar and a 44 px
   logout (U2, M5), tool links that open in a native dialog when `embedTools` is
-  on, and the login, signup, student home, group, chat and video call screens.
-  None has an axe or HTML finding; the old pages had several each.
-- Old pages left at the repo root: the grade estimate and grades screens and
-  the professor screens. `js/tools.js` stays until the professor pages that
-  use it are replaced. New pages get a stricter policy than old ones, because
+  on, and every student screen: login, signup, home, group, chat, video call,
+  grade estimate and grades. None has an axe or HTML finding; the old pages had
+  several each. The grades list has loading, error and retry states (U9).
+- Old pages left at the repo root: the professor screens and the orphan
+  `viewTeams.html`. `js/tools.js` stays until the professor pages that use it
+  are replaced. New pages get a stricter policy than old ones, because
   nothing needs jQuery Mobile's popup styles.
-- Next: the estimate and grades screens, then the professor screens.
+- Next: the professor screens: home, students, the three setup pages, grading.
 
 U4 (setup as one screen) and U5 (the what-if calculator) come after parity,
 because each needs a backend answer: a read endpoint for saved values, and the
