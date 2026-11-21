@@ -1,3 +1,4 @@
+import type { Page } from "@playwright/test";
 import { expect, test } from "../support/app";
 import { useConfig } from "../support/config";
 
@@ -31,13 +32,21 @@ const tools = [
 	},
 ];
 
+// An old page makes the tool a jQuery Mobile button, a new one a link, or with
+// embedTools a button; the label is the same.
+function opener(page: Page, name: string) {
+	return page
+		.getByRole("link", { name })
+		.or(page.getByRole("button", { name }));
+}
+
 for (const { page, key, button, address } of tools) {
 	test.describe(page, () => {
 		test("links to the tool in a new tab and does not frame it", async ({
 			app,
 		}) => {
 			await app.open(page);
-			const link = app.page.getByRole("button", { name: button });
+			const link = opener(app.page, button);
 			await expect(link).toHaveAttribute("href", address);
 			await expect(link).toHaveAttribute("target", "_blank");
 			await expect(link).toHaveAttribute("rel", "noopener noreferrer");
@@ -49,7 +58,7 @@ for (const { page, key, button, address } of tools) {
 			await app.open(page);
 			const [tab] = await Promise.all([
 				app.page.context().waitForEvent("page"),
-				app.page.getByRole("button", { name: button }).click(),
+				opener(app.page, button).click(),
 			]);
 			await tab.waitForLoadState();
 			expect(tab.url()).toBe(address);
@@ -61,17 +70,16 @@ for (const { page, key, button, address } of tools) {
 				tools: { [key]: "https://tool.example.test/room" },
 			});
 			await app.open(page);
-			await expect(
-				app.page.getByRole("button", { name: button }),
-			).toHaveAttribute("href", "https://tool.example.test/room");
+			await expect(opener(app.page, button)).toHaveAttribute(
+				"href",
+				"https://tool.example.test/room",
+			);
 		});
 
 		test("leaves the tool out when it has no address", async ({ app }) => {
 			await useConfig(app.page, { tools: { [key]: "" } });
 			await app.open(page);
-			await expect(app.page.getByRole("button", { name: button })).toHaveCount(
-				0,
-			);
+			await expect(opener(app.page, button)).toHaveCount(0);
 		});
 	});
 }
@@ -113,8 +121,10 @@ test.describe("with embedTools set", () => {
 			await expect(app.page.locator("iframe")).toHaveCount(0);
 			expect(app.backend.hosts, "hosts contacted before the click").toEqual([]);
 
-			await app.page.getByRole("button", { name: button }).click();
-			const frame = app.page.locator(".ui-popup-active iframe");
+			await opener(app.page, button).click();
+			const frame = app.page.locator(
+				".ui-popup-active iframe, dialog[open] iframe",
+			);
 			await expect(frame).toHaveAttribute("src", address);
 			await expect(frame).toHaveAttribute(
 				"sandbox",
@@ -147,7 +157,9 @@ test.describe("with embedTools set", () => {
 		expect(new Set(targets).size).toBe(6);
 
 		await buttons.nth(2).click();
-		await expect(app.page.locator(".ui-popup-active iframe")).toHaveCount(1);
+		await expect(
+			app.page.locator(".ui-popup-active iframe, dialog[open] iframe"),
+		).toHaveCount(1);
 		await expect(app.page.locator("iframe")).toHaveCount(1);
 		await app.page.keyboard.press("Escape");
 		await expect(app.page.locator("iframe")).toHaveCount(0);

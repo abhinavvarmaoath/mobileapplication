@@ -1,5 +1,5 @@
 {
-  "chat.html": 1,
+  "chat.html": 0,
   "grade.html": 3,
   "grades.html": 2,
   "index.html": 0,
@@ -9,9 +9,9 @@
   "set2.html": 2,
   "signup.html": 0,
   "student.html": 1,
-  "stuhome.html": 1,
-  "team.html": 1,
-  "videoCall.html": 1,
+  "stuhome.html": 0,
+  "team.html": 0,
+  "videoCall.html": 0,
   "viewGrades.html": 3,
   "viewTeams.html": 1
 }

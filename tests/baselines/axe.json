@@ -1,8 +1,5 @@
 {
-  "chat.html": {
-    "color-contrast": 3,
-    "html-has-lang": 1
-  },
+  "chat.html": {},
   "grade.html": {
     "color-contrast": 5,
     "html-has-lang": 1
@@ -33,19 +30,9 @@
     "color-contrast": 5,
     "html-has-lang": 1
   },
-  "stuhome.html": {
-    "color-contrast": 3,
-    "heading-order": 1,
-    "html-has-lang": 1
-  },
-  "team.html": {
-    "color-contrast": 3,
-    "html-has-lang": 1
-  },
-  "videoCall.html": {
-    "color-contrast": 3,
-    "html-has-lang": 1
-  },
+  "stuhome.html": {},
+  "team.html": {},
+  "videoCall.html": {},
   "viewGrades.html": {
     "aria-allowed-role": 6,
     "color-contrast": 3,

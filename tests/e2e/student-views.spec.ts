@@ -15,16 +15,22 @@ test.describe("student home", () => {
 	test("offers a collapsible answer to who the professor is", async ({
 		app,
 	}) => {
-		await expect(
-			app.page.locator('[data-role="collapsible"] h3'),
-		).toContainText("WHO IS MY PROFESSOR?");
+		const answer = app.page.getByText("Professor Neumann");
+		await expect(answer).toBeHidden();
+		await app.page.getByText("Who is my professor?").click();
+		await expect(answer).toBeVisible();
 	});
 
 	test("logs out to the login page", async ({ app }) => {
-		await expect(app.page.locator("a", { hasText: "Logout" })).toHaveAttribute(
-			"href",
-			"index.html",
-		);
+		await expect(
+			app.page.getByRole("link", { name: "Logout" }),
+		).toHaveAttribute("href", "index.html");
+	});
+
+	test("marks Home as the current tab", async ({ app }) => {
+		await expect(
+			app.page.getByRole("navigation").getByRole("link", { name: "Home" }),
+		).toHaveAttribute("aria-current", "page");
 	});
 });
 
