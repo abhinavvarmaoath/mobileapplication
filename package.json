@@ -10,7 +10,8 @@
   "scripts": {
     "lint": "biome check .",
     "format": "biome format --write .",
-    "dev": "node tools/serve.mjs",
+    "dev": "node tools/build.mjs && node tools/serve.mjs dist",
+    "build": "node tools/build.mjs",
     "typecheck": "tsc --noEmit && tsc --noEmit -p app",
     "test": "npm run test:unit && npm run test:e2e",
     "test:unit": "vitest run",

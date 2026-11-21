@@ -1,6 +1,6 @@
 // Writes the Content-Security-Policy meta tag into every page, built from the
-// addresses in js/config.js. With --check it changes nothing and fails when a
-// page is out of date. Run it again after editing js/config.js.
+// addresses in app/public/js/config.js. With --check it changes nothing and
+// fails when a page is out of date. Run it again after editing the config.
 //
 // A policy in a meta tag cannot carry frame-ancestors, sandbox or report-uri.
 // Those need response headers from the host.

@@ -20,9 +20,10 @@ export default defineConfig({
 	},
 	projects: [{ name: "chromium", use: { browserName: "chromium" } }],
 	webServer: {
-		command: "node tools/serve.mjs",
+		command: "node tools/build.mjs && node tools/serve.mjs dist",
 		url: `http://127.0.0.1:${port}/`,
 		env: { PORT: String(port) },
-		reuseExistingServer: !process.env.CI,
+		// The server builds the site first, so a running one may be stale.
+		reuseExistingServer: false,
 	},
 });

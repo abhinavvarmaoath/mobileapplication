@@ -7,7 +7,7 @@ modernised step by step; progress and open questions are in
 `MODERNISATION_NOTES.md`.
 
 The PHP backend is not in this repo. The pages call it at the addresses in
-`js/config.js`, `https://rubypals.com` by default; see
+`app/public/js/config.js`, `https://rubypals.com` by default; see
 `docs/api-contract.md`. The tests stub it, so nothing here needs the network.
 
 ## Requirements
@@ -21,7 +21,7 @@ npm ci
 npm run dev
 ```
 
-This serves the pages at <http://127.0.0.1:5173/>. `index.html` is the login
+This builds the site into `dist/` and serves it at <http://127.0.0.1:5173/>. `index.html` is the login
 page and needs the backend, or demo mode (see Demo). Pages can also be opened
 directly, for example `set.html`.
 
@@ -49,7 +49,8 @@ npm run lint:html -- --update
 
 ## Configuration
 
-`js/config.js` holds the backend addresses and the links to third-party tools.
+`app/public/js/config.js` holds the backend addresses and the links to
+third-party tools.
 Every page carries a content security policy built from it, so after editing
 that file run:
 
@@ -63,13 +64,13 @@ and the configured backend, and no frames. A meta tag cannot carry
 `frame-ancestors`, `sandbox` or `report-uri`; set those as response headers
 where the app is hosted.
 
-The third-party tools open in a new tab. Set `embedTools` in `js/config.js` to
+The third-party tools open in a new tab. Set `embedTools` in the config to
 open them in a sandboxed frame in the page instead; the policy then allows
 frames from those addresses and no others.
 
 ## Demo
 
-Without a backend the app can still run: set `demo: true` in `js/config.js`
+Without a backend the app can still run: set `demo: true` in the config
 and `js/demo.js` answers every call in the browser, with two courses, a few
 students, and added classes and saved settings that last for the browser
 session. Nothing is sent anywhere. To write a copy of the app in demo mode:
