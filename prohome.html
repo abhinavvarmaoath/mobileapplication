@@ -16,7 +16,7 @@
 <script src="js/prohome.js"></script>
 	</head>
 	<body>
-		<div data-role="page" data-theme="f"  style="background-color:#000;">
+		<div data-role="page" data-theme="f" class="dark">
 			<div data-role="header" data-position="inline">
 				<h1>Welcome, Professor!</h1>
 				<div data-role="navbar">
@@ -32,15 +32,15 @@
 					</ul>
 				</div>
 			</div>
-			<div data-role="content" data-theme="d" style="background-color:#000;">
-			<a href="index.html" rel="external" data-role="button" data-theme="a" data-icon="gear" style="color:#fff; width:30px; height:10px; margin-left:90%;"><span style="color:#000; font-size:8px;">Logout</span></a>
-				<h2  style="color:#fff;">Home</h2>
+			<div data-role="content" data-theme="d" class="dark">
+			<a href="index.html" rel="external" data-role="button" data-theme="a" data-icon="gear" class="logout"><span class="logout-text">Logout</span></a>
+				<h2 class="light-text">Home</h2>
 				
 				<a href="#popupLogin" data-rel="popup" data-role="button" data-icon="check" data-theme="d" data-transition="pop">Add a class</a>
 <div data-role="popup" id="popupMenu" data-theme="a">
     <div data-role="popup" id="popupLogin" data-theme="c" class="ui-corner-all">
         <form id="gr" name="gr">
-            <div style="padding:10px 20px;">
+            <div class="popup-form">
               <h3>Add a Class</h3>
               <label for="un" class="ui-hidden-accessible">Class number:</label>
               <input type="text" name="class" id="class" value="" placeholder="Number" data-theme="a">

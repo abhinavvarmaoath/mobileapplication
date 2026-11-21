@@ -16,7 +16,7 @@
 <script src="js/viewGrades.js"></script>
 	</head>
 	<body>
-		<div data-role="page" data-theme="d" style="background-color:#000;">
+		<div data-role="page" data-theme="d" class="dark">
 			<div data-role="header" data-position="inline">
 				<h1>Welcome, Student!</h1>
 				<div data-role="navbar">
@@ -28,49 +28,49 @@
 					</ul>
 				</div>
 			</div>
-			<div data-role="content" data-theme="a" style="background-color:#000;">
+			<div data-role="content" data-theme="a" class="dark">
 			
 	<a href="grades.html" rel="external" data-role="button" data-icon="user">View Grades</a>
-				<h2  style="color:#fff;"> Estimate Grades</h2>
+				<h2 class="light-text"> Estimate Grades</h2>
 			     <form name="gr" id="gr">
                                 <fieldset>
                                 
-         <input type="hidden" name="CourseId" style="display: none;" id="CourseId" value="1">
-      <input type="hidden" name="StudentId" style="display: none;" id="StudentId" value="1">
+         <input type="hidden" name="CourseId" id="CourseId" value="1">
+      <input type="hidden" name="StudentId" id="StudentId" value="1">
 
 
                                     <div class="fieldcontain">
-                                        <label class="field-title gradeTextField" for="sHomeworkField" style="color:#fff;">Homework:<span>(required)</span>
+                                        <label class="field-title gradeTextField light-text" for="sHomeworkField">Homework:<span>(required)</span>
                                         </label>
                                     <input type="range" name="MHomework" id="MHomework" value="60" min="0" max="100" data-highlight="true" data-mini="true"/>
                                     </div>
 
                                     <div class="fieldcontain">
-                                        <label class="field-title gradeTextField" for="sLabsField" style="color:#fff;">Lab:<span>(required)</span>
+                                        <label class="field-title gradeTextField light-text" for="sLabsField">Lab:<span>(required)</span>
                                         </label>
                                         <input type="range" name="MLabs" id="MLabs"  value="60" min="0" max="100" data-highlight="true" data-mini="true">
                                     </div>
 
                                     <div class="fieldcontain">
-                                        <label class="field-title gradeTextField" for="sProjectField" style="color:#fff;">Project:<span>(required)</span>
+                                        <label class="field-title gradeTextField light-text" for="sProjectField">Project:<span>(required)</span>
                                         </label>
                                         <input type="range" name="MProject" id="MProject" value="60" min="0" max="100" data-highlight="true" data-mini="true">
                                     </div>
 
                                     <div class="fieldcontain">
-                                        <label class="field-title gradeTextField" for="sPresentationField" style="color:#fff;">Presentation:<span>(required)</span>
+                                        <label class="field-title gradeTextField light-text" for="sPresentationField">Presentation:<span>(required)</span>
                                         </label>
                                         <input type="range" name="MPresentation" id="MPresentation" value="60" min="0" max="100" data-highlight="true" data-mini="true">
                                     </div>
 
                                     <div class="fieldcontain">
-                                        <label class="field-title gradeTextField" for="sMidtermField" style="color:#fff;">Midterm:<span>(required)</span>
+                                        <label class="field-title gradeTextField light-text" for="sMidtermField">Midterm:<span>(required)</span>
                                         </label>
                                         <input type="range" name="MMidterm" id="MMidterm" value="60" min="0" max="100" data-highlight="true" data-mini="true">
                                     </div>
 
                                     <div class="fieldcontain">
-                                        <label class="field-title gradeTextField" for="sFinalField" style="color:#fff;">Final:<span>(required)</span>
+                                        <label class="field-title gradeTextField light-text" for="sFinalField">Final:<span>(required)</span>
                                         </label>
                                         <input type="range" name="MFinal" id="MFinal" value="60" min="0" max="100" data-highlight="true" data-mini="true">
                                     </div>
@@ -79,11 +79,11 @@
 
 
 						<fieldset class="ui-grid-A">
-							<div class="ui-block-a"><button type="submit" data-theme="a" style="margin-left:60%;">COMPUTE GRADE</button></div>
+							<div class="ui-block-a"><button type="submit" data-theme="a" class="submit-offset">COMPUTE GRADE</button></div>
 					    </fieldset>
                             </form>
 <div class="clear"></div>
-                            <label id="totalMarksSaveStatus" style="font:bold  20px; color:#fff; white-space:pre-line;"></label>
+                            <label id="totalMarksSaveStatus" class="light-text preserve-lines"></label>
                         </div>
 				<p>
 				</p>

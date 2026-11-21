@@ -58,3 +58,72 @@
 	color: #222;
 	text-shadow: none;
 }
+
+/* Two classes, so the theme's single-class page backgrounds do not win. */
+.dark.ui-page,
+.dark.ui-content {
+	background-color: #000;
+}
+
+.light-text {
+	color: #fff;
+}
+
+.dark-text {
+	color: #000;
+}
+
+.centered {
+	text-align: center;
+}
+
+.preserve-lines {
+	white-space: pre-line;
+}
+
+label.status-offset {
+	margin-left: 30%;
+}
+
+.large-text {
+	font-size: 20px;
+}
+
+.account-label {
+	width: 200px;
+}
+
+.account-type {
+	width: 100px;
+}
+
+a.ui-btn.logout {
+	color: #fff;
+	width: 30px;
+	height: 10px;
+	margin-left: 90%;
+}
+
+.logout-text {
+	color: #000;
+	font-size: 8px;
+}
+
+a.ui-btn.plain-button {
+	color: #000;
+	background-color: #fff;
+}
+
+.professor-name {
+	text-shadow: 10px 10px 10px red;
+	font-size: 30px;
+	margin-left: 15%;
+}
+
+.popup-form {
+	padding: 10px 20px;
+}
+
+button.ui-btn.submit-offset {
+	margin-left: 60%;
+}

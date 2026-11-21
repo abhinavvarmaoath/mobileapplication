@@ -6,16 +6,16 @@
 		<title>Compute my grade</title>
 
 		<link rel="stylesheet" href="themes/Bootstrap.css">
+		<link rel="stylesheet" href="vendor/jquery.mobile.structure-1.4.1.min.css" />
 		<link rel="stylesheet" href="themes/jquery.mobile.icons.min.css" />
 		<link rel="stylesheet" href="css/app.css">
 		<script src="vendor/jquery-1.8.2.min.js"></script>
-    <script src="vendor/jquery.mobile-1.4.1.min.js"></script>
-		<link rel="stylesheet" href="vendor/jquery.mobile.structure-1.4.1.min.css" />
-    <script src="js/config.js"></script>
-    <script src="js/set2.js"></script>
+		<script src="vendor/jquery.mobile-1.4.1.min.js"></script>
+		<script src="js/config.js"></script>
+		<script src="js/set2.js"></script>
 	</head>
 		<body>
-		<div data-role="page" data-theme="f"  style="background-color:#000;">
+		<div data-role="page" data-theme="f" class="dark">
 			<div data-role="header" data-position="inline">
 				<h1>Welcome, Professor!</h1>
 				<div data-role="navbar">
@@ -29,10 +29,10 @@
 					</ul>
 				</div>
 			</div>
-						<div data-role="content" data-theme="a" style="background-color:#000;">
+						<div data-role="content" data-theme="a" class="dark">
 
 
-                <h1 style="color:#fff;">Course</h1>
+                <h1 class="light-text">Course</h1>
                 <label for="course" class="picker-label">Please select the course number</label>
 
                 <select id="course" class="picker" data-role="none">
@@ -47,7 +47,7 @@
                     <summary>Configuration Setting</summary>
                     <form id="gr" name="gr">
 
-<input type="hidden" name="courseId" style="display: none;" id="courseId">
+<input type="hidden" name="courseId" id="courseId">
 <div class="fieldcontain">
     <div data-role="rangeslider" data-mini="true" data-highlight="true">
         <label for="ARangeStart">A:</label>
@@ -93,7 +93,7 @@
 							<div class="ui-block-b"><button type="reset" data-theme="f">Cancel</button></div>
 					    </fieldset>
                             </form>
-                    <label id="gcSaveStatus" style="font:bold 20px; color:#000; margin-left:30%;"></label>
+                    <label id="gcSaveStatus" class="dark-text status-offset"></label>
                 </details>
             </div>
 

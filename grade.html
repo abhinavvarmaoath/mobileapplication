@@ -15,7 +15,7 @@
 <script src="js/grade.js"></script>
 	</head>
 	<body>
-		<div data-role="page" data-theme="f"  style="background-color:#000;">
+		<div data-role="page" data-theme="f" class="dark">
 			<div data-role="header" data-position="inline">
 				<h1>Welcome, Professor!</h1>
 				<div data-role="navbar">
@@ -30,31 +30,31 @@
 					</ul>
 				</div>
 			</div>
-						<div data-role="content" data-theme="a" style="background-color:#000;">
+						<div data-role="content" data-theme="a" class="dark">
 
 
-                <h1 style="color:#fff;">Course</h1>
+                <h1 class="light-text">Course</h1>
                 <label for="course" class="picker-label">Please select the course number</label>
 
                 <select id="course" class="picker" data-role="none">
                     <option value="">Select Course Number</option>
                 </select>
 
-                <h1 style="color:#fff;">Student</h1>
+                <h1 class="light-text">Student</h1>
                 <label for="student" class="picker-label">Please select the student</label>
 
                 <select id="student" class="picker" data-role="none">
                     <option value="">Select Student</option>
                 </select>
-                      <h1 style="color:#fff;">Marks</h1>
+                      <h1 class="light-text">Marks</h1>
 
                 <details class="settings">
                     <summary>Marks</summary>
                     <form name="gr" id="gr">
                                 <fieldset>
                                 
-                                    <input type="hidden" name="CourseId" style="display: none;" id="CourseId">
-      <input type="hidden" name="StudentId" style="display: none;" id="StudentId">
+                                    <input type="hidden" name="CourseId" id="CourseId">
+      <input type="hidden" name="StudentId" id="StudentId">
 
 
                                     <div class="fieldcontain">
@@ -101,7 +101,7 @@
 							<div class="ui-block-b"><button type="reset" data-theme="f">Cancel</button></div>
 					    </fieldset>
                             </form>
-                    <label id="totalMarksSaveStatus" style="font:bold  20px; color:#000; white-space:pre-line;"></label>
+                    <label id="totalMarksSaveStatus" class="dark-text preserve-lines"></label>
                 </details>
 
 
