@@ -9,3 +9,17 @@ export function describeFailure(error: unknown): string {
 	}
 	return "Something went wrong. Try again.";
 }
+
+/** Thrown by a form's onSubmit to show this message instead of a generic one. */
+export class FormProblem extends Error {}
+
+/**
+ * When the server refused or sent something unusable, says what was being
+ * done instead of the generic message. A network failure keeps its own.
+ */
+export function refusedAs(error: unknown, message: string): unknown {
+	const refused =
+		error instanceof ApiError &&
+		(error.failure === "status" || error.failure === "shape");
+	return refused ? new FormProblem(message) : error;
+}

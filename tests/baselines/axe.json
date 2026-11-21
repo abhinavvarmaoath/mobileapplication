@@ -7,18 +7,9 @@
   "grades.html": {},
   "index.html": {},
   "prohome.html": {},
-  "set.html": {
-    "color-contrast": 5,
-    "html-has-lang": 1
-  },
-  "set1.html": {
-    "color-contrast": 5,
-    "html-has-lang": 1
-  },
-  "set2.html": {
-    "color-contrast": 5,
-    "html-has-lang": 1
-  },
+  "set.html": {},
+  "set1.html": {},
+  "set2.html": {},
   "signup.html": {},
   "student.html": {},
   "stuhome.html": {},

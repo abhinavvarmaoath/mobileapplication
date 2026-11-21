@@ -137,12 +137,17 @@ Progress
   on, and every student screen (login, signup, home, group, chat, video call,
   grade estimate and grades) plus the professor home and student list. None has
   an axe or HTML finding; the old pages had several each. The grades list has
-  loading, error and retry states (U9).
-- Old pages left at the repo root: the three setup pages, the grading page and
-  the orphan `viewTeams.html`. `js/demo.js` still serves them in demo mode and
-  reads classes in both shapes until they are replaced. New pages get a stricter policy than old ones, because
+  loading, error and retry states (U9), and the setup pages share them.
+- The three setup pages are rebuilt too: marks, weights and grade scale, from
+  one list of categories (M4). Empty required fields replace the sliders that
+  started at 60, the weights must total 100 and grade ranges must not overlap
+  or run backwards, all before anything is sent. B11 is untouched: marks can
+  still go to 500.
+- Old pages left at the repo root: the grading page and the orphan
+  `viewTeams.html`. `js/demo.js` still serves the grading page in demo mode and
+  reads classes in both shapes until it is replaced. New pages get a stricter policy than old ones, because
   nothing needs jQuery Mobile's popup styles.
-- Next: the three setup pages, then grading, then retiring the old stack.
+- Next: the grading page, then retiring the old stack.
 
 U4 (setup as one screen) and U5 (the what-if calculator) come after parity,
 because each needs a backend answer: a read endpoint for saved values, and the

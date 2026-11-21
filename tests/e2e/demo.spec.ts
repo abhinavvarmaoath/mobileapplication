@@ -26,7 +26,7 @@ const categories = [
 
 async function setSliders(
 	app: App,
-	prefix: "P" | "M",
+	prefix: "M",
 	values: Record<string, number>,
 ): Promise<void> {
 	await openSettings(app.page);
@@ -35,6 +35,21 @@ async function setSliders(
 			.locator(`[name=${prefix}${name}]`)
 			.fill(String(values[name] ?? 0));
 	}
+}
+
+async function setWeights(
+	app: App,
+	values: Record<string, number>,
+): Promise<void> {
+	for (const name of categories) {
+		await app.page
+			.getByLabel(`${name} (%)`, { exact: true })
+			.fill(String(values[name] ?? 0));
+	}
+}
+
+async function saveWeights(app: App): Promise<void> {
+	await app.page.getByRole("button", { name: "Save weights" }).click();
 }
 
 async function submit(app: App): Promise<void> {
@@ -95,30 +110,30 @@ test.describe("demo mode", () => {
 		]);
 	});
 
-	test("refuses percentages that do not total 100 and accepts ones that do", async ({
+	// The page checks the total before sending; the demo backend's own refusal
+	// is covered by its unit tests.
+	test("refuses weights that do not total 100 and accepts ones that do", async ({
 		app,
 	}) => {
 		await app.open("set1.html");
 		await chooseCourse(app.page, "CMPE 235");
-		await submit(app);
-		const status = app.page.locator("#totalMarksSaveStatus");
-		await expect(status).toHaveText(
-			"Scaling Factors cannot be saved. It has to total to 100%",
+		await setWeights(app, { Homework: 60, Labs: 60 });
+		await saveWeights(app);
+		await expect(app.page.getByRole("alert")).toContainText(
+			"The weights must add up to 100",
 		);
 
-		await setSliders(app, "P", { Homework: 100 });
-		await app.page.locator("#gr button[type=submit]").click();
-		await expect(status).toHaveText("Scaling Factors saved successfully");
+		await setWeights(app, { Homework: 100 });
+		await saveWeights(app);
+		await expect(app.page.getByRole("status")).toHaveText("Weights saved.");
 	});
 
 	test("grades with the course's saved percentages", async ({ app }) => {
 		await app.open("set1.html");
 		await chooseCourse(app.page, "CMPE 235");
-		await setSliders(app, "P", { Homework: 100 });
-		await submit(app);
-		await expect(app.page.locator("#totalMarksSaveStatus")).toHaveText(
-			"Scaling Factors saved successfully",
-		);
+		await setWeights(app, { Homework: 100 });
+		await saveWeights(app);
+		await expect(app.page.getByRole("status")).toHaveText("Weights saved.");
 
 		await app.open("grade.html");
 		await chooseCourse(app.page, "CMPE 235");

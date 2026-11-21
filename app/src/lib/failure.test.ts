@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { ApiError } from "../api";
-import { describeFailure } from "./failure";
+import { describeFailure, FormProblem, refusedAs } from "./failure";
 
 describe("describeFailure", () => {
 	it.each(["network", "timeout"] as const)(
@@ -25,5 +25,32 @@ describe("describeFailure", () => {
 		expect(describeFailure(new Error("boom"))).toBe(
 			"Something went wrong. Try again.",
 		);
+	});
+});
+
+describe("refusedAs", () => {
+	it.each(["status", "shape"] as const)(
+		"says what was being done after a %s failure",
+		(failure) => {
+			const result = refusedAs(
+				new ApiError(failure, "x"),
+				"The marks could not be saved.",
+			);
+			expect(result).toBeInstanceOf(FormProblem);
+			expect((result as Error).message).toBe("The marks could not be saved.");
+		},
+	);
+
+	it.each(["network", "timeout"] as const)(
+		"leaves a %s failure to its own message",
+		(failure) => {
+			const error = new ApiError(failure, "x");
+			expect(refusedAs(error, "ignored")).toBe(error);
+		},
+	);
+
+	it("leaves any other error alone", () => {
+		const error = new Error("boom");
+		expect(refusedAs(error, "ignored")).toBe(error);
 	});
 });

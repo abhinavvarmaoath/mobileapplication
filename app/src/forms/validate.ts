@@ -1,5 +1,7 @@
 export interface Rule {
 	required?: boolean;
+	/** What to say when the required value is missing, instead of "X is required". */
+	requiredMessage?: string;
 	/** The value must be an email address, as browsers understand one. */
 	email?: boolean;
 	/** The value must be a number, within these bounds when they are given. */
@@ -29,7 +31,11 @@ function bounds(min: number | undefined, max: number | undefined): string {
 export function check(field: Field, value: string): string | undefined {
 	const { label, rule = {} } = field;
 	const text = value.trim();
-	if (text === "") return rule.required ? `${label} is required` : undefined;
+	if (text === "") {
+		return rule.required
+			? (rule.requiredMessage ?? `${label} is required`)
+			: undefined;
+	}
 	if (rule.email && !email.test(text)) {
 		return `${label} must be an email address`;
 	}

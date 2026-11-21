@@ -132,3 +132,19 @@ describe("matches", () => {
 		});
 	});
 });
+
+describe("requiredMessage", () => {
+	const course: Field = {
+		name: "courseId",
+		label: "Course",
+		rule: { required: true, requiredMessage: "Choose a course" },
+	};
+
+	it("is said instead of the usual wording", () => {
+		expect(check(course, "")).toBe("Choose a course");
+	});
+
+	it("does not matter once there is a value", () => {
+		expect(check(course, "1")).toBeUndefined();
+	});
+});

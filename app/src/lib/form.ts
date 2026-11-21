@@ -1,10 +1,18 @@
 import { checkAll, type Field } from "../forms/validate";
 import { h } from "./dom";
-import { describeFailure } from "./failure";
+import { describeFailure, FormProblem } from "./failure";
+
+export { FormProblem };
 
 export type Control =
 	| { kind: "text" | "password" | "email" | "tel"; autocomplete?: string }
 	| { kind: "textarea"; rows?: number }
+	| {
+			kind: "select";
+			/** The first option, which has no value. */
+			placeholder: string;
+			options: ReadonlyArray<{ value: string; label: string }>;
+	  }
 	| { kind: "number"; min?: number; max?: number; step?: number | "any" }
 	| {
 			kind: "choice";
@@ -15,11 +23,10 @@ export interface FormField extends Field {
 	control: Control;
 	/** What the field starts with, and returns to when the form is reset. */
 	value?: string;
+	/** Takes a whole row when the form is laid out in two columns. */
+	wide?: boolean;
 	hint?: string;
 }
-
-/** Thrown by onSubmit to show this message instead of a generic one. */
-export class FormProblem extends Error {}
 
 export interface FormSpec {
 	fields: readonly FormField[];
@@ -27,11 +34,18 @@ export interface FormSpec {
 	cancel?: string;
 	/** Said after a successful submit, in a live region. */
 	saved?: string;
+	/** Lay the fields out two to a row; wide fields still take a whole row. */
+	columns?: 2;
+	/**
+	 * Rules that span fields, such as values that must add up. Called only when
+	 * every field passes its own rules. Returns problems by field name.
+	 */
+	validate?(values: Record<string, string>): Record<string, string>;
 	/** Called with the values once they pass the rules. A throw is shown. */
 	onSubmit(values: Record<string, string>): Promise<void>;
 }
 
-type FieldControl = HTMLInputElement | HTMLTextAreaElement;
+type FieldControl = HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement;
 
 interface Rendered {
 	element: HTMLElement;
@@ -81,6 +95,31 @@ function renderField(field: FormField): Rendered {
 			error,
 		);
 		return { element, controls, error };
+	}
+
+	if (control.kind === "select") {
+		const select = h(
+			"select",
+			{
+				name: field.name,
+				id: field.name,
+				"aria-describedby": hint ? `${field.name}-hint` : undefined,
+			},
+			h("option", { value: "" }, control.placeholder),
+			...control.options.map((option) =>
+				h("option", { value: option.value }, option.label),
+			),
+		);
+		select.value = field.value ?? "";
+		const element = h(
+			"div",
+			{ class: "field" },
+			h("label", { for: field.name }, field.label),
+			hint,
+			select,
+			error,
+		);
+		return { element, controls: [select], error };
 	}
 
 	if (control.kind === "textarea") {
@@ -159,9 +198,15 @@ export function renderForm(spec: FormSpec): Form {
 		: null;
 	const form = h(
 		"form",
-		{ class: "form", novalidate: true },
+		{
+			class: spec.columns === 2 ? "form form-pairs" : "form",
+			novalidate: true,
+		},
 		summary,
-		...fields.map((f) => f.element),
+		...fields.map((f) => {
+			if (f.field.wide) f.element.classList.add("field-wide");
+			return f.element;
+		}),
 		failure,
 		saved,
 		h("div", { class: "actions" }, cancel, submit),
@@ -224,6 +269,9 @@ export function renderForm(spec: FormSpec): Form {
 		clearMessages();
 		const entered = values();
 		const problems = checkAll(spec.fields, entered);
+		if (Object.keys(problems).length === 0 && spec.validate) {
+			Object.assign(problems, spec.validate(entered));
+		}
 		if (Object.keys(problems).length > 0) return showProblems(problems);
 
 		// Busy is set before the first await, so a test or a screen reader sees it
