@@ -222,6 +222,10 @@ Not done, and worth doing soon
 
 - U4 and U5, and the manual accessibility pass, listed under Phase 5.
 - Pin the workflow actions to commit SHAs.
+- T5: `npm run dev` points at the real backend address. The plan was the mock
+  by default with a `dev:live` for the real API, and a devcontainer.
+- T6: pre-commit hooks (lefthook or husky), optional.
+- M6: a dev-only logger. The app has one `console.error`, so this is low value.
 - Check the pages on a real phone, and in Firefox and Safari.
 - Tool and backend HTTPS addresses are assumptions nobody has checked.
 
