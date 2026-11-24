@@ -103,14 +103,15 @@ export function describeFocus(): Stop {
 			break;
 		}
 	}
-	const light = luminance(channels(style.outlineColor));
-	const other = luminance(background);
+	const ringLuminance = luminance(channels(style.outlineColor));
+	const backgroundLuminance = luminance(background);
 	const contrast =
-		(Math.max(light, other) + 0.05) / (Math.min(light, other) + 0.05);
+		(Math.max(ringLuminance, backgroundLuminance) + 0.05) /
+		(Math.min(ringLuminance, backgroundLuminance) + 0.05);
 
 	const box = drawnBy.getBoundingClientRect();
 	const reach = Math.max(0, offset + width);
-	const ring = {
+	const outer = {
 		left: box.left - reach,
 		right: box.right + reach,
 		top: box.top - reach,
@@ -118,12 +119,12 @@ export function describeFocus(): Stop {
 	};
 	const tolerance = 0.5;
 	const outside = (edge: DOMRect) =>
-		ring.left < edge.left - tolerance ||
-		ring.right > edge.right + tolerance ||
-		ring.top < edge.top - tolerance ||
-		ring.bottom > edge.bottom + tolerance;
-	let clipped = ring.left < -tolerance;
-	clipped ||= ring.right > document.documentElement.clientWidth + tolerance;
+		outer.left < edge.left - tolerance ||
+		outer.right > edge.right + tolerance ||
+		outer.top < edge.top - tolerance ||
+		outer.bottom > edge.bottom + tolerance;
+	let clipped = outer.left < -tolerance;
+	clipped ||= outer.right > document.documentElement.clientWidth + tolerance;
 	let fixed = false;
 	for (let node: Element | null = drawnBy; node; node = node.parentElement) {
 		const around = getComputedStyle(node);
@@ -136,7 +137,7 @@ export function describeFocus(): Stop {
 		}
 	}
 	// Scrolling cannot bring the bottom of something fixed into view.
-	if (fixed) clipped ||= ring.bottom > window.innerHeight + tolerance;
+	if (fixed) clipped ||= outer.bottom > window.innerHeight + tolerance;
 
 	const bar = document.querySelector("nav.tabs");
 	let covered = false;
