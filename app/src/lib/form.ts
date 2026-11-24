@@ -288,9 +288,10 @@ export function renderForm(spec: FormSpec): Form {
 		if (Object.keys(problems).length > 0) return showProblems(problems);
 
 		// Busy is set before the first await, so a test or a screen reader sees it
-		// as soon as the button is pressed.
+		// as soon as the button is pressed. The button is aria-disabled, not
+		// disabled, because a disabled button loses the keyboard focus it has.
 		form.setAttribute("aria-busy", "true");
-		submit.disabled = true;
+		submit.setAttribute("aria-disabled", "true");
 		try {
 			await spec.onSubmit(entered);
 			if (spec.saved) saved.textContent = spec.saved;
@@ -300,7 +301,7 @@ export function renderForm(spec: FormSpec): Form {
 			failure.hidden = false;
 		} finally {
 			form.removeAttribute("aria-busy");
-			submit.disabled = false;
+			submit.removeAttribute("aria-disabled");
 		}
 	});
 	function rendered(name: string) {

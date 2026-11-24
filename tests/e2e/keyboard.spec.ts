@@ -2,6 +2,7 @@ import { expect, test } from "../support/app";
 import { useConfig } from "../support/config";
 import { tabBack, tabThrough } from "../support/keyboard";
 import { pages } from "../support/pages";
+import { studentItems } from "../support/screens";
 
 // What a person who cannot use a mouse needs: to reach every control in a
 // sensible order, to see where they are, never to lose their place, and to get
@@ -143,6 +144,35 @@ test.describe("from the keyboard alone", () => {
 		await expect(username).toBeFocused();
 		await keyboard.type("ada");
 		await expect(username).toHaveValue("ada");
+	});
+
+	test("grades a student and stays on the button that did it", async ({
+		app,
+	}) => {
+		app.backend.reply("compute_and_save_grade.php", {
+			json: { grade: "B", percentage: "81", totalMarks: "400" },
+			delayMs: 200,
+		});
+		await app.open("grade.html");
+		const { keyboard } = app.page;
+
+		await app.page.getByLabel("Course", { exact: true }).focus();
+		await keyboard.press("ArrowDown");
+		await expect(studentItems(app.page)).toHaveCount(2);
+		await keyboard.press("Tab");
+		await keyboard.press("ArrowDown");
+		for (let mark = 0; mark < 6; mark++) {
+			await keyboard.press("Tab");
+			await keyboard.type("60");
+		}
+		await keyboard.press("Tab");
+		const compute = app.page.getByRole("button", { name: "Compute grade" });
+		await expect(compute).toBeFocused();
+		await keyboard.press("Enter");
+
+		await expect(app.page.locator(".result")).toContainText("Computed grade B");
+		await app.idle();
+		await expect(compute).toBeFocused();
 	});
 
 	test("the skip link sends the next Tab to the first control on the page", async ({
