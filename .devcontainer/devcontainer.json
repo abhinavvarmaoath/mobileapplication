@@ -1,0 +1,15 @@
+{
+  "name": "Easy Grader",
+  "image": "mcr.microsoft.com/devcontainers/javascript-node:24-bookworm",
+  "postCreateCommand": "npm ci && npx playwright install --with-deps chromium",
+  "forwardPorts": [5173],
+  "customizations": {
+    "vscode": {
+      "extensions": ["biomejs.biome", "ms-playwright.playwright"],
+      "settings": {
+        "editor.defaultFormatter": "biomejs.biome",
+        "editor.formatOnSave": true
+      }
+    }
+  }
+}
