@@ -138,14 +138,29 @@ Result
 - CI caught one real problem the local run did not: in an embedded tool's
   dialog, focus could land inside the frame, so Escape did not close it. The
   Close button now comes first and has the initial focus.
+- Keyboard-only specs (`tests/e2e/keyboard.spec.ts`, measured by
+  `tests/support/keyboard.ts`) tab through every page in light and dark. Every
+  control must be reached in document order, focus must leave the page and
+  Shift+Tab must walk back, and each stop needs a focus ring at least 2px
+  thick, with 3:1 contrast, that nothing cuts off. In a 480px-high phone window
+  the tab bar may never cover the control that has focus. Journeys cover the
+  account-type radios, Enter to submit, the error summary and its links, the
+  skip link, a tool dialog giving focus back to its button, Try again and a
+  disclosure. They found four faults, each fixed in its own commit with the
+  spec that proves it: the chosen radio button's ring was the colour of its
+  fill (1.0:1); the tab bar's rings were cut off by the window; controls could
+  scroll to rest entirely behind the tab bar (WCAG 2.4.11); and focus fell to
+  the page after a form was submitted from its button and after Try again.
 
 Not done
 
 - U4 (course setup as one screen with steps) and U5 (per-category weights and
   the what-if calculator). Each needs a backend answer first: a read endpoint
   for saved values, and the weights.
-- A manual screen-reader and keyboard pass. Axe finds only part of what a
-  person would.
+- A manual screen-reader pass (VoiceOver, NVDA, TalkBack). The keyboard side is
+  automated, in Chromium only. Whether focus behaves the same in Firefox and
+  Safari is unchecked; the skip link, for one, relies on the browser moving its
+  starting point for the next Tab to the target.
 - U7 is partly done: the layout adapts between a phone and a wide screen, and
   forms go two to a row where that helps, but there is no container-query or
   landscape work.

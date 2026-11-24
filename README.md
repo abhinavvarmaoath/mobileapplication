@@ -51,6 +51,11 @@ A page may have no axe finding (WCAG 2.2 AA and best practice, in light and
 dark, and in its main states), no HTML problem, and may load at most 50 KB,
 gzipped. Each is a check that fails the build.
 
+The keyboard specs (`tests/e2e/keyboard.spec.ts`) tab through every page and
+the main journeys without a mouse. Every control is reached in order, shows a
+focus ring that can be seen, and is never hidden behind the tab bar, and focus
+is kept after a submit or a retry.
+
 ## Configuration
 
 `app/public/js/config.js` holds the backend addresses and the links to
