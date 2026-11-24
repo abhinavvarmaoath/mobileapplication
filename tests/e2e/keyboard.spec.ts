@@ -1,5 +1,6 @@
 import { expect, test } from "../support/app";
 import { useConfig } from "../support/config";
+import { courses, studentGrades } from "../support/data";
 import { tabBack, tabThrough } from "../support/keyboard";
 import { pages } from "../support/pages";
 import { studentItems } from "../support/screens";
@@ -173,6 +174,67 @@ test.describe("from the keyboard alone", () => {
 		await expect(app.page.locator(".result")).toContainText("Computed grade B");
 		await app.idle();
 		await expect(compute).toBeFocused();
+	});
+
+	test.describe("Try again", () => {
+		test("leads to the list that was loaded", async ({ app }) => {
+			app.backend.reply("get_course.php", { status: 500 });
+			await app.open("grade.html");
+			await app.idle();
+			await app.page.getByRole("button", { name: "Try again" }).focus();
+			app.backend.reply("get_course.php", { json: courses });
+			await app.page.keyboard.press("Enter");
+			await expect(
+				app.page.getByLabel("Course", { exact: true }),
+			).toBeFocused();
+		});
+
+		test("leads to the results when there is nothing in them to press", async ({
+			app,
+		}) => {
+			app.backend.reply("student.php", { status: 500 });
+			await app.open("grades.html");
+			await app.idle();
+			await app.page.getByRole("button", { name: "Try again" }).focus();
+			app.backend.reply("student.php", { json: studentGrades });
+			await app.page.keyboard.press("Enter");
+			await expect(app.page.getByRole("definition").first()).toBeVisible();
+			await expect
+				.poll(() =>
+					app.page.evaluate(
+						() => document.activeElement?.closest("main") !== null,
+					),
+				)
+				.toBe(true);
+		});
+
+		test("does not pull focus back when the visitor moved on while it loaded", async ({
+			app,
+		}) => {
+			app.backend.reply("get_course.php", { status: 500 });
+			await app.open("grade.html");
+			await app.idle();
+			await app.page.getByRole("button", { name: "Try again" }).focus();
+			app.backend.reply("get_course.php", { json: courses, delayMs: 300 });
+			await app.page.keyboard.press("Enter");
+			const logout = app.page.getByRole("link", { name: "Logout" });
+			await logout.focus();
+			await expect(
+				app.page.getByLabel("Course", { exact: true }),
+			).toBeVisible();
+			await expect(logout).toBeFocused();
+		});
+
+		test("stays on the button when it fails again", async ({ app }) => {
+			app.backend.reply("get_course.php", { status: 500 });
+			await app.open("grade.html");
+			await app.idle();
+			const again = app.page.getByRole("button", { name: "Try again" });
+			await again.focus();
+			await app.page.keyboard.press("Enter");
+			await expect(again).toBeFocused();
+			await expect(app.page.getByRole("alert")).toBeVisible();
+		});
 	});
 
 	test("the skip link sends the next Tab to the first control on the page", async ({
