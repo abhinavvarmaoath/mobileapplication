@@ -104,6 +104,11 @@
 	outline-offset: -3px;
 }
 
+/* The chosen button is filled with the colour the ring is drawn in. */
+.choice-option input:checked:focus-visible + label {
+	outline-color: var(--on-brand);
+}
+
 .actions {
 	display: flex;
 	flex-wrap: wrap;

@@ -34,6 +34,9 @@ for (const scheme of ["light", "dark"] as const) {
 				return [
 					ring.drawn ? "" : "has no focus ring",
 					ring.width >= 2 ? "" : `has a ring ${ring.width}px thick`,
+					ring.contrast >= 3
+						? ""
+						: `has a ring with ${ring.contrast.toFixed(1)}:1 contrast`,
 				]
 					.filter(Boolean)
 					.map((problem) => `${stop.label} ${problem}`);
