@@ -2,8 +2,8 @@
 // addresses here: no other file names a host. The backend endpoints are in
 // docs/api-contract.md.
 window.EasyGrader = {
-	// When true the pages never call the backend: js/demo.js answers instead.
-	// The GitHub Pages build turns this on.
+	// When true the pages never call the backend: an in-browser stand-in answers
+	// instead. The GitHub Pages build turns this on, and so does npm run dev.
 	demo: false,
 	// Everything except the two lookups.
 	apiBase: "https://rubypals.com/phonegapstyle/phpcode/",

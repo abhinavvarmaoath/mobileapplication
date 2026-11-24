@@ -3,6 +3,7 @@ import { fileURLToPath } from "node:url";
 import { createLogger, defineConfig, type Plugin } from "vite";
 import { readConfig } from "./tools/config.mjs";
 import { withPolicy } from "./tools/csp.mjs";
+import { devDemo } from "./tools/dev-demo.mjs";
 
 // js/config.js is a classic script on purpose: it stays a separate file so the
 // addresses can change after a build. Vite warns that it cannot bundle it.
@@ -33,7 +34,7 @@ function policy(): Plugin {
 	};
 }
 
-export default defineConfig(({ command }) => ({
+export default defineConfig(({ command, mode }) => ({
 	customLogger: quietLogger(command),
 	root,
 	base: "./",
@@ -49,5 +50,5 @@ export default defineConfig(({ command }) => ({
 			),
 		},
 	},
-	plugins: [policy()],
+	plugins: [policy(), devDemo(mode)],
 }));

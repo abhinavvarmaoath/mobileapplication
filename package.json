@@ -11,6 +11,7 @@
     "lint": "biome check .",
     "format": "biome format --write .",
     "dev": "vite",
+    "dev:live": "vite --mode live",
     "build": "vite build",
     "typecheck": "tsc --noEmit && tsc --noEmit -p app",
     "test": "npm run test:unit && npm run test:e2e",

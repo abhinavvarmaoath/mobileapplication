@@ -18,12 +18,21 @@ Node 22.22 or newer. Node 24 is the version in `.nvmrc`.
 
 ```sh
 npm ci
-npm run dev
+npm run dev        # the app answers itself, no backend needed
+npm run dev:live   # the pages call the backend named in the config
 ```
 
-This starts Vite at <http://127.0.0.1:5173/>. The login page needs the backend,
-or demo mode (see Demo). `npm run build` writes the site to `dist/`, and
-`node tools/serve.mjs` serves it the way a static host would.
+Both start Vite and print its address, <http://localhost:5173/> unless that
+port is taken. `npm run dev` serves the config with demo mode on (see Demo), so
+every screen works and nothing is sent anywhere. `npm run dev:live` serves the
+config as written. The browser then calls the backend from the dev server's
+origin, so the backend has to allow it; nobody has checked that it does. The
+dev server adds no content security policy, builds do.
+
+`npm run build` writes the site to `dist/`, and `node tools/serve.mjs` serves
+it the way a static host would. `.devcontainer` sets up the same thing in a dev
+container: Node 24, the dependencies and Playwright's Chromium, with port 5173
+forwarded.
 
 ## Test
 
@@ -87,5 +96,5 @@ to deploy from GitHub Actions.
   backend, `styles` the design tokens and components.
 - `tests/e2e` holds the Playwright specs and `tests/support` the stubbed
   backend. Unit tests sit beside the code in `app/src`.
-- `tools/` holds the static server, the HTML, size and policy tools and the
-  demo build.
+- `tools/` holds the static server, the HTML, size and policy tools, the demo
+  build and the plugin that gives the dev server its demo mode.

@@ -215,6 +215,17 @@ Security
   GitHub Actions; switching that on is the owner's call. The demo's rules (the
   percentages must total 100, grades from the saved weights and ranges) are
   read from the page code, not from the real server.
+- T5 Dev setup. Done: `npm run dev` serves the config with demo mode on, so the
+  app answers itself, and `npm run dev:live` serves it as written, so the pages
+  call the configured backend. A Vite plugin does it (`tools/dev-demo.mjs`,
+  serve only, tested in `tools/dev-demo.test.ts`); builds are untouched. The
+  quiet logger the build uses had also hidden the dev server's address, so it
+  now applies to builds only. `.devcontainer` has the container: Node 24, the
+  dependencies and Playwright's Chromium on creation, port 5173 forwarded. No
+  Docker was available, so the container has not been started; its file was
+  checked against the published devcontainer schema and its image tag against
+  the registry. `dev:live` needs the backend to allow the dev server's origin
+  (CORS); nobody has checked that.
 - S9 Licence and privacy clean-up. Template and names removed; LICENSE is
   waiting on question 6.
 
@@ -222,8 +233,6 @@ Not done, and worth doing soon
 
 - U4 and U5, and the manual accessibility pass, listed under Phase 5.
 - Pin the workflow actions to commit SHAs.
-- T5: `npm run dev` points at the real backend address. The plan was the mock
-  by default with a `dev:live` for the real API, and a devcontainer.
 - T6: pre-commit hooks (lefthook or husky), optional.
 - M6: a dev-only logger. The app has one `console.error`, so this is low value.
 - Check the pages on a real phone, and in Firefox and Safari.
