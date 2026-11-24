@@ -37,6 +37,7 @@ for (const scheme of ["light", "dark"] as const) {
 					ring.contrast >= 3
 						? ""
 						: `has a ring with ${ring.contrast.toFixed(1)}:1 contrast`,
+					ring.clipped ? "has a ring that is cut off" : "",
 				]
 					.filter(Boolean)
 					.map((problem) => `${stop.label} ${problem}`);

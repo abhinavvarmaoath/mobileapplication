@@ -250,6 +250,11 @@
 	box-shadow: inset 0 3px 0 var(--brand);
 }
 
+/* The bar reaches the edges of the window, where an outer ring is cut off. */
+.tabs a:focus-visible {
+	outline-offset: -3px;
+}
+
 .screen {
 	width: min(100% - 2 * var(--space-4), 40rem);
 	margin-inline: auto;
