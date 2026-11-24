@@ -236,7 +236,7 @@
 .tabs a {
 	display: grid;
 	place-items: center;
-	min-height: 3.5rem;
+	min-height: var(--tab-height);
 	padding: var(--space-2) var(--space-1);
 	font-size: var(--text-sm);
 	font-weight: 600;
@@ -255,10 +255,15 @@
 	outline-offset: -3px;
 }
 
+/* Focus scrolls a control into view above the fixed tab bar, not under it. */
+html {
+	scroll-padding-bottom: calc(var(--tabs-height) + var(--space-3));
+}
+
 .screen {
 	width: min(100% - 2 * var(--space-4), 40rem);
 	margin-inline: auto;
-	padding-block: var(--space-5) calc(4.5rem + env(safe-area-inset-bottom));
+	padding-block: var(--space-5) calc(var(--tabs-height) + var(--space-4));
 }
 
 .screen > h1 {
@@ -267,6 +272,10 @@
 }
 
 @media (min-width: 40rem) {
+	html {
+		scroll-padding-bottom: 0;
+	}
+
 	.tabs {
 		position: static;
 		border-top: 0;

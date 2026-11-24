@@ -20,6 +20,9 @@
 	--radius: 0.625rem;
 	/* The smallest comfortable touch target. */
 	--tap: 2.75rem;
+	/* One tab in the bar fixed to the bottom of a phone, and the whole bar. */
+	--tab-height: 3.5rem;
+	--tabs-height: calc(var(--tab-height) + 1px + env(safe-area-inset-bottom));
 
 	--surface: light-dark(#ffffff, #15181e);
 	--surface-raised: light-dark(#f4f6f9, #1e232b);

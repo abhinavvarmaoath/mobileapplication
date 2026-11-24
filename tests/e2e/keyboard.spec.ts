@@ -59,6 +59,25 @@ for (const scheme of ["light", "dark"] as const) {
 	}
 }
 
+test.describe("on a short phone screen", () => {
+	// The tab bar is fixed to the bottom, so a page taller than the window
+	// scrolls under it.
+	test.use({ viewport: { width: 390, height: 480 } });
+
+	for (const path of pages) {
+		test(`${path}: the tab bar never covers the control that has focus`, async ({
+			app,
+		}) => {
+			await app.open(path);
+			await app.idle();
+			const stops = await tabThrough(app.page);
+			expect(
+				stops.filter((stop) => stop.covered).map((stop) => stop.label),
+			).toEqual([]);
+		});
+	}
+});
+
 test.describe("from the keyboard alone", () => {
 	test("logs in, choosing the account type with the arrow keys", async ({
 		app,
