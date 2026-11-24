@@ -6,12 +6,17 @@ import { withPolicy } from "./tools/csp.mjs";
 
 // js/config.js is a classic script on purpose: it stays a separate file so the
 // addresses can change after a build. Vite warns that it cannot bundle it.
-const logger = createLogger("warn");
-const warn = logger.warn;
-logger.warn = (message, options) => {
-	if (message.includes('can\'t be bundled without type="module"')) return;
-	warn(message, options);
-};
+// A build says nothing unless something is wrong; the dev server has to keep
+// printing its address.
+function quietLogger(command: "build" | "serve") {
+	const logger = createLogger(command === "build" ? "warn" : "info");
+	const warn = logger.warn;
+	logger.warn = (message, options) => {
+		if (message.includes('can\'t be bundled without type="module"')) return;
+		warn(message, options);
+	};
+	return logger;
+}
 
 const root = fileURLToPath(new URL("./app", import.meta.url));
 const pages = readdirSync(root).filter((name) => name.endsWith(".html"));
@@ -28,8 +33,8 @@ function policy(): Plugin {
 	};
 }
 
-export default defineConfig({
-	customLogger: logger,
+export default defineConfig(({ command }) => ({
+	customLogger: quietLogger(command),
 	root,
 	base: "./",
 	build: {
@@ -45,4 +50,4 @@ export default defineConfig({
 		},
 	},
 	plugins: [policy()],
-});
+}));
